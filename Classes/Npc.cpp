@@ -1,0 +1,3 @@
+class NPC {
+    Vitals Vitals;
+};
