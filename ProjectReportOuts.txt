@@ -24,4 +24,3 @@ App/Project Requirements
           User-Admin 
           pthreads 
                Parallel processing
-asdadadsasdfjksadjfkl;saj;fdsa
