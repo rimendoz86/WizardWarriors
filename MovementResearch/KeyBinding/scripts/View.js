@@ -1,6 +1,9 @@
 export default class View {
+    doc = document;
+    win = window;
+    constructor(){}
 
-    HelloWorld(params) {
-        console.log("Hello World");
+    static SendToConsole(message){
+        console.log(message);
     }
 }

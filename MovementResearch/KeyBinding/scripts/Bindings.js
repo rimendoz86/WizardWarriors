@@ -1,23 +1,31 @@
+import Controller from './Controller.js'
+
 export default class Bindings{
-    static Apple='';
-    static KeyBind = {keyCode: '', keydown: () => { return;}, keyup: () => { return;}}
-    static KeyBindings = [
-
-            new Bindings.KeyBind() = { keyCode: 'KeyA', keydown: () => {console.log("You pressed a")}, keyup: () => {console.log("You released a")}}
-]
-
+    Controller = new Controller();
     constructor(){
         this.configureKeyBindings();
     }
 
+    static KeyBind = {keyCode: '', keydown: () => { return;}, keyup: () => { return;} }
+    KeyBindings = [
+        { 
+            keyCode: 'KeyA',
+            keyDown: () => Controller.SendToConsole('You Pressed A'), 
+            keyUp: () =>  Controller.SendToConsole('You Released A')
+        }
+    ]
+
     configureKeyBindings(){
         window.addEventListener("keydown", (event) => {
-            let keyPressed = event.code;
-            this.KeyBindings
+            let obj = this.KeyBindings.filter(x => x.keyCode == event.code)[0];
+            if (obj) obj.keyDown();
+            return;
         })
 
         window.addEventListener("keyup", (event) => {
-            console.log(event);
+            let obj = this.KeyBindings.filter(x => x.keyCode == event.code)[0];
+            if (obj) obj.keyUp();
+            return;
         })
     }
 

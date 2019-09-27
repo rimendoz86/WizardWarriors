@@ -6,5 +6,4 @@ export default class Init{
         this.Bindings = new Bindings();
     }
 }
-
 var init = new Init();

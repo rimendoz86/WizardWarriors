@@ -1,6 +1,7 @@
+import DomInfo from './DomInfo.Model.js'
 export default class Player {
-    Apple;
+    DomInfo;
     constructor() {
-        this.Apple = "Apple"
+        this.DomInfo = new DomInfo();
      }
 }
