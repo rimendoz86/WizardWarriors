@@ -1,4 +1,5 @@
 import Controller from './Controller.js'
+import KeyBind from './Models/KeyBind.Model.js';
 
 export default class Bindings{
     Controller = new Controller();
@@ -6,27 +7,25 @@ export default class Bindings{
         this.configureKeyBindings();
     }
 
-    static KeyBind = {keyCode: '', keydown: () => { return;}, keyup: () => { return;} }
     KeyBindings = [
-        { 
-            keyCode: 'KeyA',
-            keyDown: () => Controller.SendToConsole('You Pressed A'), 
-            keyUp: () =>  Controller.SendToConsole('You Released A')
-        }
+        new KeyBind('KeyA',
+        () => Controller.SendToConsole('You Pressed A'),
+        () => Controller.SendToConsole('You Released A'))
     ]
 
     configureKeyBindings(){
         window.addEventListener("keydown", (event) => {
-            let obj = this.KeyBindings.filter(x => x.keyCode == event.code)[0];
-            if (obj) obj.keyDown();
-            return;
-        })
+            let bindings = this.KeyBindings.filter(x => x.KeyCode == event.code);
+            bindings.forEach((binding) => {
+                binding.KeyDown();
+            });
+        });
 
         window.addEventListener("keyup", (event) => {
-            let obj = this.KeyBindings.filter(x => x.keyCode == event.code)[0];
-            if (obj) obj.keyUp();
-            return;
-        })
+            let bindings = this.KeyBindings.filter(x => x.KeyCode == event.code);
+            bindings.forEach((binding) => { 
+                binding.KeyUp(); 
+            });
+        });
     }
-
 }
