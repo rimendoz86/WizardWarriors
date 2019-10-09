@@ -1,3 +1,3 @@
-class Ally {
-    Vitals Vitals;
-};
+// class Ally {
+//     Vitals Vitals;
+// };
