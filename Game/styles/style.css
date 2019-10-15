@@ -1,9 +1,12 @@
+html, body {
+    height:100%;
+}
+
 .fullScreen{
     width: 100%;
-    height: 90vh;
+    height: 100%;
     background-image: url('../assets/gameBackground.jpg');
     background-size: cover;
-    padding: 20px;
 }
 
 #playArea{
@@ -16,6 +19,7 @@
     background-size: contain;
     border: 1px black solid;
     box-shadow: 5px 5px 20px black;
+    top: 20px;
 }
 
 .gameUnit{
