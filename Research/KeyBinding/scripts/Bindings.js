@@ -1,5 +1,5 @@
-import Controller from './Controller.js'
-import KeyBind from './Models/KeyBind.Model.js';
+import Controller from './Controller.js.js'
+import KeyBind from './Models/KeyBind.Model.js.js';
 
 export default class Bindings{
     Controller = new Controller();

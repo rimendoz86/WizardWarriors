@@ -1,5 +1,5 @@
-import Player from "./Models/Player.Model.js";
-import View from './View.js'
+import Player from "./Models/Player.Model.js.js";
+import View from './View.js.js'
 export default class Model{
     View = new View();
 

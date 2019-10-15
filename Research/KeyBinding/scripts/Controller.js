@@ -1,4 +1,4 @@
-import Model from './Model.js';
+import Model from './Model.js.js';
 export default class Controller{
     Model = new Model();
     

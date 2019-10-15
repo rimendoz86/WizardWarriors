@@ -1,4 +1,4 @@
-import DomInfo from './DomInfo.Model.js'
+import DomInfo from './DomInfo.Model.js.js'
 export default class Player {
     DomInfo;
     constructor() {
