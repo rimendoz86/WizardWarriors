@@ -35,6 +35,7 @@ function UnitLocation(domID){
     this.DomID = domID;
     this.Left;
     this.Top;
+    this.RotateDeg;
 
     this.MoveLeft = function (feet) {
         this.Left -= feet;
@@ -59,6 +60,28 @@ function UnitLocation(domID){
     this.UpdateLocation = function() {
         GlobalViewRef.UpdateLocation(this.DomID, this.Left, this.Top);
     }
+    
+    this.UpdateRotateDeg = function(LookToX, LookToY){
+    
+        var angle = (cx, cy, ex, ey) => {
+            var dy = ey - cy;
+            var dx = ex - cx;
+            var theta = Math.atan2(dy, dx); // range (-PI, PI]
+            theta *= 180 / Math.PI; // rads to degs, range (-180, 180]
+            return theta;
+        }
+    
+        var angle360 = (cx, cy, ex, ey) => {
+            var theta = angle(cx, cy, ex, ey); // range (-180, 180]
+            if (theta < 0) theta = 360 + theta; // range [0, 360)
+            return theta;
+        }
+
+        let playerAngle = angle360(LookToX, LookToY, this.Left, this.Top);
+        window.GlobalViewRef.UpdateRotate('player',playerAngle-90)
+    
+    }
+
 }
 
 function TimerAction(action = () => {return}, runEvery = 5, runMax = 15){
@@ -67,11 +90,6 @@ function TimerAction(action = () => {return}, runEvery = 5, runMax = 15){
     this.RunMax = runMax;
     this.Iteration = 0;
     this.Dispose = false;
-}
-
-function UserEnvironment(){
-    this.MouseTop;
-    this.MouseLeft;
 }
 
 function KeyBind(keyCode = '', keyDown = () => { return }, keyUp = () => { return }){

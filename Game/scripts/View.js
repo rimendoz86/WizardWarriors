@@ -4,5 +4,10 @@ function viewClass (){
         domRef.SetLocation(Left, Top)
     }
 
+    this.UpdateRotate = function (DomID,RotateDeg){
+        let domRef = new DomRef(DomID);
+        domRef.SetRotation(RotateDeg)
+    }
+
     window.GlobalViewRef = this;
 };

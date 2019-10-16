@@ -5,7 +5,7 @@ function controllerClass (){
 };
 
 controllerClass.prototype.SetMousePosition = function(mouseTop, moustLeft){
-    this.Model.SetMousePosition(mouseTop, moustLeft);
+    this.Model.Player.UnitLocation.UpdateRotateDeg(moustLeft, mouseTop);
 }
 
 controllerClass.prototype.SpawnPlayer = function () {

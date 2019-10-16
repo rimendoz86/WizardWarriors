@@ -37,7 +37,7 @@ bindingClass.prototype.ConfigureKeyBindings = function(){
 bindingClass.prototype.MouseTracking = function(){
     var playArea = new DomRef('playArea');
     playArea.nativeElementRef.addEventListener("mousemove" , (e) => {
-        this.ControllerRef.SetMousePosition(e.clientY, e.clientX)
+        this.ControllerRef.SetMousePosition(e.layerY, e.layerX)
     });
 }
 
