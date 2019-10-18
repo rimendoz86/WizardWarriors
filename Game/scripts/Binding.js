@@ -1,6 +1,6 @@
 function bindingClass (controllerRef){
     this.ControllerRef = controllerRef;
-    this.ConfigureKeyBindings();
+    // this.ConfigureKeyBindings();
     this.MouseTracking();
     this.SetGlobalTimer();
     this.TimerActions = [
@@ -10,8 +10,8 @@ function bindingClass (controllerRef){
     window.GlobalBindingRef = this;
 };
 
-bindingClass.prototype.KeyBindings = [
-    new KeyBind('KeyW', () => {GlobalControllerRef.MovePlayerUp()}),
+/* bindingClass.prototype.KeyBindings = [
+    new KeyBind('KeyW', () => {GlobalControllerRef.MovePlayer()}),
     new KeyBind('KeyA', () => {GlobalControllerRef.MovePlayerLeft()}),
     new KeyBind('KeyS', () => {GlobalControllerRef.MovePlayerDown()}),
     new KeyBind('KeyD', () => {GlobalControllerRef.MovePlayerRight()}),
@@ -19,7 +19,7 @@ bindingClass.prototype.KeyBindings = [
 
 bindingClass.prototype.ConfigureKeyBindings = function(){
     window.addEventListener("keydown", (event) => {
-        console.log(event);
+        //console.log(event);
         let bindings = this.KeyBindings.filter(x => x.KeyCode == event.code);
         bindings.forEach((binding) => {
             binding.KeyDown();
@@ -28,11 +28,11 @@ bindingClass.prototype.ConfigureKeyBindings = function(){
 
     window.addEventListener("keyup", (event) => {
         let bindings = this.KeyBindings.filter(x => x.KeyCode == event.code);
-        bindings.forEach((binding) => { 
+        bindings.forEach((binding) => {
             binding.KeyUp(); 
         });
     });
-}
+} */
 
 bindingClass.prototype.MouseTracking = function(){
     var playArea = new DomRef('playArea');
