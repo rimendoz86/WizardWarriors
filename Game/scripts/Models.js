@@ -2,24 +2,11 @@ function Player (){
     this.UnitLocation = new UnitLocation('player');
     this.DomRef = new DomRef('player');
     this.Stats = new Stats();
-    this.Stats.Speed = 20;
-
-    this.MovePlayerLeft = function() {
-        this.UnitLocation.MoveLeft(this.Stats.Speed);
-    }
-    this.MovePlayerRight = function() {
-        this.UnitLocation.MoveRight(this.Stats.Speed);
-    }
-    this.MovePlayerUp = function() {
-        this.UnitLocation.MoveUp(this.Stats.Speed);
-    }
-    this.MovePlayerDown = function() {
-        this.UnitLocation.MoveDown(this.Stats.Speed);
-    }
+    this.Stats.Speed = 2;
 }
 
 function Stats(){
-    this.Speed = 10;
+    this.Speed = 1;
     this.Health = 100;
     this.MaxHealth = 100;
     this.Attack = 100;
@@ -33,11 +20,15 @@ function Enemy(id) {
 
 function UnitLocation(domID){
     this.DomID = domID;
+    this.MOVE_UP = false;
+    this.MOVE_DOWN = false;
+    this.MOVE_LEFT = false;
+    this.MOVE_RIGHT = false;
     this.Left;
     this.Top;
     this.RotateDeg;
 
-    this.MoveLeft = function (feet) {
+    /* this.MoveLeft = function (feet) {
         this.Left -= feet;
         this.UpdateLocation();
     }
@@ -55,10 +46,10 @@ function UnitLocation(domID){
     this.MoveDown = function (feet) {
         this.Top += feet;
         this.UpdateLocation();
-    }
+    } */
 
     this.UpdateLocation = function() {
-        GlobalViewRef.UpdateLocation(this.DomID, this.Left, this.Top);
+        window.GlobalViewRef.UpdateLocation(this.DomID, this.Left, this.Top);
     }
     
     this.UpdateRotateDeg = function(LookToX, LookToY){
@@ -92,11 +83,11 @@ function TimerAction(action = () => {return}, runEvery = 5, runMax = 15){
     this.Dispose = false;
 }
 
-function KeyBind(keyCode = '', keyDown = () => { return }, keyUp = () => { return }){
+/* function KeyBind(keyCode = '', keyDown = (KeyCode) => { return }, keyUp = () => { return }){
     this.KeyCode = keyCode;
     this.KeyDown = keyDown;
     this.KeyUp = keyUp;
-}
+} */
 
 function DomRef(id){
     this.nativeElementRef = document.getElementById(id);
