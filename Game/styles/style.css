@@ -11,6 +11,7 @@ html, body {
 
 #playArea{
     margin: auto;
+    overflow: hidden;
     width: 1280px;
     height: 720px;
     background-color: gray;
@@ -18,7 +19,7 @@ html, body {
     background: url('../assets/background.jpg');
     background-size: contain;
     border: 1px black solid;
-    box-shadow: 5px 5px 20px black;
+    box-shadow: 5px 5px 20px black, inset 0px 0px 5px black;
     top: 20px;
 }
 
@@ -27,9 +28,7 @@ html, body {
     height: 20px;
     width: 20px;
     background-color: black;
-    transition: top .15s, left .15s;
-    box-shadow: 0px 0px 12px black;
-    
+    box-shadow: 0px 0px 12px black;    
 }
 
 #player{

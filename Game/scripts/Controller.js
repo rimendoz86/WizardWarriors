@@ -9,7 +9,7 @@ controllerClass.prototype.RegisterPlayerMovement = function() {
   window.addEventListener("keydown", keyDown);
   window.addEventListener("keyup", keyRelease);
   setInterval(
-    () => { this.loopMoveUnit(this.Model.Player);}, 90
+    () => { this.loopMoveUnit(this.Model.Player);}, 20
   )
 }
 
@@ -26,10 +26,29 @@ controllerClass.prototype.SpawnPlayer = function () {
 }
 
 controllerClass.prototype.loopMoveUnit = function(gameUnit) {
-  if (gameUnit.UnitLocation.MOVE_UP) { gameUnit.UnitLocation.Top -= gameUnit.Stats.Speed; };
-  if (gameUnit.UnitLocation.MOVE_DOWN) { gameUnit.UnitLocation.Top += gameUnit.Stats.Speed; };
-  if (gameUnit.UnitLocation.MOVE_RIGHT) { gameUnit.UnitLocation.Left += gameUnit.Stats.Speed; };
-  if (gameUnit.UnitLocation.MOVE_LEFT) { gameUnit.UnitLocation.Left -= gameUnit.Stats.Speed;  };
+  
+  if (gameUnit.UnitLocation.MOVE_UP) { 
+    gameUnit.UnitLocation.Top -= gameUnit.UnitLocation.Top - gameUnit.Stats.Speed < PlayArea.MaxTop 
+                              ? 0
+                              : gameUnit.Stats.Speed;
+
+  };
+  if (gameUnit.UnitLocation.MOVE_DOWN) {
+    gameUnit.UnitLocation.Top += gameUnit.UnitLocation.Top + gameUnit.Stats.Speed > PlayArea.MaxBottom 
+                              ? 0
+                              : gameUnit.Stats.Speed;
+   };
+  if (gameUnit.UnitLocation.MOVE_RIGHT) {
+    gameUnit.UnitLocation.Left += gameUnit.UnitLocation.Left + gameUnit.Stats.Speed > PlayArea.MaxRight 
+                              ? 0 
+                              : gameUnit.Stats.Speed;
+    };
+  if (gameUnit.UnitLocation.MOVE_LEFT) {
+    gameUnit.UnitLocation.Left -= gameUnit.UnitLocation.Left - gameUnit.Stats.Speed < PlayArea.MaxLeft 
+                                ? 0
+                                : gameUnit.Stats.Speed;
+                                console.log(gameUnit.UnitLocation.Left);
+    };
 
   gameUnit.UnitLocation.UpdateLocation();
 }
