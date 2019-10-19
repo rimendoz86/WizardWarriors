@@ -2,11 +2,11 @@ function Player (){
     this.UnitLocation = new UnitLocation('player');
     this.DomRef = new DomRef('player');
     this.Stats = new Stats();
-    this.Stats.Speed = 2;
+    this.Stats.Speed = 10;
 }
 
 function Stats(){
-    this.Speed = 1;
+    this.Speed = 10;
     this.Health = 100;
     this.MaxHealth = 100;
     this.Attack = 100;
@@ -27,26 +27,6 @@ function UnitLocation(domID){
     this.Left;
     this.Top;
     this.RotateDeg;
-
-    /* this.MoveLeft = function (feet) {
-        this.Left -= feet;
-        this.UpdateLocation();
-    }
-
-    this.MoveRight = function (feet) {
-        this.Left += feet;
-        this.UpdateLocation();
-    }
-
-    this.MoveUp = function (feet) {
-        this.Top -= feet;
-        this.UpdateLocation();
-    }
-
-    this.MoveDown = function (feet) {
-        this.Top += feet;
-        this.UpdateLocation();
-    } */
 
     this.UpdateLocation = function() {
         window.GlobalViewRef.UpdateLocation(this.DomID, this.Left, this.Top);
@@ -82,12 +62,6 @@ function TimerAction(action = () => {return}, runEvery = 5, runMax = 15){
     this.Iteration = 0;
     this.Dispose = false;
 }
-
-/* function KeyBind(keyCode = '', keyDown = (KeyCode) => { return }, keyUp = () => { return }){
-    this.KeyCode = keyCode;
-    this.KeyDown = keyDown;
-    this.KeyUp = keyUp;
-} */
 
 function DomRef(id){
     this.nativeElementRef = document.getElementById(id);
