@@ -10,30 +10,6 @@ function bindingClass (controllerRef){
     window.GlobalBindingRef = this;
 };
 
-/* bindingClass.prototype.KeyBindings = [
-    new KeyBind('KeyW', () => {GlobalControllerRef.MovePlayer()}),
-    new KeyBind('KeyA', () => {GlobalControllerRef.MovePlayerLeft()}),
-    new KeyBind('KeyS', () => {GlobalControllerRef.MovePlayerDown()}),
-    new KeyBind('KeyD', () => {GlobalControllerRef.MovePlayerRight()}),
-]
-
-bindingClass.prototype.ConfigureKeyBindings = function(){
-    window.addEventListener("keydown", (event) => {
-        //console.log(event);
-        let bindings = this.KeyBindings.filter(x => x.KeyCode == event.code);
-        bindings.forEach((binding) => {
-            binding.KeyDown();
-        });
-    });
-
-    window.addEventListener("keyup", (event) => {
-        let bindings = this.KeyBindings.filter(x => x.KeyCode == event.code);
-        bindings.forEach((binding) => {
-            binding.KeyUp(); 
-        });
-    });
-} */
-
 bindingClass.prototype.MouseTracking = function(){
     var playArea = new DomRef('playArea');
     playArea.nativeElementRef.addEventListener("mousemove" , (e) => {

@@ -1,8 +1,17 @@
 function controllerClass (){
+  window.GlobalControllerRef = this;
     this.Model = new modelClass();
     this.SpawnPlayer();
-    window.GlobalControllerRef = this;
+    this.RegisterPlayerMovement();
 };
+
+controllerClass.prototype.RegisterPlayerMovement = function() {
+  window.addEventListener("keydown", keyDown);
+  window.addEventListener("keyup", keyRelease);
+  setInterval(
+    () => { this.loopMoveUnit(this.Model.Player);}, 90
+  )
+}
 
 controllerClass.prototype.SetMousePosition = function(mouseTop, moustLeft){
     this.Model.Player.UnitLocation.UpdateRotateDeg(moustLeft, mouseTop);
@@ -16,25 +25,14 @@ controllerClass.prototype.SpawnPlayer = function () {
     this.Model.Player = player;
 }
 
-// controllerClass.prototype.MovePlayerLeft = function(){
-//     this.Model.Player.MovePlayerLeft();
-// }
+controllerClass.prototype.loopMoveUnit = function(gameUnit) {
+  if (gameUnit.UnitLocation.MOVE_UP) { gameUnit.UnitLocation.Top -= gameUnit.Stats.Speed; };
+  if (gameUnit.UnitLocation.MOVE_DOWN) { gameUnit.UnitLocation.Top += gameUnit.Stats.Speed; };
+  if (gameUnit.UnitLocation.MOVE_RIGHT) { gameUnit.UnitLocation.Left += gameUnit.Stats.Speed; };
+  if (gameUnit.UnitLocation.MOVE_LEFT) { gameUnit.UnitLocation.Left -= gameUnit.Stats.Speed;  };
 
-// controllerClass.prototype.MovePlayerUp = function(){
-//     this.Model.Player.MovePlayerUp();
-// }
-
-// controllerClass.prototype.MovePlayerRight = function(){
-//     this.Model.Player.MovePlayerRight();
-// }
-
-// controllerClass.prototype.MovePlayerDown = function(){
-//     this.Model.Player.MovePlayerDown();
-// }
-
-
-window.addEventListener("keydown", keyDown);
-window.addEventListener("keyup", keyRelease);
+  gameUnit.UnitLocation.UpdateLocation();
+}
 
 function keyDown(e) {
   if (e.keyCode === 87) { GlobalControllerRef.Model.Player.UnitLocation.MOVE_UP = true };
@@ -49,14 +47,3 @@ function keyRelease(e) {
   if (e.keyCode === 68) { GlobalControllerRef.Model.Player.UnitLocation.MOVE_RIGHT = false };
   if (e.keyCode === 65) { GlobalControllerRef.Model.Player.UnitLocation.MOVE_LEFT = false };
 }
-
-function loopMovePlayer() {
-  if (GlobalControllerRef.Model.Player.UnitLocation.MOVE_UP) { GlobalControllerRef.Model.Player.UnitLocation.Top -= GlobalControllerRef.Model.Player.Stats.Speed; };
-  if (GlobalControllerRef.Model.Player.UnitLocation.MOVE_DOWN) { GlobalControllerRef.Model.Player.UnitLocation.Top += GlobalControllerRef.Model.Player.Stats.Speed; };
-  if (GlobalControllerRef.Model.Player.UnitLocation.MOVE_RIGHT) { GlobalControllerRef.Model.Player.UnitLocation.Left += GlobalControllerRef.Model.Player.Stats.Speed; };
-  if (GlobalControllerRef.Model.Player.UnitLocation.MOVE_LEFT) { GlobalControllerRef.Model.Player.UnitLocation.Left -= GlobalControllerRef.Model.Player.Stats.Speed;  };
-
-  GlobalControllerRef.Model.Player.UnitLocation.UpdateLocation();
-  window.requestAnimationFrame(loopMovePlayer);
-}
-window.requestAnimationFrame(loopMovePlayer);

@@ -27,7 +27,7 @@ html, body {
     height: 20px;
     width: 20px;
     background-color: black;
-    transition: top .3s, left .3s;
+    transition: top .15s, left .15s;
     box-shadow: 0px 0px 12px black;
     
 }
