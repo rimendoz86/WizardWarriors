@@ -47,7 +47,6 @@ controllerClass.prototype.loopMoveUnit = function(gameUnit) {
     gameUnit.UnitLocation.Left -= gameUnit.UnitLocation.Left - gameUnit.Stats.Speed < PlayArea.MaxLeft 
                                 ? 0
                                 : gameUnit.Stats.Speed;
-                                console.log(gameUnit.UnitLocation.Left);
     };
 
   gameUnit.UnitLocation.UpdateLocation();
