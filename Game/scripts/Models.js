@@ -2,7 +2,7 @@ function Player (){
     this.UnitLocation = new UnitLocation('player');
     this.DomRef = new DomRef('player');
     this.Stats = new Stats();
-    this.Stats.Speed = 10;
+    this.Stats.Speed = 2;
 }
 
 function Stats(){
@@ -87,4 +87,12 @@ function DomRef(id){
         this.nativeElementRef.style.top = `${top}px`;
         this.nativeElementRef.style.left = `${left}px`;
     }
+}
+
+//Static Methods
+var PlayArea = {
+    MaxLeft: 0,
+    MaxRight: 1260,
+    MaxTop: 0,
+    MaxBottom: 700
 }
