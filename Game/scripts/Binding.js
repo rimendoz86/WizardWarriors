@@ -1,6 +1,5 @@
 function bindingClass (controllerRef){
     this.ControllerRef = controllerRef;
-    // this.ConfigureKeyBindings();
     this.MouseTracking();
     this.SetGlobalTimer();
     this.TimerActions = [

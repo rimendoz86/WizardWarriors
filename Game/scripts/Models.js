@@ -33,24 +33,8 @@ function UnitLocation(domID){
     }
     
     this.UpdateRotateDeg = function(LookToX, LookToY){
-    
-        var angle = (cx, cy, ex, ey) => {
-            var dy = ey - cy;
-            var dx = ex - cx;
-            var theta = Math.atan2(dy, dx); // range (-PI, PI]
-            theta *= 180 / Math.PI; // rads to degs, range (-180, 180]
-            return theta;
-        }
-    
-        var angle360 = (cx, cy, ex, ey) => {
-            var theta = angle(cx, cy, ex, ey); // range (-180, 180]
-            if (theta < 0) theta = 360 + theta; // range [0, 360)
-            return theta;
-        }
-
-        let playerAngle = angle360(LookToX, LookToY, this.Left, this.Top);
-        window.GlobalViewRef.UpdateRotate('player',playerAngle-90)
-    
+        let playerAngle = Utility.Angle360(LookToX, LookToY, this.Left, this.Top);
+        window.GlobalViewRef.UpdateRotate('player', playerAngle-90)
     }
 
 }
@@ -64,7 +48,15 @@ function TimerAction(action = () => {return}, runEvery = 5, runMax = 15){
 }
 
 function DomRef(id){
-    this.nativeElementRef = document.getElementById(id);
+
+    let domObj = document.getElementById(id);
+    if(domObj == undefined){
+        domObj = document.createElement("div");
+        domObj.setAttribute("id", id);
+        domObj.setAttribute("class", "gameUnit");
+        document.getElementById('playArea').appendChild(domObj);
+    }
+    this.nativeElementRef = domObj;
 
     this.SetOnClick = function(methodByRef){
         this.nativeElementRef.addEventListener("click", methodByRef);
@@ -87,6 +79,10 @@ function DomRef(id){
         this.nativeElementRef.style.top = `${top}px`;
         this.nativeElementRef.style.left = `${left}px`;
     }
+
+    this.Remove = function() {
+        this.nativeElementRef.remove()
+    }
 }
 
 //Static Methods
@@ -94,5 +90,20 @@ var PlayArea = {
     MaxLeft: 0,
     MaxRight: 1260,
     MaxTop: 0,
-    MaxBottom: 700
+    MaxBottom: 700,
+    getDomRef: () => {
+        return new DomRef('playArea');
+    }
+}
+
+//UtilityFunctions
+var Utility = {
+    Angle360: (cx, cy, ex, ey) => {
+        let dy = ey - cy;
+        let dx = ex - cx;
+        let theta = Math.atan2(dy, dx); 
+        theta *= 180 / Math.PI; 
+        if (theta < 0) theta += 360;
+        return theta;
+    }
 }
