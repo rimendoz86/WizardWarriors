@@ -6,6 +6,7 @@ function Player (){
 }
 
 function Stats(){
+    this.Nickname = "TestPlayer";
     this.Speed = 10;
     this.Health = 100;
     this.MaxHealth = 100;
