@@ -1,7 +1,7 @@
 function controllerClass (){
   window.GlobalControllerRef = this;
     this.Model = new modelClass();
-    this.SpawnPlayer();
+    this.SpawnPlayer(600, 350);
     this.RegisterPlayerMovement();
 };
 
@@ -17,12 +17,13 @@ controllerClass.prototype.SetMousePosition = function(mouseTop, moustLeft){
     this.Model.Player.UnitLocation.UpdateRotateDeg(moustLeft, mouseTop);
 }
 
-controllerClass.prototype.SpawnPlayer = function () {
+controllerClass.prototype.SpawnPlayer = function (spawnLeft, spawnTop) {
     var player  = new Player();
-    player.UnitLocation.Left = 50;
-    player.UnitLocation.Top = 50;
+    player.UnitLocation.Left = spawnLeft;
+    player.UnitLocation.Top = spawnTop;
     player.UnitLocation.UpdateLocation();
     this.Model.Player = player;
+    this.Model.Allies.push(player);
 }
 
 controllerClass.prototype.loopMoveUnit = function(gameUnit) {
