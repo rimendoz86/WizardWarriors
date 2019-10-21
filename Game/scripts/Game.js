@@ -28,14 +28,18 @@ function gameClass (){
     gameClass.prototype.checkCookie = function() {
       var user = this.getCookie('nickname');
       if (user != "") {
-        alert("Welcome Back, WizardWarrior " + user);
+        return true;
       } else {
-        alert("not set");
+        return false;
       }
     }
 
-    this.setCookie("nickname", this.Controller.Model.Player.Stats.Nickname, 1);
-    this.checkCookie('nickname');
+    if(this.checkCookie('nickname')){
+      alert("Welcome Back, WizardWarrior " + this.getCookie("nickname"));
+    }else{
+      this.setCookie("nickname", this.Controller.Model.Player.Stats.Nickname, 1);
+      alert("Hello " + this.getCookie("nickname"));
+    }
 };
 
 var Game = new gameClass();
