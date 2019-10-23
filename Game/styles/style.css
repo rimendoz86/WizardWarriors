@@ -34,4 +34,15 @@ html, body {
 
 #player{
     background-color: black;
+    z-index: 10;
+}
+
+.enemy{
+    background-color: red;
+    z-index: 8;
+}
+
+.ally{
+    background-color: white;
+    z-index: 9;
 }
