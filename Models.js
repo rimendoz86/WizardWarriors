@@ -31,12 +31,7 @@ function Player (){
 
 function Stats(){
     this.Name = "Dummy";
-    this.Speed = 1;
-    this.Health = 1;
-    this.MaxHealth = 1;
-    this.Attack = 1;
-    this.AtkSpeed = 2;      //2 hits per second
-    this.Level = 1;
+
     //c++ functions
     this.getHealth = function(){
         return Health;

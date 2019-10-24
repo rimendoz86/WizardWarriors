@@ -1,22 +1,20 @@
-function Player (){
-    this.UnitLocation = new UnitLocation('player');
-    this.DomRef = new DomRef('player');
-    this.Stats = new Stats();
-    this.Stats.Speed = 2;
-}
-
-function Stats(){
+function GameUnit(unitID){
+    this.ID = unitID;
+    this.UnitLocation = new UnitLocation(unitID);
+    this.DomRef = new DomRef(unitID);
+    this.Stats = new Stats(1);
     this.Nickname = "TestPlayer";
-    this.Speed = 10;
-    this.Health = 100;
-    this.MaxHealth = 100;
-    this.Attack = 100;
+    this.GameUnitType;
+    this.Target;
 }
 
-function Enemy(id) {
-    this.UnitLocation = new UnitLocation(id);
-    this.DomRef = new DomRef('player');
-    this.Stats = new Stats();
+function Stats(level){
+    this.Level = 1;
+    this.Speed = 2 * this.Level;
+    this.Health = 1 * this.Level;
+    this.MaxHealth = 1 * this.Level;
+    this.Attack = 1 * this.Level;
+    this.AtkSpeed = 2 * this.Level;
 }
 
 function UnitLocation(domID){
@@ -37,7 +35,6 @@ function UnitLocation(domID){
         let playerAngle = Utility.Angle360(LookToX, LookToY, this.Left, this.Top);
         window.GlobalViewRef.UpdateRotate('player', playerAngle-90)
     }
-
 }
 
 function TimerAction(action = () => {return}, runEvery = 5, runMax = 15){
@@ -49,7 +46,6 @@ function TimerAction(action = () => {return}, runEvery = 5, runMax = 15){
 }
 
 function DomRef(id){
-
     let domObj = document.getElementById(id);
     if(domObj == undefined){
         domObj = document.createElement("div");
@@ -95,6 +91,13 @@ var PlayArea = {
     getDomRef: () => {
         return new DomRef('playArea');
     }
+}
+
+var GameUnitType = {
+    Player: 0,
+    Ally: 1,
+    Enemy: 2,
+    IsValid: (gameUnitType)=> gameUnitType == 0 || gameUnitType == 1 || gameUnitType == 2
 }
 
 //UtilityFunctions
