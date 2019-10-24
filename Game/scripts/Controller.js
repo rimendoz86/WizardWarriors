@@ -2,6 +2,8 @@ function controllerClass() {
   window.GlobalControllerRef = this;
   this.Model = new modelClass();
   this.SpawnUnit('player', GameUnitType.Player, 600, 350);
+  this.SpawnUnit('enem_1', GameUnitType.Enemy, 600, 300);
+  this.SpawnUnit('ally_1', GameUnitType.Ally, 600, 400);
 };
 
 controllerClass.prototype.SetMousePosition = function (mouseTop, moustLeft) {
@@ -19,11 +21,12 @@ controllerClass.prototype.SpawnUnit = function (unitID, gameUnitType, spawnLeft,
     return;
   }
 
+  let defaultClickAction = () => { gameUnit.ClickAction()};
   var gameUnit = new GameUnit(unitID);
   gameUnit.UnitLocation.Left = spawnLeft;
   gameUnit.UnitLocation.Top = spawnTop;
   gameUnit.GameUnitType = gameUnitType;
-  console.log(typeof gameUnitType)
+
   switch (gameUnitType) {
     case GameUnitType.Player:
       gameUnit.DomRef.ReplaceClass(null,'player')
@@ -37,8 +40,11 @@ controllerClass.prototype.SpawnUnit = function (unitID, gameUnitType, spawnLeft,
     case GameUnitType.Enemy:
       gameUnit.DomRef.ReplaceClass(null,'enemy')
       this.Model.Enemies.push(gameUnit);
+      defaultClickAction = () => { Attack.Basic(this.Model.Player, gameUnit) };
       break;
   }
+
+  gameUnit.DomRef.SetOnClick(defaultClickAction);
   this.Model.AllGameUnits.push(gameUnit);
   gameUnit.UnitLocation.UpdateLocation();
 }

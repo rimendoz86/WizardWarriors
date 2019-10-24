@@ -6,15 +6,33 @@ function GameUnit(unitID){
     this.Nickname = "TestPlayer";
     this.GameUnitType;
     this.Target;
+    this.ClickAction = () => { console.log(`You clicked ${this.ID}`)}
 }
 
 function Stats(level){
     this.Level = 1;
-    this.Speed = 2 * this.Level;
-    this.Health = 1 * this.Level;
+    this.Speed = 2;
+    this.Defense = 2;
+    this.Health = 100 * this.Level;
     this.MaxHealth = 1 * this.Level;
-    this.Attack = 1 * this.Level;
+    this.Attack = 10 * this.Level;
     this.AtkSpeed = 2 * this.Level;
+    this.CritChance = .1;
+    this.CritMultiplier = 2;
+    this.IsAlive = true;
+    
+    this.receiveAttackDamage = (damage) => {
+        if(!this.IsAlive) return;
+        let mitigatedDamage = damage - this.Defense;
+        this.Health -= mitigatedDamage;
+        this.IsAlive = this.Health > 0;
+        console.log(this.Health);
+    }
+
+    this.getAttackDamage = () => {
+        if(!this.IsAlive) return 0;
+        return (Math.random() < this.CritChance) ? this.Attack * this.CritMultiplier : this.Attack;
+    }
 }
 
 function UnitLocation(domID){
@@ -110,4 +128,11 @@ var Utility = {
         if (theta < 0) theta += 360;
         return theta;
     }
+}
+
+var Attack = {
+    Basic: (fromGameUnit, toGameUnit) => {
+        let attackDamage = fromGameUnit.Stats.getAttackDamage();
+        toGameUnit.Stats.receiveAttackDamage(attackDamage);
+    },  
 }
