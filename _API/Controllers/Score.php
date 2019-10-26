@@ -10,7 +10,6 @@ class Score extends API\APIBase{
         //Logic: call to method in data layer. map to response
 
         //Response: return response
-        echo "this is a mutated get";
         echo json_encode($req);
     }
 }
