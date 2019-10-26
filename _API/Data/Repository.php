@@ -1,7 +1,6 @@
 <?php 
 namespace Data\Repository;
-include './Context.php';
-
+include 'Context.php';
 use Context;
 
 class Score {
@@ -18,8 +17,28 @@ class Score {
     function Get(){
         return "[{'id':'0', 'name':'Superman','Score':'1000'}]";
     }
-
 }
 
-$tmp = new Score();
+class User {
+    public $conn;
+    function __construct() {
+        $tmp = new \Data\Context\Connection();
+        $this->conn = $tmp->Conn;
+    }
+    function Save($userName, $returnKey){
+        $stmt = $this->conn->prepare(
+        "INSERT INTO `users` 
+        (`ID`,`UserName`,`ReturnKey`,`CreatedOn`,`CreatedBy`,`UpdatedOn`,`UpdatedBy`)
+        VALUES 
+        (NULL, ?, ?, current_timestamp(),'TestUser', current_timestamp(),'TestUser');");
+        $stmt->bind_param("ss", $userName, $returnKey);
+        $stmt->execute();
+        $stmt->close();
+    } 
+
+    function Get(){
+        // return "[{'id':'0', 'name':'Superman','Score':'1000'}]";
+    }
+
+}
 ?>
