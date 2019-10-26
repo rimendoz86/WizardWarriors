@@ -7,7 +7,6 @@ use Context;
 class Score {
     public $conn;
     function __construct() {
-        echo "this ran";
         $this->conn = new \Data\Context\Connection();
     }
 
