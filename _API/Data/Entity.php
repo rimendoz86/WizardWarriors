@@ -1,10 +1,7 @@
 <?php 
 namespace Data\Entity;
 
-class Score {
+class ScoreEntity {
     
 }
-
-
-
 ?>
