@@ -14,23 +14,20 @@ class APIBase {
                 $this->Get($this->RequestObject);
                 break;
             case 'POST':
-                $this->RequestObject = $this->ArrayToObject($_GET);
+                $this->RequestObject = json_decode(file_get_contents('php://input'), true);
                 $this->Post($this->RequestObject);
                 break;
             default:
-                echo "The request method has not been defined";
                 break;
         }
     }
 
     function Post($requestObject){
-        echo "Post Method not defined";
-        echo " Request:".json_encode($requestObject);
+        echo json_encode($requestObject);
     }
 
     function Get($requestObject){
-        echo "Get Method not defined";
-        echo " Request:".json_encode($requestObject);
+        echo json_encode($requestObject);
     }
 
     function ArrayToObject($fromArray){

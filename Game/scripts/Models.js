@@ -130,6 +130,45 @@ var Utility = {
     }
 }
 
+var Data = {
+    Get: (controller, params) => {
+        let promise = new Promise((resolve, reject) => {
+            let req = new XMLHttpRequest;
+            req.open("GET",controller+"?"+params,true);
+            req.setRequestHeader("Content-type", "application/json");
+            req.onreadystatechange = (event) => {
+                let res = event.currentTarget;
+                if(res.readyState == 4 && res.status == 200){
+                    resolve(JSON.parse(res.responseText));
+                }else if (res.readyState == 4 && res.status != 200){
+                    reject(event);
+                }
+            }
+            req.send();
+        })
+        return promise;
+    },
+    Post: (controller, params) => {
+        let promise = new Promise((resolve, reject) => {
+            let req = new XMLHttpRequest;
+            req.open("POST",controller,true);
+            req.setRequestHeader("Content-Type", "application/json");
+            req.onreadystatechange = (event) => {
+                let res = event.currentTarget;
+                if(res.readyState == 4 && res.status == 200){
+                    resolve(JSON.parse(res.responseText));
+                }else if (res.readyState == 4 && res.status != 200){
+                    reject(event);
+                }
+            }
+            let paramsJson = JSON.stringify(params);
+            req.send(paramsJson);
+        })
+        return promise;
+    }
+}
+
+//UnitActions
 var Attack = {
     Basic: (fromGameUnit, toGameUnit) => {
         let attackDamage = fromGameUnit.Stats.getAttackDamage();
