@@ -17,7 +17,7 @@ function Stats(level){
     this.MaxHealth = 100 * this.Level;
     this.Attack = 10 * (.5 * this.Level);
     this.AtkSpeed = 2 * (.2 * this.Level);
-    this.CritChance = .1 (.01 * this.Level);
+    this.CritChance = .1 + (.01 * this.Level);
     this.CritMultiplier = 2;
     this.IsAlive = true;
     
