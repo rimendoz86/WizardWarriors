@@ -35,10 +35,10 @@ function gameClass (){
     }
 
     if(this.checkCookie('nickname')){
-      alert("Welcome Back, WizardWarrior " + this.getCookie("nickname"));
+      GlobalViewRef.MessageCenter.Add("Welcome Back, WizardWarrior " + this.getCookie("nickname"));
     }else{
       this.setCookie("nickname", this.Controller.Model.Player.Stats.Nickname, 1);
-      alert("Hello " + this.getCookie("nickname"));
+      GlobalViewRef.MessageCenterAdd("Hello " + this.getCookie("nickname"));
     }
 };
 

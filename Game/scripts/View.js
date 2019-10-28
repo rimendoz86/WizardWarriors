@@ -9,5 +9,15 @@ function viewClass (){
         domRef.SetRotation(RotateDeg)
     }
 
+    this.MessageCenter = {
+        DomRef: new DomRef("messageCenter"),
+        Add: function(message){ 
+            var newSpan = document.createElement('span');
+            newSpan.innerHTML = message;
+            this.DomRef.AddChildNode(newSpan);
+            this.DomRef.nativeElementRef.scrollTop = this.DomRef.nativeElementRef.scrollHeight;
+        }
+    }
+
     window.GlobalViewRef = this;
 };

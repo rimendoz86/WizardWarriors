@@ -6,32 +6,33 @@ function GameUnit(unitID){
     this.Nickname = "TestPlayer";
     this.GameUnitType;
     this.Target;
-    this.ClickAction = () => { console.log(`You clicked ${this.ID}`)}
+    this.ClickAction = () => { GlobalViewRef.MessageCenter.Add(`You clicked ${this.ID}`)}
 }
 
-function Stats(level){
-    this.Level = 1;
+function Stats(level = 1){
+    this.Level = level;
     this.Speed = 2;
     this.Defense = 2;
     this.Health = 100 * this.Level;
     this.MaxHealth = 100 * this.Level;
-    this.Attack = 10 * (.5 * this.Level);
+    this.Attack = 10 + (.5 * this.Level);
     this.AtkSpeed = 2 * (.2 * this.Level);
     this.CritChance = .1 + (.01 * this.Level);
     this.CritMultiplier = 2;
     this.IsAlive = true;
     
     this.receiveAttackDamage = (damage) => {
-        if(!this.IsAlive) return;
+        if(!this.IsAlive) return 0;
         let mitigatedDamage = damage - this.Defense;
         this.Health -= mitigatedDamage;
         this.IsAlive = this.Health > 0;
-        console.log(this.Health);
+        return mitigatedDamage;
     }
 
     this.getAttackDamage = () => {
         if(!this.IsAlive) return 0;
-        return (Math.random() < this.CritChance) ? this.Attack * this.CritMultiplier : this.Attack;
+        let rawDamage = (Math.random() < this.CritChance) ? this.Attack * this.CritMultiplier : this.Attack;
+        return parseInt(rawDamage);
     }
 }
 
@@ -51,7 +52,7 @@ function UnitLocation(domID){
     
     this.UpdateRotateDeg = function(LookToX, LookToY){
         let playerAngle = Utility.Angle360(LookToX, LookToY, this.Left, this.Top);
-        window.GlobalViewRef.UpdateRotate('player', playerAngle-90)
+        GlobalViewRef.UpdateRotate('player', playerAngle-90)
     }
 }
 
@@ -75,6 +76,10 @@ function DomRef(id){
 
     this.SetOnClick = function(methodByRef){
         this.nativeElementRef.addEventListener("click", methodByRef);
+    }
+
+    this.AddChildNode = function(htmlNode){
+        this.nativeElementRef.appendChild(htmlNode);
     }
     
     this.SetInnerHTML = function(innerHTML){
@@ -172,6 +177,8 @@ var Data = {
 var Attack = {
     Basic: (fromGameUnit, toGameUnit) => {
         let attackDamage = fromGameUnit.Stats.getAttackDamage();
-        toGameUnit.Stats.receiveAttackDamage(attackDamage);
+        let damageInflicted = toGameUnit.Stats.receiveAttackDamage(attackDamage);
+        if (damageInflicted > 0)
+        GlobalViewRef.MessageCenter.Add(`${fromGameUnit.ID} attacked ${toGameUnit.ID} with ${damageInflicted} damage`)
     },  
 }
