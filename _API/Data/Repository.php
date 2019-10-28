@@ -1,13 +1,9 @@
 <?php 
 namespace Data\Repository;
-include 'Context.php';
-use Context;
+include 'Connection.php';
+use Data;
 
-class Score {
-    public $conn;
-    function __construct() {
-        $this->conn = new \Data\Context\Connection();
-    }
+class Score extends Data\Connection{
 
     function Save(){
         
@@ -19,21 +15,23 @@ class Score {
     }
 }
 
-class User {
-    public $conn;
-    function __construct() {
-        $tmp = new \Data\Context\Connection();
-        $this->conn = $tmp->Conn;
-    }
+class User extends Data\Connection{
     function Save($userName, $returnKey){
-        $stmt = $this->conn->prepare(
+        $stmt = $this->Conn->prepare(
         "INSERT INTO `users` 
         (`ID`,`UserName`,`ReturnKey`,`CreatedOn`,`CreatedBy`,`UpdatedOn`,`UpdatedBy`)
         VALUES 
         (NULL, ?, ?, current_timestamp(),'TestUser', current_timestamp(),'TestUser');");
+        if($stmt == false){
+            var_dump($this->Conn->error_list);
+            return "['Statement Failed']";
+            
+        }
+
         $stmt->bind_param("ss", $userName, $returnKey);
         $stmt->execute();
         $stmt->close();
+        return $this->Conn->insert_id;
     } 
 
     function Get(){
