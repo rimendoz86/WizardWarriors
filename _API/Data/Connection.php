@@ -1,5 +1,5 @@
 <?php 
-namespace Data\Context;
+namespace Data;
 
 class Connection {
     public $Servername = "localhost";

@@ -26,10 +26,16 @@ class User extends API\APIBase{
 
         //Data: Get/Save to Data Layer
         $repository = new Repository\User();
-        $repository->Save($UserName, $ReturnKey);
+        $result = $repository->Save($UserName, $ReturnKey);
 
+        if($result != null){
+            
+            echo $result;
+        }else{
+            echo "['Fail to insert user']";
+        }
         //Response: echo response
-        echo "[1]";
+        
     }
 
 }
