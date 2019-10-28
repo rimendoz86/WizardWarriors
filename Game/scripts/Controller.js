@@ -2,7 +2,7 @@ function controllerClass() {
   window.GlobalControllerRef = this;
   this.Model = new modelClass();
   this.SpawnUnit('player', GameUnitType.Player, 600, 350);
-  this.SpawnUnit('enem_1', GameUnitType.Enemy, 600, 300);
+  this.SpawnUnit('enemy_1', GameUnitType.Enemy, 600, 300);
   this.SpawnUnit('ally_1', GameUnitType.Ally, 600, 400);
 };
 
