@@ -4,7 +4,18 @@ function bindingClass (controllerRef){
     this.SetGlobalTimer();
     this.RegisterPlayerMovement();
     this.TimerActions = [
-        new TimerAction()
+        new TimerAction( () => {
+            let allGameUnits = this.ControllerRef.Model.AllGameUnits;
+            allGameUnits.forEach(gameUnit => {
+                if(!gameUnit.Stats.IsAlive) {
+                    //If unit is alive, make it look dead and then despawn after 5 seconds
+                    gameUnit.DomRef.ReplaceClass(null,"isDead");
+                    setTimeout(()=> { gameUnit.DomRef.Remove()}, 5000);
+                    GlobalViewRef.MessageCenter.Add(`${gameUnit.ID} has been killed`);
+                }
+            });
+            allGameUnits = allGameUnits.filter( x => x.Stats.IsAlive == true);
+        }, 1, 999)
     ];
 
     window.GlobalBindingRef = this;

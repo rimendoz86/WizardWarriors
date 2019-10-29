@@ -6,7 +6,7 @@ function GameUnit(unitID){
     this.Nickname = "TestPlayer";
     this.GameUnitType;
     this.Target;
-    this.ClickAction = () => { GlobalViewRef.MessageCenter.Add(`You clicked ${this.ID}`)}
+    this.ClickAction = () => { GlobalViewRef.MessageCenter.Add(`You clicked ${this.ID}`)};
 }
 
 function Stats(level = 1){
@@ -19,6 +19,7 @@ function Stats(level = 1){
     this.AtkSpeed = 2 * (.2 * this.Level);
     this.CritChance = .1 + (.01 * this.Level);
     this.CritMultiplier = 2;
+    this.Aggro = this.Alive ? this.Health + this.Attack : 0;
     this.IsAlive = true;
     
     this.receiveAttackDamage = (damage) => {
@@ -138,9 +139,8 @@ var Utility = {
 var Data = {
     Get: (controller, params) => {
         let promise = new Promise((resolve, reject) => {
-            let BaseURL = "\\_API\\Controllers\\";
             let req = new XMLHttpRequest;
-            req.open("GET",BaseURL+controller+"?"+params,true);
+            req.open("GET",controller+"?"+params,true);
             req.setRequestHeader("Content-type", "application/json");
             req.onreadystatechange = (event) => {
                 let res = event.currentTarget;
@@ -156,9 +156,8 @@ var Data = {
     },
     Post: (controller, params) => {
         let promise = new Promise((resolve, reject) => {
-            let BaseURL = "\\_API\\Controllers\\";
             let req = new XMLHttpRequest;
-            req.open("POST",BaseURL+controller,true);
+            req.open("POST",controller,true);
             req.setRequestHeader("Content-Type", "application/json");
             req.onreadystatechange = (event) => {
                 let res = event.currentTarget;
