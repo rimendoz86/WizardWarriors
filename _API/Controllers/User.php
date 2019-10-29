@@ -14,7 +14,7 @@ class User extends API\APIBase{
         //Data: Get/Save to Data Layer
 
         //Response: echo response
-        echo json_encode($req);
+        echo '{"this": "is an example response from a PHP api"}';
     }
 
     function Post($req){

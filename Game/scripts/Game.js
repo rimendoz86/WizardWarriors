@@ -38,8 +38,15 @@ function gameClass (){
       GlobalViewRef.MessageCenter.Add("Welcome Back, WizardWarrior " + this.getCookie("nickname"));
     }else{
       this.setCookie("nickname", this.Controller.Model.Player.Stats.Nickname, 1);
-      GlobalViewRef.MessageCenterAdd("Hello " + this.getCookie("nickname"));
+      GlobalViewRef.MessageCenter.Add("Hello " + this.getCookie("nickname"));
     }
 };
 
 var Game = new gameClass();
+
+// Ajax Example
+Data.Get('User.php',"Hello=world")
+.then(
+  (data) => {
+    console.log(data)
+  });

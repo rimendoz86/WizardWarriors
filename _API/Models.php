@@ -14,8 +14,8 @@ class Authentication {
         $this->UserName = $userName;
         $this->ReturnKey = $returnKey;
         $this->SessionID = $sessionID;
-
     }
+    
     function getAuthentication(){
         return $this;
     }

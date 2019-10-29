@@ -138,8 +138,9 @@ var Utility = {
 var Data = {
     Get: (controller, params) => {
         let promise = new Promise((resolve, reject) => {
+            let BaseURL = "\\_API\\Controllers\\";
             let req = new XMLHttpRequest;
-            req.open("GET",controller+"?"+params,true);
+            req.open("GET",BaseURL+controller+"?"+params,true);
             req.setRequestHeader("Content-type", "application/json");
             req.onreadystatechange = (event) => {
                 let res = event.currentTarget;
@@ -155,8 +156,9 @@ var Data = {
     },
     Post: (controller, params) => {
         let promise = new Promise((resolve, reject) => {
+            let BaseURL = "\\_API\\Controllers\\";
             let req = new XMLHttpRequest;
-            req.open("POST",controller,true);
+            req.open("POST",BaseURL+controller,true);
             req.setRequestHeader("Content-Type", "application/json");
             req.onreadystatechange = (event) => {
                 let res = event.currentTarget;
