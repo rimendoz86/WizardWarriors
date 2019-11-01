@@ -75,3 +75,17 @@ controllerClass.prototype.MoveUnit = function (gameUnit) {
 
   gameUnit.UnitLocation.UpdateLocation();
 }
+
+controllerClass.prototype.RunsEverySecond = () => {
+  let allGameUnits = this.Model.AllGameUnits;
+  allGameUnits.forEach(gameUnit => {
+      if(!gameUnit.Stats.IsAlive) {
+          //If unit is alive, make it look dead and then despawn after 5 seconds
+          gameUnit.DomRef.ReplaceClass(null,"isDead");
+          setTimeout(()=> { gameUnit.DomRef.Remove()}, 5000);
+          GlobalViewRef.MessageCenter.Add(`${gameUnit.ID} has been killed`);
+      }
+  });
+  this.Model.AllGameUnits = allGameUnits.filter( x => x.Stats.IsAlive == true);
+  console.log("This Runs Forever");
+}
