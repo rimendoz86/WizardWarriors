@@ -25,7 +25,6 @@ class User extends Data\Connection{
         if($stmt == false){
             var_dump($this->Conn->error_list);
             return "['Statement Failed']";
-            
         }
 
         $stmt->bind_param("ss", $userName, $returnKey);

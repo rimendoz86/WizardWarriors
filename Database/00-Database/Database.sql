@@ -1,1 +1,1 @@
-CREATE DATABASE WizardWarrors;
+CREATE DATABASE WizardWarriors;
