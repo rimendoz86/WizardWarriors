@@ -48,6 +48,10 @@ html, body {
     z-index: 9;
 }
 
+.isDead{
+    opacity: .5;
+}
+
 .messageCenterContainer{
     width: 1280px;
     height: 100px;

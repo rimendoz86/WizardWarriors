@@ -4,9 +4,8 @@ function bindingClass (controllerRef){
     this.SetGlobalTimer();
     this.RegisterPlayerMovement();
     this.TimerActions = [
-        new TimerAction()
+        new TimerAction( function () {this.ControllerRef.RunsEverySecond()}, 1, null)
     ];
-
     window.GlobalBindingRef = this;
 };
 
@@ -33,7 +32,7 @@ bindingClass.prototype.SetGlobalTimer = function(){
                 timerAction.Action();
 
             timerAction.Iteration += 1; 
-            if (timerAction.Iteration > timerAction.RunMax) timerAction.Dispose = true;
+            if (timerAction.RunMax != null && timerAction.Iteration > timerAction.RunMax) timerAction.Dispose = true;
         });
 
         this.TimerActions = this.TimerActions.filter(x => x.Dispose == false);
