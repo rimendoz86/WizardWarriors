@@ -13,10 +13,16 @@ class Connection {
         $conn = new \ mysqli($this->Servername, $this->Username,$this->Password, $this->Database, $this->Port);
 
         if ($conn->connect_error) {
+            Respond(500,)
             die('["Connection Failed"]' . $conn->connect_error);
             return null;
         }
         $this->Conn = $conn;
+    }
+    
+    function Respond(httpResponseCode, responseMessage){
+        http_response_code (httpResponseCode);
+        echo json_encode(responseMessage);
     }
 }
 ?>
