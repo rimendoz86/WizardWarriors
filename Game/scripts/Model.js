@@ -4,4 +4,5 @@ function modelClass (){
     this.Enemies = [];
     this.Allies = [];
     this.Player;
+    window.GlobalModelRef = this;
 }

@@ -2,11 +2,26 @@ function GameUnit(unitID){
     this.ID = unitID;
     this.UnitLocation = new UnitLocation(unitID);
     this.DomRef = new DomRef(unitID);
-    this.Stats = new Stats(1);
+    this.Stats = new Stats();
     this.Nickname = "TestPlayer";
     this.GameUnitType;
     this.Target;
     this.ClickAction = () => { GlobalViewRef.MessageCenter.Add(`You clicked ${this.ID}`)};
+
+    this.SetTarget = (gameUnit) => {
+        this.Target = gameUnit;
+        this.UnitLocation.UpdateRotateDeg(gameUnit.UnitLocation.Left, gameUnit.UnitLocation.Top);
+        this.UnitLocation.UpdateLocation();
+    }   
+    
+    this.IsTargetInRange = (range) => {
+        if (!this.Target) return;
+        unitLocation = this.UnitLocation;
+        targetUnitLocation = this.Target.UnitLocation;
+
+        return Math.abs(unitLocation.Top  - targetUnitLocation.Top) < range
+        && Math.abs(unitLocation.Left  - targetUnitLocation.Left) < range;
+    }
 }
 
 function Stats(level = 1){
@@ -53,7 +68,7 @@ function UnitLocation(domID){
     
     this.UpdateRotateDeg = function(LookToX, LookToY){
         let playerAngle = Utility.Angle360(LookToX, LookToY, this.Left, this.Top);
-        GlobalViewRef.UpdateRotate('player', playerAngle-90)
+        GlobalViewRef.UpdateRotate(this.DomID, playerAngle-90)
     }
 }
 
@@ -140,7 +155,7 @@ var Data = {
     Get: (controller, params) => {
         let promise = new Promise((resolve, reject) => {
             let req = new XMLHttpRequest;
-            req.open("GET",controller+"?"+params,true);
+            req.open("GET","\\_API\\Controllers\\"+controller+"?"+params,true);
             req.setRequestHeader("Content-type", "application/json");
             req.onreadystatechange = (event) => {
                 let res = event.currentTarget;
@@ -157,7 +172,7 @@ var Data = {
     Post: (controller, params) => {
         let promise = new Promise((resolve, reject) => {
             let req = new XMLHttpRequest;
-            req.open("POST",controller,true);
+            req.open("POST","\\_API\\Controllers\\"+controller,true);
             req.setRequestHeader("Content-Type", "application/json");
             req.onreadystatechange = (event) => {
                 let res = event.currentTarget;

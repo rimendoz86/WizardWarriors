@@ -3,7 +3,7 @@ namespace API;
 if ( session_status() ===  PHP_SESSION_NONE) { 
     session_start();
 }
-// header("Access-Control-Allow-Origin: *");
+//header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 class APIBase {
@@ -23,6 +23,9 @@ class APIBase {
             case 'PUT':
                 $RequestObject = json_decode(file_get_contents('php://input'), true);
                 $this->Put($RequestObject);
+            case 'DELETE':
+                $RequestObject = json_decode(file_get_contents('php://input'), true);
+                $this->Delete($RequestObject);
             break;
             default:
                 break;
@@ -37,13 +40,17 @@ class APIBase {
         echo json_encode($requestObject);
     }
 
+    function Delete($requestObject){
+        echo json_encode($requestObject);
+    }
+
     function Get($requestObject){
         echo json_encode($requestObject);
     }
 
-    function Respond(httpResponseCode, responseMessage){
-        http_response_code (httpResponseCode);
-        echo json_encode(responseMessage);
+    function Response($responseCode, $responseBody){
+        http_response_code($responseCode);
+        echo json_encode($responseBody);
     }
 }
 ?>
