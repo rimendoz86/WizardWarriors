@@ -2,7 +2,6 @@ function controllerClass() {
   window.GlobalControllerRef = this;
   this.Model = new modelClass();
   this.SpawnUnit('player', GameUnitType.Player, 600, 350);
-  this.SpawnUnit('ally_1', GameUnitType.Ally, 600, 400);
 };
 
 controllerClass.prototype.SetMousePosition = function (mouseTop, moustLeft) {
@@ -31,7 +30,6 @@ controllerClass.prototype.SpawnUnit = function (unitID, gameUnitType, spawnLeft,
     case GameUnitType.Player:
       gameUnit.DomRef.ReplaceClass(null,'player')
       this.Model.Player = gameUnit;
-      this.Model.Allies.push(gameUnit);
       this.Model.AllGameUnits.push(gameUnit);
       gameUnit.Stats = new Stats(2);
       break;
@@ -55,8 +53,8 @@ controllerClass.prototype.SpawnUnit = function (unitID, gameUnitType, spawnLeft,
 controllerClass.prototype.MoveToTarget = function(gameUnit){
   unitLocation = gameUnit.UnitLocation;
   targetUnitLocation = gameUnit.Target.UnitLocation;
-  if(gameUnit.IsTargetInRange(25) || !gameUnit.Stats.IsAlive) return
 
+  if(gameUnit.IsTargetInRange(25) || !gameUnit.Stats.IsAlive) return
   unitLocation.MOVE_UP = unitLocation.Top > targetUnitLocation.Top;
   unitLocation.MOVE_DOWN = unitLocation.Top < targetUnitLocation.Top;
   unitLocation.MOVE_LEFT = unitLocation.Left > targetUnitLocation.Left;
@@ -88,6 +86,4 @@ controllerClass.prototype.MoveUnit = function (gameUnit) {
       ? 0
       : gameUnit.Stats.Speed;
   };
-
-  gameUnit.UnitLocation.UpdateLocation();
 }

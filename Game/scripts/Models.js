@@ -10,8 +10,6 @@ function GameUnit(unitID){
 
     this.SetTarget = (gameUnit) => {
         this.Target = gameUnit;
-        this.UnitLocation.UpdateRotateDeg(gameUnit.UnitLocation.Left, gameUnit.UnitLocation.Top);
-        this.UnitLocation.UpdateLocation();
     }   
     
     this.IsTargetInRange = (range) => {
