@@ -28,7 +28,7 @@ function Stats(level = 1){
     this.Defense = 2;
     this.Health = 100 * this.Level;
     this.MaxHealth = 100 * this.Level;
-    this.Attack = 10 + (.5 * this.Level);
+    this.Attack = 15 + (5 * this.Level);
     this.AtkSpeed = 2 * (.2 * this.Level);
     this.CritChance = .1 + (.01 * this.Level);
     this.CritMultiplier = 2;
@@ -146,6 +146,12 @@ var Utility = {
         theta *= 180 / Math.PI; 
         if (theta < 0) theta += 360;
         return theta;
+    },
+    RandomFromArray: (array = []) => {
+        if (array == null) return [];
+        let arrayLen = array.length;
+        let address = Math.floor(Math.random() * arrayLen);
+        return array[address];
     }
 }
 

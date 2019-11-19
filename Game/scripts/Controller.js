@@ -25,22 +25,21 @@ controllerClass.prototype.SpawnUnit = function (unitID, gameUnitType, spawnLeft,
   gameUnit.UnitLocation.Left = spawnLeft;
   gameUnit.UnitLocation.Top = spawnTop;
   gameUnit.GameUnitType = gameUnitType;
+  let playerLevel = this.Model.Player ? this.Model.Player.Stats.Level : 10;
 
   switch (gameUnitType) {
     case GameUnitType.Player:
       gameUnit.DomRef.ReplaceClass(null,'player')
       this.Model.Player = gameUnit;
-      this.Model.AllGameUnits.push(gameUnit);
-      gameUnit.Stats = new Stats(2);
+      gameUnit.Stats = new Stats(playerLevel);
       break;
     case GameUnitType.Ally:
       gameUnit.DomRef.ReplaceClass(null,'ally')
-      this.Model.Allies.push(gameUnit);
+      gameUnit.Stats = new Stats(playerLevel - 2);
       break;
     case GameUnitType.Enemy:
       gameUnit.DomRef.ReplaceClass(null,'enemy')
-      gameUnit.Stats.Speed = 1;
-      this.Model.Enemies.push(gameUnit);
+      gameUnit.Stats = new Stats(playerLevel - 1);
       defaultClickAction = () => { Attack.Basic(this.Model.Player, gameUnit) };
       break;
   }

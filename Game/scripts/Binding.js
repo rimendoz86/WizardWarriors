@@ -8,8 +8,8 @@ function bindingClass (controllerRef){
     this.TimerActions = [
         new TimerAction( () => {this.RunsEverySecond()}, 1, null),
         new TimerAction( () => {this.SetTargets() },1,null),
-        new TimerAction( () => {this.SpawnAlly()}, 7, null),
-        new TimerAction( () => {this.SpawnEnemy()}, 5, null ),
+        new TimerAction( () => {this.SpawnAlly()}, 10, null),
+        new TimerAction( () => {this.SpawnEnemy()}, 3, null ),
         new TimerAction( () => {this.AttackTarget()}, 2, null )
     ];
     window.GlobalBindingRef = this;
@@ -32,7 +32,7 @@ bindingClass.prototype.RegisterPlayerMovement = function () {
                 }
                 unit.UnitLocation.UpdateLocation();
         });
-    }, 20
+    }, 33
     )
   }
 
@@ -79,14 +79,13 @@ bindingClass.prototype.KeyDown = function (e) {
     allGameUnits.forEach(gameUnit => {
 
         if(!gameUnit.Stats.IsAlive) {
-            //If unit is alive, make it look dead and then despawn after 5 seconds
+            //If unit is not alive, make it look dead and then despawn after 5 seconds
             gameUnit.DomRef.ReplaceClass(null,"isDead");
             setTimeout(()=> { gameUnit.DomRef.Remove()}, 5000);
             GlobalViewRef.MessageCenter.Add(`${gameUnit.ID} has been killed`);
         }
     });
     GlobalModelRef.AllGameUnits = allGameUnits.filter( x => x.Stats.IsAlive == true);
-    console.log("This Runs Forever");
   }
 
   bindingClass.prototype.SpawnEnemy = function () {
@@ -98,6 +97,7 @@ bindingClass.prototype.KeyDown = function (e) {
   }
 
   bindingClass.prototype.SpawnAlly = function(){
+      if (GlobalModelRef.Allies().length > 3) return;
     let allyID = ++this.AllyCounter;
     let spawnX = parseInt(Math.random() * PlayArea.MaxRight);
     let spawnY = 300 + parseInt(Math.random() * 200);
@@ -107,31 +107,34 @@ bindingClass.prototype.KeyDown = function (e) {
 
   bindingClass.prototype.SetTargets = function (){
     let model = GlobalModelRef;
+    let enemies = model.Enemies();
+    let allies = model.Allies();
+    let targetToSelect = model.Player;
 
-    model.Enemies.forEach((enemy) => {
-        if (enemy.Stats.Health > 1)
-            enemy.SetTarget(model.Player);
-    });
+    model.AllGameUnits.forEach((unit) => {
+        if (unit.Target && unit.Target.Stats.IsAlive) return;
 
-    model.Allies.forEach((ally) => {
-        if (model.Enemies.length < 1 || (ally.Target && ally.Target.Stats.Health > 0)) return;
+        switch (unit.GameUnitType) {
+            case GameUnitType.Ally:
+                if (enemies.length < 1) return;
+                targetToSelect = Utility.RandomFromArray(enemies);
+                break;
 
-        enemies = model.Enemies.filter( e => e.Stats.Health > 0)
-        enemySelect = parseInt(Math.random() * enemies.length)
-        ally.SetTarget(enemies[enemySelect]);
+            case GameUnitType.Enemy:
+                if (allies.length < 1) return;
+                targetToSelect = Utility.RandomFromArray(allies);
+                break;
+        }
+        unit.SetTarget(targetToSelect);
     });
   }
 
   bindingClass.prototype.AttackTarget = function () {
     let model = GlobalModelRef;
-    
-    model.Enemies.forEach((enemy) => {
-        if(enemy.IsTargetInRange(30)) 
-            Attack.Basic(enemy, enemy.Target)
-    });
 
-    model.Allies.forEach((ally) => {
-        if (ally.Target && ally.IsTargetInRange(30))
-            Attack.Basic(ally, ally.Target)
+    model.AllGameUnits.forEach((unit) => {
+        if(unit.GameUnitType == GameUnitType.Player || !unit.Target || !unit.IsTargetInRange(30)) return;
+            
+        Attack.Basic(unit, unit.Target)
     });
-  }
+}
