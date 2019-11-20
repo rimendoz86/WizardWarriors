@@ -14,7 +14,11 @@ class User extends API\APIBase{
         //Data: Get/Save to Data Layer
 
         //Response: echo response
-        echo '{"this": "is an example response from a PHP api"}';
+        $tmp = (object)[];
+        $tmp->Hello = "This is a string";
+        $tmp->Number = 2;
+        
+        echo json_encode($tmp);
     }
 
     function Post($req){
