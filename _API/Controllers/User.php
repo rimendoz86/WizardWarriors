@@ -6,40 +6,28 @@ use API;
 use Data\Repository;
 
 class User extends API\APIBase{
-    function Get($req){
-        //Validation: Ensure request has required params
-
-        //Logic: Map request to variables/object
-
-        //Data: Get/Save to Data Layer
-
-        //Response: echo response
-        $tmp = (object)[];
-        $tmp->Hello = "This is a string";
-        $tmp->Number = 2;
-        
-        echo json_encode($tmp);
-    }
-
     function Post($req){
+        //var_dump($req);
         //Validation: Ensure request has required params
-        
-        //Logic: Map request to variables/object
-        $UserName = $req["UserName"];
-        $ReturnKey = $req["ReturnKey"];
-
-        //Data: Get/Save to Data Layer
-        $repository = new Repository\User();
-        $result = $repository->Save($UserName, $ReturnKey);
-
-        if($result != null){
-            
-            echo $result;
-        }else{
-            echo "['Fail to insert user']";
+        if(empty($req->Login) || empty($req->Password)){
+            array_push($this->Response->ValidationMessages,"Login AND Password are required");
+            $this->SendResponse(200);
         }
-        //Response: echo response
-        
+        //Logic: call to method in data layer. map to response
+        $repository = new Repository\User();
+        $isUserExists = $repository->CheckForUser($req);
+
+        if(count($isUserExists) > 0) 
+        array_push($this->Response->ValidationMessages,"Login is Taken");
+
+        if(count($this->Response->ValidationMessages) > 0){
+            $this->SendResponse(200);
+        }
+
+        //Response: return response
+        $this->Response->Result = $repository->Register($req);
+        $this->SendResponse(200);
+
     }
 
 }

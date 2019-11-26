@@ -1,0 +1,16 @@
+DROP TABLE IF EXISTS entity_user;
+CREATE TABLE entity_user ( 
+    UserID INT NOT NULL AUTO_INCREMENT,
+    Login VARCHAR(50) NOT NULL,
+    Password VARCHAR(50) NOT NULL,
+    CreatedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UpdatedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    IsActive bit(1) NOT NULL DEFAULT b'1',
+    PRIMARY KEY (UserID)
+);
+
+INSERT INTO entity_user
+(UserID,Login, Password)
+VALUES
+(1, "TestUser", "TestPass"),
+(2, "Mouse", "TestPass");

@@ -97,7 +97,7 @@ bindingClass.prototype.KeyDown = function (e) {
   }
 
   bindingClass.prototype.SpawnAlly = function(){
-      if (GlobalModelRef.Allies().length > 3) return;
+      if (GlobalModelRef.Allies().length > 5) return;
     let allyID = ++this.AllyCounter;
     let spawnX = parseInt(Math.random() * PlayArea.MaxRight);
     let spawnY = 300 + parseInt(Math.random() * 200);

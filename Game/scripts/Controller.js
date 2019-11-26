@@ -1,8 +1,20 @@
 function controllerClass() {
   window.GlobalControllerRef = this;
   this.Model = new modelClass();
+  this.CheckAuthentication();
   this.SpawnUnit('player', GameUnitType.Player, 600, 350);
 };
+
+controllerClass.prototype.CheckAuthentication = function () {
+let authModel = AppStorage.Authentication.get();
+if(authModel){
+  Object.assign(this.Model.Authentication,authModel);
+  GlobalViewRef.MessageCenter.Add(`Welcome ${this.Model.Authentication.Login}`)
+}else{
+  alert("You must be logged in to play!")
+  window.location.href = "/"
+}
+}
 
 controllerClass.prototype.SetMousePosition = function (mouseTop, moustLeft) {
   if(!this.Model.Player.Stats.IsAlive) return;

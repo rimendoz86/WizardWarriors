@@ -4,59 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <style>
-    body, html{
-        background-color: black;
-        font-family:Arial, Helvetica, sans-serif
-    }
-    .welcomePage{
-        width: 500px;
-        height: 200px;
-        color: white;
-        text-align: center;
-        background-color: #000056;
-        border-radius: 5px;
-        margin-top: 100px;
-        margin-left: auto;
-        margin-right: auto;
-        padding: 25px;
-    }
-    a h2{
-        background-color: blue;
-        border-radius: 10px;
-        color: white;
-        text-decoration: none;
-        padding: 5px;
-        width: 100px;
-        margin: auto;
-    }
-    input{
-        height: 30px;
-        width: 200px;
-        border-width: 0px 0px 3px 0px;
-        border-color: white;
-        background-color: #000056;
-        font-size: large;
-        font-weight: bold;
-        color: white;
-        margin: 20px;
-    }
-    input::placeholder{
-        font-weight: normal;
-        font-size: large;
-        color: white;
-    }
-    </style>
+    <script src="/scripts/Models.js"></script>
+    <script src="scripts/Model.js"></script>
+    <script src="scripts/Controller.js"></script>
+    <script src="scripts/View.js"></script>
+    <link rel="stylesheet" href="styles.css">
     <title>Document</title>
 </head>
 <body>
     <div class="welcomePage">
-            <h1>Wizard Warrors</h1>
-            <input type="text" id="playerName" placeholder="Player Name">
-            <input type="text" id="returnKey" placeholder="Return Key">
-            <a href="Game/index.htm"><h2>Play</h2></a>
+        <h1>Wizard Warrors</h1>
+        <form id="loginForm" class="horizontalForm">
+            <input type="text" id="Login" placeholder="Player Name">
+            <input type="password" id="Password" placeholder="Password">
+            <input class="btn btn-primary" type="submit" value="Play">
+        </form>
+        <span id="validationMessage"></span>
+        <span class="btn" onclick="GlobalControllerRef.SignUp()"> Register </span>
     </div>
 
 </body>
-    <script src="welcomeScript.js"></script>
+<script src="scripts/Binding.js"></script>
 </html>
