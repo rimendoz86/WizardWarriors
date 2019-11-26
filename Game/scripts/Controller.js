@@ -43,7 +43,9 @@ controllerClass.prototype.SpawnUnit = function (unitID, gameUnitType, spawnLeft,
     case GameUnitType.Player:
       gameUnit.DomRef.ReplaceClass(null,'player')
       this.Model.Player = gameUnit;
+      this.Model.GameStats.Player = gameUnit;
       gameUnit.Stats = new Stats(playerLevel);
+
       break;
     case GameUnitType.Ally:
       gameUnit.DomRef.ReplaceClass(null,'ally')

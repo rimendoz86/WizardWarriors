@@ -198,15 +198,46 @@ var Data = {
         return promise;
     }
 }
-
+function GameStats(){
+    this.ID;
+    this.UserID;
+    this.Player;
+    this.TeamDeaths = 0;
+    this.TeamKills = 0;
+    this.PlayerKills = 0;
+    this.PlayerKillsAtLevel = 0;
+    this.TotalAllies = 0;
+    this.TotalEnemies = 0;
+    this.IsGameOver = false;
+    this.AddKillTo = function (gameUnit) {
+        gameUnitType = gameUnit.GameUnitType;
+        switch (gameUnitType) {
+            case GameUnitType.Ally:
+                this.TeamKills += 1;
+                break;
+            case GameUnitType.Player:
+                this.PlayerKills += 1;
+                this.PlayerKillsAtLevel += 1;
+                break;
+        
+            case GameUnitType.Enemy:
+                this.TeamDeaths += 1;
+                break;
+        }
+    }
+}
 //UnitActions
 var Attack = {
     Basic: (fromGameUnit, toGameUnit) => {
+        if (!toGameUnit.Stats.IsAlive) return;
         let attackDamage = fromGameUnit.Stats.getAttackDamage();
         let damageInflicted = toGameUnit.Stats.receiveAttackDamage(attackDamage);
         if (damageInflicted > 0)
-        GlobalViewRef.MessageCenter.Add(`${fromGameUnit.ID} attacked ${toGameUnit.ID} with ${damageInflicted} damage`)
-    },  
+        GlobalViewRef.MessageCenter.Add(`${fromGameUnit.ID} attacked ${toGameUnit.ID} with ${damageInflicted} damage`) 
+        
+        if(!toGameUnit.Stats.IsAlive)
+            GlobalModelRef.GameStats.AddKillTo(fromGameUnit);
+    }
 }
 
 var RegexType = {
@@ -272,8 +303,9 @@ var Data = {
                     reject(event);
                 }
             }
-            let paramsJson = JSON.stringify(params);
-            req.send(paramsJson);
+            // let paramsJson = JSON.stringify(params);
+            // req.send(paramsJson);
+            req.send(params);
         })
         return promise;
     }

@@ -1,0 +1,15 @@
+DROP TABLE IF EXISTS entity_gamestats;
+CREATE TABLE entity_gamestats ( 
+    UserID INT NOT NULL AUTO_INCREMENT,
+    TeamDeaths INTEGER NOT NULL,
+    TeamKills INTEGER NOT NULL,
+    PlayerKills INTEGER NOT NULL,
+    PlayerKillsAtLevel INTEGER NOT NULL,
+    TotalAllies INTEGER NOT NULL,
+    TotalEnemies INTEGER NOT NULL,
+    IsGameOver bit(1)  NOT NULL,
+    CreatedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UpdatedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    IsActive bit(1) NOT NULL DEFAULT b'1',
+    PRIMARY KEY (UserID)
+);

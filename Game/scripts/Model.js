@@ -11,5 +11,7 @@ function modelClass (){
         .filter(units => units.GameUnitType != GameUnitType.Enemy && units.Stats.IsAlive);
     }
     this.Player;
+    this.GameStats = new GameStats();
+    this.IsGameOver = false;
     window.GlobalModelRef = this;
 }

@@ -17,7 +17,8 @@ class APIBase {
         switch ($RequestMethod) {
             case 'GET':
                 $RequestObject = (object) $_GET;
-                if($RequestObject = "{}"){
+                var_dump($RequestObject);
+                if(!(array)$RequestObject){
                     $this->Get();
                 }else{
                     $this->GetWith($RequestObject);
@@ -48,6 +49,7 @@ class APIBase {
         echo json_encode($this->Response);
     }
     function Get(){
+        echo json_encode($this->Response);
     }
     function GetWith($requestObject){
         echo json_encode($this->Response);

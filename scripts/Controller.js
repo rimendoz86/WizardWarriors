@@ -3,11 +3,10 @@ function controllerClass() {
   this.Model = new modelClass();
   AppStorage.Authentication.clear();
 
-  this.LoginForm = new FormBinding(this.Model.Authentication, 'loginForm', 
-  (m) => {return;},
-  (authModel) => {
-    Data.Post("login",authModel).then((res) => {
+  this.LoginForm = new FormBinding(this.Model.Authentication, 'loginForm', (x) => {return}, (authModel) => {this.Login(authModel)});
 
+  this.Login = function(authModel){
+    Data.Post("login",authModel).then((res) => {
     if(res.ValidationMessages.length > 0) {
       GlobalViewRef.ValidationMessage.SetInnerHTML(res.ValidationMessages[0]);
       return;
@@ -16,10 +15,9 @@ function controllerClass() {
     GlobalViewRef.ValidationMessage.SetInnerHTML("Success, Please Wait");
     Object.assign(this.Model.Authentication, res.Result[0]);
     AppStorage.Authentication.set(this.Model.Authentication);
-    window.location.href = "/Game/index.html"
-    console.log(res);
+    window.location.href = "/Game/index.html";
     })
-  });
+  }
 
   this.SignUp = function () {
     Data.Post('User',GlobalModelRef.Authentication).then((res) =>{
