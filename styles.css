@@ -1,0 +1,92 @@
+body, html{
+    background-color: black;
+    font-family:Arial, Helvetica, sans-serif
+}
+
+.welcomePage{
+    width: 500px;
+    height: 200px;
+    color: white;
+    text-align: center;
+    background-color: #000056;
+    border-radius: 5px;
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 25px;
+}
+a h2{
+    background-color: blue;
+    border-radius: 10px;
+    color: white;
+    text-decoration: none;
+    padding: 5px;
+    width: 100px;
+    margin: auto;
+}
+input{
+
+    width: 200px;
+    border-width: 0px 0px 3px 0px;
+    border-color: white;
+    background-color: #000056;
+    font-size: large;
+    font-weight: bold;
+    color: white;
+    margin: 20px;
+}
+input::placeholder{
+    font-weight: normal;
+    font-size: large;
+    color: white;
+}
+input, select, textarea {
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid lightGray;
+    padding: 10px;
+    margin: 5px 1px;
+    font-size: 16px;
+}
+
+.btn{
+    display: inline-block;
+    background-color: #5a6268;
+    color: white;
+    font-size: large;
+    padding: 10px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+    font-weight: lighter;
+    border: 1px solid lightgray;
+    width: auto;
+    -webkit-user-select: none; 
+    -moz-user-select: none;
+    -khtml-user-select: none; 
+    -ms-user-select: none;
+    white-space: nowrap;
+}
+
+.btn.btn-primary{
+    background-color: #007bff;
+    color: white;
+}
+
+.btn.btn-light{
+    color: #212529;
+    background-color: #f8f9fa
+}
+
+
+.hide {
+    display:none !important;
+}
+
+.horizontalForm{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}

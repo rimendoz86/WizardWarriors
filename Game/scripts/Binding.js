@@ -7,21 +7,39 @@ function bindingClass (controllerRef){
     this.RegisterPlayerMovement();
     this.TimerActions = [
         new TimerAction( () => {this.RunsEverySecond()}, 1, null),
-        new TimerAction( () => {this.SetTargets() },1,null),
+        new TimerAction( () => {this.SetTargets() }, 1, null),
         new TimerAction( () => {this.SpawnAlly()}, 10, null),
         new TimerAction( () => {this.SpawnEnemy()}, 3, null ),
-        new TimerAction( () => {this.AttackTarget()}, 2, null )
+        new TimerAction( () => {this.AttackTarget()}, 2, null ),
+        new TimerAction( () => {this.SaveGame()}, 5, null )
     ];
     window.GlobalBindingRef = this;
     console.log(this);
 };
+
+
+bindingClass.prototype.this.SaveGame = function() {
+    Data.Post('GameStats', GlobalModelRef.GameStats).then(
+        (res) => {
+            console.log(res)
+        }
+
+    );
+}
 
 bindingClass.prototype.RegisterPlayerMovement = function () {
     window.addEventListener("keydown", this.KeyDown);
     window.addEventListener("keyup", this.KeyRelease);
     setInterval(
       () => { 
-        this.ControllerRef.MoveUnit(this.ControllerRef.Model.Player); 
+        let playerUnit = this.ControllerRef.Model.Player;
+        if(!playerUnit.Stats.IsAlive){
+            GlobalModelRef.IsGameOver = true;
+            GlobalModelRef.GameStats.IsGameOver = true;
+            return;
+        }
+
+        this.ControllerRef.MoveUnit(playerUnit); 
         GlobalModelRef.AllGameUnits.forEach((unit) => 
         {
             if(unit.Target 
@@ -97,7 +115,7 @@ bindingClass.prototype.KeyDown = function (e) {
   }
 
   bindingClass.prototype.SpawnAlly = function(){
-      if (GlobalModelRef.Allies().length > 3) return;
+      if (GlobalModelRef.Allies().length > 5) return;
     let allyID = ++this.AllyCounter;
     let spawnX = parseInt(Math.random() * PlayArea.MaxRight);
     let spawnY = 300 + parseInt(Math.random() * 200);
