@@ -32,6 +32,7 @@ function controllerClass() {
 
   this.GetTopScores = function(){
     Data.Get('GameStats').then((res) => {
+      this.Model.TopScores = res.Result;
       GlobalViewRef.ShowTopScores(res.Result);
     });
   }
@@ -40,8 +41,16 @@ function controllerClass() {
     let userID = this.Model.Authentication.UserID;
     if (!userID) return;
     Data.Get('GameStats',`UserID=${userID}`).then((res) => {
+      this.Model.SavedGames = res.Result;
       GlobalViewRef.ShowSavedGames(res.Result);
     });
+  }
+
+  this.ResumeGame = function(saveGameID){
+    let saveGame = this.Model.SavedGames.filter(x => x.ID = saveGameID);
+    if(saveGame.length == 0) return;
+    AppStorage.SavedGame.set(saveGame[0])
+    window.location.href = "/Game/index.html";
   }
 
   this.GetTopScores();

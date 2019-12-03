@@ -39,7 +39,7 @@ viewClass.prototype.ShowSavedGames = function (scores) {
             <td>${score.ID}</td>
             <td>${score.PlayerKills}</td>
             <td>${score.PlayerLevel}</td>
-            <td><span class="btn"> Continue </span></td>
+            <td><span class="btn" onclick="GlobalControllerRef.ResumeGame(${score.ID})"> Continue </span></td>
         </tr>
         `
     });

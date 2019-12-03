@@ -379,5 +379,16 @@ var AppStorage = {
         clear: () => {
             sessionStorage.removeItem('Authentication');
         }
+    },
+    SavedGame: {
+        get: () => {
+            return JSON.parse(sessionStorage.getItem('SavedGame'));
+        },
+        set: (savedGame) => {
+            sessionStorage.setItem('SavedGame',JSON.stringify(savedGame));
+        },
+        clear: () => {
+            sessionStorage.removeItem('SavedGame');
+        }
     }
 }
