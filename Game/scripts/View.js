@@ -14,7 +14,7 @@ function viewClass (){
         Add: function(message){ 
             var newSpan = document.createElement('span');
             newSpan.innerHTML = message;
-            this.DomRef.AddChildNode(newSpan);
+            this.DomRef.AppendChild(newSpan);
             this.DomRef.nativeElementRef.scrollTop = this.DomRef.nativeElementRef.scrollHeight;
         }
     }

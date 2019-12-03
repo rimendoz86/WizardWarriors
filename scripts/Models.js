@@ -85,7 +85,14 @@ function TimerAction(action = () => {return}, runEvery = 5, runMax = 15){
 }
 
 function DomRef(id){
-    this.nativeElementRef = document.getElementById(id);
+    let domObj = document.getElementById(id);
+    if(domObj == undefined){
+        domObj = document.createElement("div");
+        domObj.setAttribute("id", id);
+        domObj.setAttribute("class", "gameUnit");
+        document.getElementById('playArea').appendChild(domObj);
+    }
+    this.nativeElementRef = domObj;
 
     this.SetOnClick = function(methodByRef){
         this.nativeElementRef.addEventListener("click", methodByRef);
@@ -168,38 +175,62 @@ var Utility = {
 }
 
 var Data = {
-    Get: (controller, params) => {
-        let promise = new Promise((resolve, reject) => {
-            let req = new XMLHttpRequest;
-            req.open("GET","\\_API\\Controllers\\"+controller+"?"+params,true);
-            req.setRequestHeader("Content-type", "application/json");
-            req.onreadystatechange = (event) => {
-                let res = event.currentTarget;
-                if(res.readyState == 4 && res.status == 200){
-                    resolve(JSON.parse(res.responseText));
-                }else if (res.readyState == 4 && res.status != 200){
-                    reject(event);
-                }
-            }
-            req.send();
-        })
-        return promise;
+    Get: (controller, params = '') => {
+        return Data._ReqWithURI('GET',controller,params)
     },
-    Post: (controller, params) => {
+    Post:(controller, params) => {
+        return Data._ReqWithBody('POST',controller,params)
+    },
+    Put:(controller, params) => {
+        return Data._ReqWithBody('PUT',controller,params)
+    },
+    Delete: (controller, id) => {
+        return Data._ReqWithURI('DELETE',controller,`id=${id}`)
+    },
+    _ReqWithBody: (verb, controller, params) => {
         let promise = new Promise((resolve, reject) => {
+            let BaseURL = "\\_API\\Controllers\\";
             let req = new XMLHttpRequest;
-            req.open("POST","\\_API\\Controllers\\"+controller,true);
+            req.open(verb,BaseURL+controller+".php",true);
             req.setRequestHeader("Content-Type", "application/json");
             req.onreadystatechange = (event) => {
                 let res = event.currentTarget;
                 if(res.readyState == 4 && res.status == 200){
-                    resolve(JSON.parse(res.responseText));
+                    try{
+                        resolve(JSON.parse(res.responseText));
+                    }catch(err){
+                        console.log(res.responseText);
+                        reject(err);
+                    }
                 }else if (res.readyState == 4 && res.status != 200){
                     reject(event);
                 }
             }
             let paramsJson = JSON.stringify(params);
             req.send(paramsJson);
+        })
+        return promise;
+    },
+    _ReqWithURI: (verb, controller, params) => {
+        let promise = new Promise((resolve, reject) => {
+            let BaseURL = "\\_API\\Controllers\\";
+            let req = new XMLHttpRequest;
+            req.open(verb,BaseURL+controller+".php?"+params,true);
+            req.setRequestHeader("Content-type", "application/json");
+            req.onreadystatechange = (event) => {
+                let res = event.currentTarget;
+                if(res.readyState == 4 && res.status == 200){
+                    try{
+                        resolve(JSON.parse(res.responseText));
+                    }catch(err){
+                        console.log(res.responseText);
+                        reject(err);
+                    }
+                }else if (res.readyState == 4 && res.status != 200){
+                    reject(event);
+                }
+            }
+            req.send();
         })
         return promise;
     }
@@ -279,56 +310,6 @@ String.prototype.IsType = function(regex, modifier = null){
 let val = this.toString()
 var re = !modifier ? new RegExp(regex) : new RegExp(regex, modifier);
 return val.match(re) ? true: false;
-}
-
-var Data = {
-    Get: (controller, params = '') => {
-        let promise = new Promise((resolve, reject) => {
-            let BaseURL = "\\_API\\Controllers\\";
-            let req = new XMLHttpRequest;
-            req.open("GET",BaseURL+controller+".php?"+params,true);
-            req.setRequestHeader("Content-type", "application/json");
-            req.onreadystatechange = (event) => {
-                let res = event.currentTarget;
-                if(res.readyState == 4 && res.status == 200){
-                    try{
-                        resolve(JSON.parse(res.responseText));
-                    }catch(err){
-                        console.log(res.responseText);
-                        reject(err);
-                    }
-                }else if (res.readyState == 4 && res.status != 200){
-                    reject(event);
-                }
-            }
-            req.send();
-        })
-        return promise;
-    },
-    Post: (controller, params) => {
-        let promise = new Promise((resolve, reject) => {
-            let BaseURL = "\\_API\\Controllers\\";
-            let req = new XMLHttpRequest;
-            req.open("POST",BaseURL+controller+".php",true);
-            req.setRequestHeader("Content-Type", "application/json");
-            req.onreadystatechange = (event) => {
-                let res = event.currentTarget;
-                if(res.readyState == 4 && res.status == 200){
-                    try{
-                        resolve(JSON.parse(res.responseText));
-                    }catch(err){
-                        console.log(res.responseText);
-                        reject(err);
-                    }
-                }else if (res.readyState == 4 && res.status != 200){
-                    reject(event);
-                }
-            }
-            let paramsJson = JSON.stringify(params);
-            req.send(paramsJson);
-        })
-        return promise;
-    }
 }
 
 function FormBinding(objectRef,formID, onChange = (modelData) =>{ return; }, onSubmit = (modelData) =>{ console.log(modelData); return; }) {

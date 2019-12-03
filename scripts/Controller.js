@@ -6,7 +6,7 @@ function controllerClass() {
   this.LoginForm = new FormBinding(this.Model.Authentication, 'loginForm', (x) => {return}, (authModel) => {this.Login(authModel)});
 
   this.Login = function(authModel){
-    Data.Post("login",authModel).then((res) => {
+    Data.Post("Login",authModel).then((res) => {
     if(res.ValidationMessages.length > 0) {
       GlobalViewRef.ValidationMessage.SetInnerHTML(res.ValidationMessages[0]);
       return;
