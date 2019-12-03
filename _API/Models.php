@@ -1,32 +1,31 @@
 <?php 
-namespace Model;
-class Authentication {
-    public $DBID;
-    public $UserName;
-    public $ReturnKey;
-    public $SessionID;
-
-    function __construct($userName, $returnKey, $sessionID){
-        $this->setAuthentication($userName, $returnKey, $sessionID);
+namespace API;
+class Sess{
+    public $VarName;
+    function __construct($varName){
+        $this->VarName = $varName;
     }
-    function setAuthentication($dBID, $userName, $returnKey, $sessionID){
-        $this->dBID = $dBID;
-        $this->UserName = $userName;
-        $this->ReturnKey = $returnKey;
-        $this->SessionID = $sessionID;
+    public function get(){
+        if(!isset($_SESSION[$this->VarName])){
+            return;
+        }
+        return json_decode($_SESSION[$this->VarName]);
     }
-    
-    function getAuthentication(){
-        return $this;
+    public function set($auth){
+        $_SESSION[$this->VarName] = json_encode($auth);
+        return $this->get();
     }
-}
-
-class SessionStorage {
-    function getAuthentication(){
-        return $_SESSION['authenticationModel'];
-    }
-    function setAuthentication( $authenticationModel){
-        $_SESSION['authenticationModel'] = $authenticationModel;
+    public function clear(){
+        unset($_SESSION[$this->VarName]);
     }
 }
+class Response{
+    public $ValidationMessages = [];
+    public $Result = [];
+}
+
+function DumpAndDie($obj){
+    die(json_encode($obj));
+}
+
 ?>

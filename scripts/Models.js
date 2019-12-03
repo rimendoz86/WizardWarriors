@@ -201,9 +201,9 @@ var Data = {
 function GameStats(){
     this.ID;
     this.UserID;
-    this.Player;
     this.TeamDeaths = 0;
     this.TeamKills = 0;
+    this.PlayerLevel = 0;
     this.PlayerKills = 0;
     this.PlayerKillsAtLevel = 0;
     this.TotalAllies = 0;
@@ -235,8 +235,23 @@ var Attack = {
         if (damageInflicted > 0)
         GlobalViewRef.MessageCenter.Add(`${fromGameUnit.ID} attacked ${toGameUnit.ID} with ${damageInflicted} damage`) 
         
-        if(!toGameUnit.Stats.IsAlive)
-            GlobalModelRef.GameStats.AddKillTo(fromGameUnit);
+        if(!toGameUnit.Stats.IsAlive) GlobalModelRef.GameStats.AddKillTo(fromGameUnit);
+        
+        if (fromGameUnit.GameUnitType == GameUnitType.Player 
+            && GlobalModelRef.GameStats.PlayerKillsAtLevel >= fromGameUnit.Stats.Level){
+                let newLevel = fromGameUnit.Stats.Level + 1;
+                fromGameUnit.Stats = new Stats(newLevel);
+                GlobalControllerRef.SaveGame();
+                GlobalModelRef.GameStats.PlayerKillsAtLevel = 0;
+                GlobalViewRef.MessageCenter.Add(`Player is now ${newLevel}`);
+        }
+
+        if (toGameUnit.GameUnitType == GameUnitType.Player 
+            && !toGameUnit.Stats.IsAlive){
+                GlobalModelRef.IsGameOver  = true;
+                GlobalControllerRef.SaveGame();
+            }
+
     }
 }
 
@@ -303,9 +318,8 @@ var Data = {
                     reject(event);
                 }
             }
-            // let paramsJson = JSON.stringify(params);
-            // req.send(paramsJson);
-            req.send(params);
+            let paramsJson = JSON.stringify(params);
+            req.send(paramsJson);
         })
         return promise;
     }

@@ -6,8 +6,6 @@ use API;
 use Data\Repository;
 class Login extends API\APIBase{
     function Post($authModel){
-        
-        die(var_dump($authModel));
         //Validation: Ensure request has required params
         if(empty($authModel->Login) || empty($authModel->Password)){
             array_push($this->Response->ValidationMessages,"Login AND Password are required");

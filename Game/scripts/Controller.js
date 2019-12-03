@@ -3,6 +3,7 @@ function controllerClass() {
   this.Model = new modelClass();
   this.CheckAuthentication();
   this.SpawnUnit('player', GameUnitType.Player, 600, 350);
+  this.SaveGame();
 };
 
 controllerClass.prototype.CheckAuthentication = function () {
@@ -43,7 +44,6 @@ controllerClass.prototype.SpawnUnit = function (unitID, gameUnitType, spawnLeft,
     case GameUnitType.Player:
       gameUnit.DomRef.ReplaceClass(null,'player')
       this.Model.Player = gameUnit;
-      this.Model.GameStats.Player = gameUnit;
       gameUnit.Stats = new Stats(playerLevel);
 
       break;
@@ -99,4 +99,17 @@ controllerClass.prototype.MoveUnit = function (gameUnit) {
       ? 0
       : gameUnit.Stats.Speed;
   };
+}
+
+controllerClass.prototype.SaveGame = function() {
+  let gameStats = GlobalModelRef.GameStats;
+  gameStats.PlayerLevel = this.Model.Player.Stats.Level;
+  gameStats.UserID = this.Model.Authentication.UserID;
+  gameStats.TotalAllies = this.Model.Allies().length;
+  gameStats.TotalEnemies = this.Model.Enemies().length
+  gameStats.IsGameOver = this.Model.IsGameOver;
+
+  Data.Post('GameStats', gameStats).then((res) => {
+    gameStats.ID = res.Result;
+  });
 }

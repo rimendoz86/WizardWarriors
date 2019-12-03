@@ -1,6 +1,5 @@
 <?php 
 namespace Data;
-
 class Connection {
     public $Servername = "localhost";
     public $Username = "serviceAcct";
@@ -11,20 +10,12 @@ class Connection {
 
     function __construct() {
         $conn = new \ mysqli($this->Servername, $this->Username,$this->Password, $this->Database, $this->Port);
-
         if ($conn->connect_error) {
-            $this->Respond(500,'["Connection Failed",'. json_encode($conn->connect_error) .']' );
-            die();
+            die("['Connection Failed',$conn->connect_error]");
             return null;
         }
         $this->Conn = $conn;
     }
-    
-    function Respond($httpResponseCode, $responseMessage){
-        http_response_code ($httpResponseCode);
-        echo json_encode($responseMessage);
-    }
-
     function StmtToList($stmt){
         $results = [];
         $res = $stmt->get_result();
@@ -34,9 +25,21 @@ class Connection {
         };
         return $results;
     }
+    
+    function dbUpdate($SQLCommand){
+        $stmt = $this->Conn->prepare($SQLCommand);   
+        if($stmt == false){
+            echo $SQLCommand;
+            die(json_encode($this->Conn->error_list));
+        }
+        $res = $stmt->execute();
+        $stmt->close();
+        return $res;
+    }
     function dbSelect($SQLCommand){
         $stmt = $this->Conn->prepare($SQLCommand);   
         if($stmt == false){
+            echo $SQLCommand;
             die(json_encode($this->Conn->error_list));
         }
         $stmt->execute();
@@ -48,6 +51,7 @@ class Connection {
     function dbInsert($SQLCommand){
         $stmt = $this->Conn->prepare($SQLCommand);   
         if($stmt == false){
+            echo $SQLCommand;
             die(json_encode($this->Conn->error_list));
         }
         $stmt->execute();

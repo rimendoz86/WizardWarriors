@@ -6,28 +6,33 @@ use API;
 use Data\Repository;
 
 class GameStats extends API\APIBase{
+    function Get(){
+        $repository = new Repository\GameStats();
+        $this->Response->Result = $repository->SelectAll();
+    }
+
+    function GetWith($req){
+        $repository = new Repository\GameStats();
+        $this->Response->Result = $repository->SelectByUser($req);
+    }
+
     function Post($req){
-        //var_dump($req);
         //Validation: Ensure request has required params
         if(empty($req->UserID)){
-            array_push($this->Response->ValidationMessages,"UserID");
-
+            array_push($this->Response->ValidationMessages,"UserID Is Missing");
         }
-        //Logic: call to method in data layer. map to response
-        $repository = new Repository\User();
-        $isUserExists = $repository->CheckForUser($req);
-
-        if(count($isUserExists) > 0) 
-        array_push($this->Response->ValidationMessages,"Login is Taken");
 
         if(count($this->Response->ValidationMessages) > 0){
             $this->SendResponse(200);
         }
 
         //Response: return response
-        $this->Response->Result = $repository->Register($req);
-        $this->SendResponse(200);
-
+        $repository = new Repository\GameStats();
+        if(empty($req->ID)){
+            $this->Response->Result = $repository->Insert($req);
+        }else{
+            $this->Response->Result = $repository->Update($req);
+        }
     }
 
 }

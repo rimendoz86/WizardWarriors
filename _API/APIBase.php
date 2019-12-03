@@ -3,21 +3,18 @@ namespace API;
 if ( session_status() ===  PHP_SESSION_NONE) { 
     session_start();
 }
-header("Access-Control-Allow-Origin: *");
+include 'Models.php';
 header("Content-Type: application/json; charset=UTF-8");
 class APIBase {
+    public $Sess_Auth;
     public $Response;
     function __construct(){
+        $this->Sess_Auth = new Sess('Auth');
         $RequestMethod = $_SERVER['REQUEST_METHOD'];
-        $RequestObject;
-        $this->Response = new \ stdClass();;
-        $this->Response->ValidationMessages = [];
-        $this->Response->Result = null;
-        
+        $this->Response = new Response();
         switch ($RequestMethod) {
             case 'GET':
                 $RequestObject = (object) $_GET;
-                var_dump($RequestObject);
                 if(!(array)$RequestObject){
                     $this->Get();
                 }else{
@@ -31,13 +28,15 @@ class APIBase {
             case 'PUT':
                 $RequestObject = json_decode(file_get_contents('php://input'));
                 $this->Put($RequestObject);
+                break;
             case 'DELETE':
-                $RequestObject = json_decode(file_get_contents('php://input'));
-                $this->Delete($RequestObject);
-            break;
+                $RequestObject = (object) $_GET;
+                $this->Delete($RequestObject->id);
+                break;
             default:
                 break;
         }
+        $this->SendResponse(200);
     }
     function Post($requestObject){
         echo json_encode($this->Response);
@@ -56,8 +55,11 @@ class APIBase {
     }
     function SendResponse($responseCode){
         http_response_code($responseCode);
-        echo json_encode($this->Response);
-        die();
+        die(json_encode($this->Response));
+    }  
+    function AddValidationMessage($validationMessage){
+        if (empty($validationMessage)) return;
+        array_push($this->Response->ValidationMessages,$validationMessage);
     }
 }
 ?>

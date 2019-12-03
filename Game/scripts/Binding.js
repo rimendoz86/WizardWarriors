@@ -10,15 +10,14 @@ function bindingClass (controllerRef){
         new TimerAction( () => {this.SetTargets() }, 1, null),
         new TimerAction( () => {this.SpawnAlly()}, 10, null),
         new TimerAction( () => {this.SpawnEnemy()}, 3, null ),
-        new TimerAction( () => {this.AttackTarget()}, 2, null ),
-        new TimerAction( () => {this.SaveGame()}, 5, null )
+        new TimerAction( () => {this.AttackTarget()}, 2, null )
     ];
     window.GlobalBindingRef = this;
     console.log(this);
 };
 
 
-bindingClass.prototype.this.SaveGame = function() {
+bindingClass.prototype.SaveGame = function() {
     Data.Post('GameStats', GlobalModelRef.GameStats).then(
         (res) => {
             console.log(res)
