@@ -2,20 +2,43 @@ function controllerClass() {
   window.GlobalControllerRef = this;
   this.Model = new modelClass();
   this.CheckAuthentication();
+  this.LoadGame();
   this.SpawnUnit('player', GameUnitType.Player, 600, 350);
   this.SaveGame();
 };
 
 controllerClass.prototype.CheckAuthentication = function () {
-let authModel = AppStorage.Authentication.get();
-if(authModel){
-  Object.assign(this.Model.Authentication,authModel);
-  GlobalViewRef.MessageCenter.Add(`Welcome ${this.Model.Authentication.Login}`)
-}else{
-  alert("You must be logged in to play!")
-  window.location.href = "/"
+  let authModel = AppStorage.Authentication.get();
+  if(authModel){
+    Object.assign(this.Model.Authentication,authModel);
+    GlobalViewRef.MessageCenter.Add(`Welcome ${this.Model.Authentication.Login}`)
+  }else{
+    alert("You must be logged in to play!")
+    window.location.href = "/"
+  }
 }
-}
+
+controllerClass.prototype.LoadGame = function(){
+  let gameStats  = new GameStats();
+  let savedGame = AppStorage.SavedGame.get();
+  if (saveGame) {
+    Object.assign(gameStats, savedGame)
+    this.Model.Player.Stats = new Stats(savedGame.PlayerLevel);
+    this.TotalAllies = 0;
+    this.TotalEnemies = 0;
+    for (let i = 0; i <= gameStats.TotalAllies; i++)
+    {
+
+    }
+    for (let i = 0; i <= gameStats.TotalEnemies; i++)
+    {
+
+    }
+    AppStorage.SavedGame.clear();
+  } 
+
+  this.Model.GameStats = gameStats;
+};
 
 controllerClass.prototype.SetMousePosition = function (mouseTop, moustLeft) {
   if(!this.Model.Player.Stats.IsAlive) return;

@@ -128,6 +128,10 @@ function DomRef(id){
         this.nativeElementRef.reset();
     }
 
+    this.Remove = function() {
+        this.nativeElementRef.remove()
+    }
+
     this.Show = function (isShow) {
         if (isShow) {
             this.ReplaceClass("hide", null);
@@ -235,6 +239,7 @@ var Data = {
         return promise;
     }
 }
+
 function GameStats(){
     this.ID;
     this.UserID;
