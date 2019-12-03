@@ -3,8 +3,6 @@ function controllerClass() {
   this.Model = new modelClass();
   this.CheckAuthentication();
   this.LoadGame();
-  this.SpawnUnit('player', GameUnitType.Player, 600, 350);
-  this.SaveGame();
 };
 
 controllerClass.prototype.CheckAuthentication = function () {
@@ -19,30 +17,48 @@ controllerClass.prototype.CheckAuthentication = function () {
 }
 
 controllerClass.prototype.LoadGame = function(){
+  this.SpawnUnit('player', GameUnitType.Player, 600, 350);
   let gameStats  = new GameStats();
   let savedGame = AppStorage.SavedGame.get();
-  if (saveGame) {
+  if (savedGame) {
     Object.assign(gameStats, savedGame)
-    this.Model.Player.Stats = new Stats(savedGame.PlayerLevel);
-    this.TotalAllies = 0;
-    this.TotalEnemies = 0;
+    this.Model.Player.Stats = new Stats(gameStats.PlayerLevel);
     for (let i = 0; i <= gameStats.TotalAllies; i++)
     {
-
+      this.SpawnAlly();
     }
     for (let i = 0; i <= gameStats.TotalEnemies; i++)
     {
-
+      this.SpawnEnemy();
     }
     AppStorage.SavedGame.clear();
   } 
-
+  let playerStats = this.Model.Player.Stats;
+  GlobalViewRef.SetPlayerLevel(playerStats.Level)
+  GlobalViewRef.SetPlayerHealth(playerStats.Health, playerStats.MaxHealth)
   this.Model.GameStats = gameStats;
 };
 
 controllerClass.prototype.SetMousePosition = function (mouseTop, moustLeft) {
   if(!this.Model.Player.Stats.IsAlive) return;
   this.Model.Player.UnitLocation.UpdateRotateDeg(moustLeft, mouseTop);
+}
+
+controllerClass.prototype.SpawnEnemy = function () {
+  let enemyId = ++this.Model.EnemyCounter;
+  let spawnX = parseInt(Math.random() * PlayArea.MaxRight);
+  let spawnY = parseInt(Math.random() * 200);
+
+  this.SpawnUnit('Demon-'+enemyId, GameUnitType.Enemy, spawnX, spawnY);
+}
+
+controllerClass.prototype.SpawnAlly = function(){
+    if (GlobalModelRef.Allies().length > (GlobalModelRef.Player.Stats.Level / 2)) return;
+  let allyID = ++this.Model.AllyCounter;
+  let spawnX = parseInt(Math.random() * PlayArea.MaxRight);
+  let spawnY = 300 + parseInt(Math.random() * 200);
+
+  this.SpawnUnit('Knight-'+allyID, GameUnitType.Ally, spawnX, spawnY);
 }
 
 controllerClass.prototype.SpawnUnit = function (unitID, gameUnitType, spawnLeft, spawnTop ) {
@@ -73,10 +89,12 @@ controllerClass.prototype.SpawnUnit = function (unitID, gameUnitType, spawnLeft,
     case GameUnitType.Ally:
       gameUnit.DomRef.ReplaceClass(null,'ally')
       gameUnit.Stats = new Stats(playerLevel - 2);
+      gameUnit.Stats.Speed = 1;
       break;
     case GameUnitType.Enemy:
       gameUnit.DomRef.ReplaceClass(null,'enemy')
       gameUnit.Stats = new Stats(playerLevel - 1);
+      gameUnit.Stats.Speed = 1;
       defaultClickAction = () => { Attack.Basic(this.Model.Player, gameUnit) };
       break;
   }
@@ -125,7 +143,7 @@ controllerClass.prototype.MoveUnit = function (gameUnit) {
 }
 
 controllerClass.prototype.SaveGame = function() {
-  let gameStats = GlobalModelRef.GameStats;
+  var gameStats = GlobalModelRef.GameStats;
   gameStats.PlayerLevel = this.Model.Player.Stats.Level;
   gameStats.UserID = this.Model.Authentication.UserID;
   gameStats.TotalAllies = this.Model.Allies().length;
@@ -134,5 +152,10 @@ controllerClass.prototype.SaveGame = function() {
 
   Data.Post('GameStats', gameStats).then((res) => {
     gameStats.ID = res.Result;
+    if(this.Model.IsGameOver){
+      alert('The game is over, you died')
+      window.location.href = "/";
+    }
+   
   });
 }

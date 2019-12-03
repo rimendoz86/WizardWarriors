@@ -278,14 +278,21 @@ var Attack = {
         GlobalViewRef.MessageCenter.Add(`${fromGameUnit.ID} attacked ${toGameUnit.ID} with ${damageInflicted} damage`) 
         
         if(!toGameUnit.Stats.IsAlive) GlobalModelRef.GameStats.AddKillTo(fromGameUnit);
-        
+
+
+        if(toGameUnit.GameUnitType == GameUnitType.Player){
+            GlobalViewRef.SetPlayerHealth(toGameUnit.Stats.Health,toGameUnit.Stats.MaxHealth)
+        }
+    
         if (fromGameUnit.GameUnitType == GameUnitType.Player 
             && GlobalModelRef.GameStats.PlayerKillsAtLevel >= fromGameUnit.Stats.Level){
                 let newLevel = fromGameUnit.Stats.Level + 1;
                 fromGameUnit.Stats = new Stats(newLevel);
                 GlobalControllerRef.SaveGame();
                 GlobalModelRef.GameStats.PlayerKillsAtLevel = 0;
-                GlobalViewRef.MessageCenter.Add(`Player is now ${newLevel}`);
+                GlobalViewRef.MessageCenter.Add(`Player is now level ${newLevel}`);
+                GlobalViewRef.SetPlayerHealth(fromGameUnit.Stats.Health, fromGameUnit.Stats.MaxHealth)
+                GlobalViewRef.SetPlayerLevel(newLevel);
         }
 
         if (toGameUnit.GameUnitType == GameUnitType.Player 

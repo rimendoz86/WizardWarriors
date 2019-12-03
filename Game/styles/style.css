@@ -58,10 +58,34 @@ html, body {
     height: 100px;
     background-color: lightgray;
     margin: auto;
-    margin-top: 50px;
+    margin-top: 20px;
     border: 2px gray solid;
     box-shadow: 5px 5px 20px black, inset 0px 0px 2px black;
     padding: 10px;
+}
+
+.bottomBar{
+    width: 1280px;
+    margin: auto;
+    margin-top: 35px;
+    background-color: lightgray;
+    border: 2px gray solid;
+    box-shadow: 5px 5px 20px black, inset 0px 0px 2px black;
+    padding: 5px;
+}
+
+.infoTile{
+    display: inline-block;
+    background-color: #5a6268;
+    color: white;
+    font-size: large;
+    padding: 5px 5px;
+    border-radius: 5px;
+    margin: 5px;
+    font-weight: lighter;
+    border: 1px solid lightgray;
+    width: auto;
+    white-space: nowrap;
 }
 
 #messageCenter{

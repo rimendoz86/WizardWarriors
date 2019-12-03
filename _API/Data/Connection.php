@@ -2,7 +2,7 @@
 namespace Data;
 class Connection {
     public $Servername = "localhost";
-    public $Username = "serviceAcct";
+    public $Username = "wizardwarrior";
     public $Password = "6iUgHc0xxL3dMf4F";
     public $Database = "WizardWarriors";
     public $Port = 3306;

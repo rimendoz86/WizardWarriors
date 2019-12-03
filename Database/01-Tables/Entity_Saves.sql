@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS Entity_Saves;
 CREATE TABLE WizardWarriors.Entity_Saves ( 
     ID INT NOT NULL AUTO_INCREMENT,
     UsersID INT NOT NULL,

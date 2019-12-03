@@ -11,14 +11,16 @@ viewClass.prototype.ShowTopScores = function(scores){
         this.TopScoreTable.SetInnerHTML('');
         return; 
     } 
-    let tableContent = `<thead><tr><th>Login</th><th>PlayerKills</th><th>PlayerLevel</th></tr></thead>
+    let tableContent = `<thead><tr><th>Game ID</th><th>Login</th><th>Kills</th><th>Level</th><th>PlayedOn</th></tr></thead>
                         <tbody>`;
     scores.forEach(score => {
         tableContent += `
         <tr>
+            <td>${score.ID}</td>
             <td>${score.Login}</td>
             <td>${score.PlayerKills}</td>
             <td>${score.PlayerLevel}</td>
+            <td>${score.UpdatedOn}</td>
         </tr>
         `
     });
@@ -31,7 +33,7 @@ viewClass.prototype.ShowSavedGames = function (scores) {
         this.SavedGamesTable.SetInnerHTML('');
         return; 
     } 
-    let tableContent = `<thead><tr><th>ID</th><th>PlayerKills</th><th>PlayerLevel</th><th></th></tr></thead>
+    let tableContent = `<thead><tr><th>ID</th><th>Kills</th><th>Level</th><th>Saved</th><th></th></tr></thead>
                         <tbody>`;
     scores.forEach(score => {
         tableContent += `
@@ -39,6 +41,7 @@ viewClass.prototype.ShowSavedGames = function (scores) {
             <td>${score.ID}</td>
             <td>${score.PlayerKills}</td>
             <td>${score.PlayerLevel}</td>
+            <td>${score.UpdatedOn}</td>
             <td><span class="btn" onclick="GlobalControllerRef.ResumeGame(${score.ID})"> Continue </span></td>
         </tr>
         `

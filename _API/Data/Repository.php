@@ -17,11 +17,13 @@ class GameStats extends Data\Connection{
         PlayerKillsAtLevel,
         TotalAllies,
         TotalEnemies,
-        IsGameOver
+        IsGameOver,
+        eGS.UpdatedOn
         FROM entity_gamestats as eGS
         INNER JOIN entity_user as eU ON (eGS.UserID = eU.UserID)
         WHERE eGS.IsActive = true AND IsGameOver = true
-        ORDER BY PlayerLevel DESC, PlayerKills DESC";
+        ORDER BY PlayerLevel DESC, PlayerKills DESC
+        LIMIT 20;";
 
         return $this->dbSelect($sql);
     }
@@ -36,7 +38,8 @@ class GameStats extends Data\Connection{
         PlayerKillsAtLevel,
         TotalAllies,
         TotalEnemies,
-        IsGameOver
+        IsGameOver,
+        UpdatedOn
         FROM entity_gamestats
         WHERE IsGameOver = false AND IsActive = true AND UserID = $req->UserID;";
 
@@ -45,6 +48,7 @@ class GameStats extends Data\Connection{
 
     function Insert($req){
         $isGameOver = (int) $req->IsGameOver;
+
         $sql = "INSERT INTO entity_gamestats
         (
             UserID, 

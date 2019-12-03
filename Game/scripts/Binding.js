@@ -1,30 +1,18 @@
 function bindingClass (controllerRef){
     this.ControllerRef = controllerRef;
-    this.EnemyCounter = 0;
-    this.AllyCounter = 0;
     this.MouseTracking();
     this.SetGlobalTimer();
     this.RegisterPlayerMovement();
     this.TimerActions = [
         new TimerAction( () => {this.RunsEverySecond()}, 1, null),
         new TimerAction( () => {this.SetTargets() }, 1, null),
-        new TimerAction( () => {this.SpawnAlly()}, 10, null),
-        new TimerAction( () => {this.SpawnEnemy()}, 3, null ),
+        new TimerAction( () => {this.ControllerRef.SpawnAlly()}, 10, null),
+        new TimerAction( () => {this.ControllerRef.SpawnEnemy()}, 3, null ),
         new TimerAction( () => {this.AttackTarget()}, 2, null )
     ];
     window.GlobalBindingRef = this;
     console.log(this);
 };
-
-
-bindingClass.prototype.SaveGame = function() {
-    Data.Post('GameStats', GlobalModelRef.GameStats).then(
-        (res) => {
-            console.log(res)
-        }
-
-    );
-}
 
 bindingClass.prototype.RegisterPlayerMovement = function () {
     window.addEventListener("keydown", this.KeyDown);
@@ -103,23 +91,6 @@ bindingClass.prototype.KeyDown = function (e) {
         }
     });
     GlobalModelRef.AllGameUnits = allGameUnits.filter( x => x.Stats.IsAlive == true);
-  }
-
-  bindingClass.prototype.SpawnEnemy = function () {
-    let enemyId = ++this.EnemyCounter;
-    let spawnX = parseInt(Math.random() * PlayArea.MaxRight);
-    let spawnY = parseInt(Math.random() * 200);
-
-    this.ControllerRef.SpawnUnit('Demon-'+enemyId, GameUnitType.Enemy, spawnX, spawnY);
-  }
-
-  bindingClass.prototype.SpawnAlly = function(){
-      if (GlobalModelRef.Allies().length > 5) return;
-    let allyID = ++this.AllyCounter;
-    let spawnX = parseInt(Math.random() * PlayArea.MaxRight);
-    let spawnY = 300 + parseInt(Math.random() * 200);
-
-    this.ControllerRef.SpawnUnit('Knight-'+allyID, GameUnitType.Ally, spawnX, spawnY);
   }
 
   bindingClass.prototype.SetTargets = function (){

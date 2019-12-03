@@ -47,7 +47,7 @@ function controllerClass() {
   }
 
   this.ResumeGame = function(saveGameID){
-    let saveGame = this.Model.SavedGames.filter(x => x.ID = saveGameID);
+    let saveGame = this.Model.SavedGames.filter(x => x.ID == saveGameID);
     if(saveGame.length == 0) return;
     AppStorage.SavedGame.set(saveGame[0])
     window.location.href = "/Game/index.html";

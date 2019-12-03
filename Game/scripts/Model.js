@@ -13,5 +13,7 @@ function modelClass (){
     this.Player;
     this.GameStats = new GameStats();
     this.IsGameOver = false;
+    this.EnemyCounter = 0;
+    this.AllyCounter = 0;
     window.GlobalModelRef = this;
 }
