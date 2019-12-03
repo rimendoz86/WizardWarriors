@@ -13,16 +13,25 @@
 </head>
 <body>
     <div class="welcomePage">
+    <div>
         <h1>Wizard Warrors</h1>
         <form id="loginForm" class="horizontalForm">
             <input type="text" id="Login" placeholder="Player Name">
             <input type="password" id="Password" placeholder="Password">
-            <input class="btn btn-primary" type="submit" value="Play">
+            <input class="btn btn-primary" type="submit" value="Login">
+            <input type="button" class="btn" onclick="GlobalControllerRef.SignUp()" value="Register" >
         </form>
         <span id="validationMessage"></span>
-        <span class="btn" onclick="GlobalControllerRef.SignUp()"> Register </span>
     </div>
-
+    <div>
+        <h2>Top Scores</h2>
+        <table id="topScoreTable"></table>
+    </div>
+    <div>
+        <h2>Saved Games</h2>
+        <table id="savedGamesTable"> <tr><td>Login to see saves</td></tr></table>
+    </div>
+</div>
 </body>
 <script src="scripts/Binding.js"></script>
 </html>

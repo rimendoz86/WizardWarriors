@@ -85,25 +85,18 @@ function TimerAction(action = () => {return}, runEvery = 5, runMax = 15){
 }
 
 function DomRef(id){
-    let domObj = document.getElementById(id);
-    if(domObj == undefined){
-        domObj = document.createElement("div");
-        domObj.setAttribute("id", id);
-        domObj.setAttribute("class", "gameUnit");
-        document.getElementById('playArea').appendChild(domObj);
-    }
-    this.nativeElementRef = domObj;
+    this.nativeElementRef = document.getElementById(id);
 
     this.SetOnClick = function(methodByRef){
         this.nativeElementRef.addEventListener("click", methodByRef);
     }
-
-    this.AddChildNode = function(htmlNode){
-        this.nativeElementRef.appendChild(htmlNode);
-    }
     
     this.SetInnerHTML = function(innerHTML){
         this.nativeElementRef.innerHTML = innerHTML;
+    }
+
+    this.SetValue = function(value){
+        this.nativeElementRef.value = value;
     }
 
     this.ReplaceClass = function(removeClass, addClass){
@@ -120,10 +113,23 @@ function DomRef(id){
         this.nativeElementRef.style.left = `${left}px`;
     }
 
-    this.Remove = function() {
-        this.nativeElementRef.remove()
+    this.AppendChild = function(htmlNode){
+        this.nativeElementRef.appendChild(htmlNode);
     }
+
+    this.Reset = function(){
+        this.nativeElementRef.reset();
+    }
+
+    this.Show = function (isShow) {
+        if (isShow) {
+            this.ReplaceClass("hide", null);
+        } else {
+            this.ReplaceClass(null, "hide");
+        }
+    }  
 }
+
 
 //Static Methods
 var PlayArea = {

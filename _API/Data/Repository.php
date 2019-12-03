@@ -6,8 +6,10 @@ use Data;
 class GameStats extends Data\Connection{
 
     function SelectAll(){
-        $sql = "Select ID,
-        UserID, 
+        $sql = "
+        Select ID,
+		eU.Login,
+        eGS.UserID, 
         TeamDeaths, 
         TeamKills, 
         PlayerLevel, 
@@ -16,9 +18,10 @@ class GameStats extends Data\Connection{
         TotalAllies,
         TotalEnemies,
         IsGameOver
-        FROM entity_gamestats
-        WHERE IsActive = true AND IsGameOver = true
-        ORDER BY PlayerLevel DESC, PlayerKills DESC;";
+        FROM entity_gamestats as eGS
+        INNER JOIN entity_user as eU ON (eGS.UserID = eU.UserID)
+        WHERE eGS.IsActive = true AND IsGameOver = true
+        ORDER BY PlayerLevel DESC, PlayerKills DESC";
 
         return $this->dbSelect($sql);
     }
@@ -35,7 +38,7 @@ class GameStats extends Data\Connection{
         TotalEnemies,
         IsGameOver
         FROM entity_gamestats
-        WHERE IsActive = true AND UserID = $req->UserID;";
+        WHERE IsGameOver = false AND IsActive = true AND UserID = $req->UserID;";
 
         return $this->dbSelect($sql);
     }

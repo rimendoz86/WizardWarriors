@@ -11,11 +11,11 @@ function controllerClass() {
       GlobalViewRef.ValidationMessage.SetInnerHTML(res.ValidationMessages[0]);
       return;
     }
-
-    GlobalViewRef.ValidationMessage.SetInnerHTML("Success, Please Wait");
+    GlobalViewRef.LoginForm.Show(false);
+    GlobalViewRef.ValidationMessage.SetInnerHTML("Success, <a href='/Game/index.html' class='btn'>Start</a> a new Game or Continue a Saved Game Below");
     Object.assign(this.Model.Authentication, res.Result[0]);
     AppStorage.Authentication.set(this.Model.Authentication);
-    window.location.href = "/Game/index.html";
+    this.GetUserSaves();
     })
   }
 
@@ -29,4 +29,20 @@ function controllerClass() {
       GlobalViewRef.ValidationMessage.SetInnerHTML("Success, Please Login to Continue");
     });
   }
+
+  this.GetTopScores = function(){
+    Data.Get('GameStats').then((res) => {
+      GlobalViewRef.ShowTopScores(res.Result);
+    });
+  }
+
+  this.GetUserSaves = function(){
+    let userID = this.Model.Authentication.UserID;
+    if (!userID) return;
+    Data.Get('GameStats',`UserID=${userID}`).then((res) => {
+      GlobalViewRef.ShowSavedGames(res.Result);
+    });
+  }
+
+  this.GetTopScores();
 };
