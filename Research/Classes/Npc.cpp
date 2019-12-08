@@ -1,3 +1,0 @@
-class NPC {
-    Vitals Vitals;
-};

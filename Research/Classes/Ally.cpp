@@ -1,3 +1,0 @@
-// class Ally {
-//     Vitals Vitals;
-// };
