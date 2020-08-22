@@ -12,7 +12,7 @@ function controllerClass() {
       return;
     }
     GlobalViewRef.LoginForm.Show(false);
-    GlobalViewRef.ValidationMessage.SetInnerHTML("Success, <a href='/Game/index.html' class='btn'>Start</a> a new Game or Continue a Saved Game Below");
+    GlobalViewRef.ValidationMessage.SetInnerHTML("Success, <a href='Game/index.html' class='btn'>Start</a> a new Game or Continue a Saved Game Below");
     Object.assign(this.Model.Authentication, res.Result[0]);
     AppStorage.Authentication.set(this.Model.Authentication);
     this.GetUserSaves();

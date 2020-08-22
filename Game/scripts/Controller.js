@@ -154,7 +154,7 @@ controllerClass.prototype.SaveGame = function() {
     gameStats.ID = res.Result;
     if(this.Model.IsGameOver){
       alert('The game is over, you died')
-      window.location.href = "/";
+      window.location.href = "/wizardwarrior/";
     }
    
   });

@@ -193,7 +193,7 @@ var Data = {
     },
     _ReqWithBody: (verb, controller, params) => {
         let promise = new Promise((resolve, reject) => {
-            let BaseURL = "\\_API\\Controllers\\";
+            let BaseURL = "\\wizardwarrior\\_API\\Controllers\\";
             let req = new XMLHttpRequest;
             req.open(verb,BaseURL+controller+".php",true);
             req.setRequestHeader("Content-Type", "application/json");
@@ -217,7 +217,7 @@ var Data = {
     },
     _ReqWithURI: (verb, controller, params) => {
         let promise = new Promise((resolve, reject) => {
-            let BaseURL = "\\_API\\Controllers\\";
+            let BaseURL = "\\wizardwarrior\\_API\\Controllers\\";
             let req = new XMLHttpRequest;
             req.open(verb,BaseURL+controller+".php?"+params,true);
             req.setRequestHeader("Content-type", "application/json");
