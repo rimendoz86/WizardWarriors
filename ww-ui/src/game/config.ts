@@ -1,9 +1,10 @@
 import { Types } from "phaser";
 import MenuScene from "src/scenes/MenuScene";
 
-const gameConfig: Types.Core.GameConfig = {
+export const config: Types.Core.GameConfig = {
   type: Phaser.AUTO,
   title: "ww",
+  parent: "game-content",
   width: 1280,
   height: 720,
   scale: {
@@ -21,5 +22,3 @@ const gameConfig: Types.Core.GameConfig = {
   roundPixels: true,
   scene: [MenuScene],
 };
-
-export default gameConfig;

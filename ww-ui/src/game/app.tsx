@@ -1,10 +1,10 @@
+import usePhaserGame from "@hooks/usePhaserGame";
 import { useRef } from "react";
-import { useGame } from "src/hooks/useGame";
-import gameConfig from "./config";
+import { config } from "./config";
 
 const PhaserGame = () => {
   const gameRef = useRef<HTMLDivElement>(null);
-  useGame(gameConfig, gameRef);
+  usePhaserGame(config, gameRef);
 
   return <div ref={gameRef} />;
 };

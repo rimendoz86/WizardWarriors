@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
 import { Game, Types } from "phaser";
+import { useEffect, useState } from "react";
 
-export function useGame(
+const usePhaserGame = (
   config: Types.Core.GameConfig,
   containerRef: React.RefObject<HTMLDivElement>
-): Game | undefined {
+): Game | undefined => {
   const [game, setGame] = useState<Game>();
   useEffect(() => {
     if (!game && containerRef.current) {
@@ -17,4 +17,5 @@ export function useGame(
   }, [config, containerRef, game]);
 
   return game;
-}
+};
+export default usePhaserGame;

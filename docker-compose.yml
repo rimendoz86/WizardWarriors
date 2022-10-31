@@ -1,0 +1,81 @@
+version: "3"
+
+services:
+  traefik:
+    image: "traefik:v2.9"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - wiznet
+
+  db:
+    image: "postgres:15.0"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: wizardwarriors
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data-volume:/var/lib/postgresql/data
+    depends_on: ["traefik"]
+    networks:
+      - wiznet
+
+  ws:
+    build:
+      context: .
+      dockerfile: ws.Dockerfile
+      args:
+        DATABASE_URL: ${DATABASE_URL}
+        REDIS_URL: redis://192.168.0.2:6379/3
+    volumes:
+      - ws-volume:/opt/ww
+    depends_on: ["traefik"]
+    networks:
+      - wiznet
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ws.rule=Host(`ww.localhost`)"
+      - "traefik.http.routers.ws.rule=PathPrefix(`/game`)"
+      - "traefik.http.routers.ws.service=ws-service"
+      - "traefik.http.routers.ws.entrypoints=web"
+      - "traefik.http.services.ws-service.loadbalancer.server.port=8080"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: fe.Dockerfile
+      args:
+        NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL}
+    volumes:
+      - frontend-volume:/opt/ww-ui
+    depends_on: ["db", "traefik"]
+    networks:
+      - wiznet
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ww-ui.rule=Host(`ww.dev.localhost`)"
+      - "traefik.http.routers.ww-ui.service=ww-ui-service"
+      - "traefik.http.routers.ww-ui.entrypoints=web"
+      - "traefik.http.services.ww-ui-service.loadbalancer.server.port=3000"
+
+networks:
+  wiznet:
+    driver: bridge
+
+volumes:
+  pg-data-volume:
+    external: false
+  frontend-volume:
+    external: false
+  ws-volume:
+    external: false
