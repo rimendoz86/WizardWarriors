@@ -17,9 +17,10 @@ services:
       - wiznet
 
   db:
-    image: "postgres:15.0"
+    image: "postgres:15"
     restart: always
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: wizardwarriors
     ports:
@@ -39,7 +40,7 @@ services:
         REDIS_URL: redis://192.168.0.2:6379/3
     volumes:
       - ws-volume:/opt/ww
-    depends_on: ["traefik"]
+    depends_on: ["traefik", "db"]
     networks:
       - wiznet
     labels:
