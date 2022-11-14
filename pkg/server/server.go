@@ -8,19 +8,43 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/go-redis/redis/v9"
+	"github.com/gorilla/websocket"
 	"github.com/sonastea/WizardWarriors/pkg/config"
 	"github.com/sonastea/WizardWarriors/pkg/hub"
 )
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	// Returning true for now, but should check origin.
+	CheckOrigin: func(r *http.Request) bool {
+		log.Printf("Origin %v\n", r.Header.Get("Origin"))
+		return true
+	},
+}
 
 type Server struct {
 	server *http.Server
 }
 
+func ServeWs(h *hub.Hub, w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	err = hub.NewClient(h, conn)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+}
+
 func NewServer(cfg *config.Config, hub *hub.Hub) (*Server, error) {
 	router := http.NewServeMux()
 	router.Handle("/game", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		hub.ServeWs(w, r)
+		ServeWs(hub, w, r)
 	}))
 
 	srv := &http.Server{
@@ -36,15 +60,10 @@ func NewServer(cfg *config.Config, hub *hub.Hub) (*Server, error) {
 	return s, nil
 }
 
-func (s *Server) Start(cfg *config.Config, stores hub.Stores, pool *redis.Client) {
+func (s *Server) Start(hub *hub.Hub) {
 	ctx, pubsubCancel := context.WithCancel(context.Background())
 
 	cleanup := make(chan os.Signal, 1)
-
-	hub, err := hub.New(cfg, stores, pool)
-	if err != nil {
-		panic(err)
-	}
 
 	go hub.Run(ctx)
 

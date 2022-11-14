@@ -3,25 +3,9 @@ package hub
 import (
 	"context"
 	"fmt"
-	"log"
-	"net/http"
 
 	"github.com/go-redis/redis/v9"
-	"github.com/gorilla/websocket"
-	"github.com/lithammer/shortuuid"
 	"github.com/sonastea/WizardWarriors/pkg/config"
-)
-
-var (
-	upgrader = websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
-		// Returning true for now, but should check origin.
-		CheckOrigin: func(r *http.Request) bool {
-			log.Printf("Origin %v\n", r.Header.Get("Origin"))
-			return true
-		},
-	}
 )
 
 type Hub struct {
@@ -54,30 +38,6 @@ func New(cfg *config.Config, stores Stores, pool *redis.Client) (*Hub, error) {
 	// hub.users = userStore.GetAllUsers()
 
 	return hub, nil
-}
-
-func (hub *Hub) ServeWs(w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	newId := shortuuid.New()
-
-	client := &Client{
-		Xid:      newId,
-		Name:     newId,
-		Email:    newId + "example.com",
-		Password: "",
-		hub:      hub,
-		conn:     conn,
-		send:     make(chan []byte),
-	}
-
-	client.hub.register <- client
-
-	go client.writePump()
-	go client.readPump()
 }
 
 func (hub *Hub) Run(ctx context.Context) {

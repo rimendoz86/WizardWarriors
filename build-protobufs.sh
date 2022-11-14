@@ -15,5 +15,5 @@ done
 
 for api in "ipc"
 do
-    protoc --plugin="protoc-gen-ts=$TS_GEN_DIR/node_modules/.bin/protoc-gen-tso" --ts_out=$TS_GEN_DIR/src/rpc/api/proto/ --proto_path=$SRC_DIR/proto/ipc/ $api.proto
+    protoc --plugin="protoc-gen-ts=$TS_GEN_DIR/node_modules/.bin/protoc-gen-ts" --js_out="import_style=commonjs,binary:${TS_GEN_DIR}/src/rpc/api/proto/" --ts_out=$TS_GEN_DIR/src/rpc/api/proto/ --proto_path=$SRC_DIR/proto/ipc/ $api.proto
 done

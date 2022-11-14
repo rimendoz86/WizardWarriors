@@ -37,5 +37,5 @@ func main() {
 		log.Fatalln("Unable to create server")
 	}
 
-	server.Start(cfg, stores, pool)
+	server.Start(hub)
 }

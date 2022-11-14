@@ -1,13 +1,14 @@
 package hub
 
 import (
+	"context"
+	"log"
 	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/lithammer/shortuuid"
 )
-
-var newLine = ([]byte{'\n'})
 
 const (
 	// Time allowed to write a message to the peer.
@@ -32,9 +33,29 @@ type Client struct {
 	Password string `json:"password,omitempty"`
 	conn     *websocket.Conn
 
-	hub   *Hub
+	hub *Hub
 
 	send chan []byte
+}
+
+func NewClient(hub *Hub, conn *websocket.Conn) error {
+	newId := shortuuid.New()
+	client := &Client{
+		Xid:      newId,
+		Name:     newId,
+		Email:    newId + "example.com",
+		Password: "",
+		hub:      hub,
+		conn:     conn,
+		send:     make(chan []byte),
+	}
+
+	hub.register <- client
+
+	go client.writePump()
+	go client.readPump()
+
+    return nil
 }
 
 func (client *Client) GetId() int {
@@ -71,7 +92,7 @@ func (client *Client) readPump() {
 	client.conn.SetReadDeadline(time.Now().Add(pongWait))
 	client.conn.SetPongHandler(func(string) error { client.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 
-	/* for {
+	for {
 		_, message, err := client.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err,
@@ -83,8 +104,11 @@ func (client *Client) readPump() {
 			break
 		}
 
-		client.handleIncomingMessage(message)
-	} */
+		client.hub.pubsub.conn.Publish(context.Background(), "lobby", message)
+		// client.hub.pubsub.conn.PSubscribe
+
+		// client.handleIncomingMessage(message)
+	}
 }
 
 func (client *Client) writePump() {
@@ -104,7 +128,7 @@ func (client *Client) writePump() {
 				return
 			}
 
-			w, err := client.conn.NextWriter(websocket.TextMessage)
+			w, err := client.conn.NextWriter(websocket.BinaryMessage)
 			if err != nil {
 				return
 			}
@@ -113,7 +137,6 @@ func (client *Client) writePump() {
 
 			n := len(client.send)
 			for i := 0; i < n; i++ {
-				w.Write(newLine)
 				w.Write(<-client.send)
 			}
 
