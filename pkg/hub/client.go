@@ -81,9 +81,6 @@ func (client *Client) GetPassword() string {
 func (client *Client) readPump() {
 	defer func() {
 		client.hub.unregister <- client
-		/* for room := range client.rooms {
-			room.unregister <- client
-		} */
 		close(client.send)
 		client.conn.Close()
 	}()
@@ -103,11 +100,7 @@ func (client *Client) readPump() {
 			}
 			break
 		}
-
 		client.hub.pubsub.conn.Publish(context.Background(), "lobby", message)
-		// client.hub.pubsub.conn.PSubscribe
-
-		// client.handleIncomingMessage(message)
 	}
 }
 
@@ -152,87 +145,3 @@ func (client *Client) writePump() {
 		}
 	}
 }
-
-/* func (client *Client) handleIncomingMessage(msg []byte) {
-	var m Message
-	if err := json.Unmarshal(msg, &m); err != nil {
-		log.Printf("Error on unmarshal JSON message %s", err)
-		return
-	}
-	m.Sender = client
-
-	switch m.Type {
-	case message.Normal.String():
-		client.handleSendMessage(m)
-
-	case message.Command.String():
-		switch m.Action {
-		case message.JoinRoom.String():
-			client.handleJoinRoom(m)
-		case message.LeaveRoom.String():
-			client.handleLeaveRoom(m)
-		}
-	}
-}
-
-func (client *Client) handleSendMessage(msg Message) {
-	msg.Action = message.SendMessage.String()
-	roomXid := msg.Room.GetXid()
-	client.hub.pubsub.conn.Publish(ctx, "room."+roomXid, msg.encode())
-}
-
-func (client *Client) handleJoinRoom(msg Message) {
-	roomName := msg.Room.GetName()
-
-	room := client.hub.findRoomByName(client, roomName)
-
-	if client.isInRoom(room) {
-		client.notifyRoomClientJoined(room, client)
-		return
-	}
-
-	if !client.isInRoom(room) {
-		client.rooms[room] = true
-		room.register <- client
-		client.notifyRoomClientJoined(room, client)
-	}
-
-	for prevRoom := range client.rooms {
-		if room != prevRoom {
-			prevRoom.unregister <- client
-		}
-	}
-}
-
-func (client *Client) handleLeaveRoom(msg Message) {
-	room := client.hub.findRoomByXid(msg.Room.Xid)
-	if room == nil {
-		return
-	}
-
-	if _, ok := client.rooms[room]; ok {
-		delete(client.rooms, room)
-	}
-
-	room.unregister <- client
-}
-
-func (client *Client) isInRoom(room *Room) bool {
-	if _, ok := client.rooms[room]; ok {
-		return true
-	}
-
-	return false
-}
-
-func (client *Client) notifyRoomClientJoined(room *Room, sender models.User) {
-	msg := Message{
-		Type:   string(message.Server),
-		Action: string(message.NotifyJoinRoomMessage),
-		Room:   room,
-		Body:   fmt.Sprintf("%v joined %v.", sender.GetXid(), room.GetName()),
-		Sender: broker,
-	}
-
-	client.send <- msg.encode()
-} */
