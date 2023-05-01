@@ -20,24 +20,26 @@ export default class GameScene extends Scene {
   create() {
     const map = this.make.tilemap({ key: "map" });
     const tileset = map.addTilesetImage("DesertTilemap", "tiles");
-    const layer = map.createLayer("ground", tileset, 0, 0);
-    const elevationLayer = map.createLayer("elevation", tileset, 0, 0);
-    const collisionLayer = map.createLayer("collisions", tileset, 0, 0);
+    if (tileset) {
+      map.createLayer("ground", tileset, 0, 0);
+      const elevationLayer = map.createLayer("elevation", tileset, 0, 0);
+      const collisionLayer = map.createLayer("collisions", tileset, 0, 0);
 
-    player = new Player(
-      this,
-      640,
-      310,
-      "player"
-    ) as Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+      collisionLayer?.setCollisionBetween(45, 54);
+      elevationLayer?.setCollisionBetween(78, 81);
+      elevationLayer?.setCollisionBetween(92, 95);
+      elevationLayer?.setCollisionBetween(106, 109);
 
-    collisionLayer.setCollisionBetween(45, 54);
-    elevationLayer.setCollisionBetween(78, 81);
-    elevationLayer.setCollisionBetween(92, 95);
-    elevationLayer.setCollisionBetween(106, 109);
+      player = new Player(
+        this,
+        640,
+        310,
+        "player"
+      ) as Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 
-    this.physics.add.collider(player, collisionLayer);
-    this.physics.add.collider(player, elevationLayer);
+      this.physics.add.collider(player, collisionLayer!);
+      this.physics.add.collider(player, elevationLayer!);
+    }
 
     this.anims.create({
       key: "left",

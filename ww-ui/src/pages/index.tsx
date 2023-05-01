@@ -1,20 +1,30 @@
-import useWebSocket from "@hooks/useWebSocket";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { NextPage } from "next/types";
 import { useState } from "react";
-import NameInput from "src/components/NameInput";
+/* import { MessageType } from "src/rpc/api/proto/ipc_pb"; */
 import styles from "../styles/index.module.css";
+import NameInput from "src/components/NameInput";
+import Image from "next/image";
 
 const Home: NextPage = () => {
+  const [username, setUsername] = useState<string>("");
   const [name, setName] = useState<boolean>(false);
   const [isLoading, setLoading] = useState<boolean>();
-  useWebSocket();
+  /* const { ws } = useSocket(); */
 
   const PhaserGame = dynamic(
     () => import("../game/app").finally(() => setLoading(false)),
     { ssr: false }
   );
+
+  /* useEffect(() => {
+    ws?.send(`play as ${username}`);
+    if (username && ws) {
+      const msg = new Uint8Array(1);
+      msg[0] = MessageType.JOIN_GAME;
+      ws.send(msg);
+    }
+  }, [ws, username]); */
 
   return (
     <>
@@ -31,7 +41,12 @@ const Home: NextPage = () => {
       {name && <PhaserGame />}
       {!name && (
         <div className={styles.container}>
-          <NameInput setName={setName} setLoading={setLoading} />
+          <NameInput
+            setName={setName}
+            setLoading={setLoading}
+            setUsername={setUsername}
+            username={username}
+          />
         </div>
       )}
     </>

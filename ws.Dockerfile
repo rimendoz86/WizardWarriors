@@ -1,6 +1,11 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.19-alpine as builder
+FROM golang:1.20.3-alpine as builder
+ARG DATABASE_URL
+ARG REDIS_URL
+ENV DATABASE_URL $DATABASE_URL
+ENV REDIS_URL $REDIS_URL
+
 RUN mkdir /opt/ww
 WORKDIR /opt/ww
 

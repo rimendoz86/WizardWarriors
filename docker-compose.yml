@@ -36,7 +36,7 @@ services:
       context: .
       dockerfile: ws.Dockerfile
       args:
-        DATABASE_URL: ${DATABASE_URL}
+        DATABASE_URL: postgresql://postgres:postgres@db/postgres
         REDIS_URL: redis://192.168.0.2:6379/3
     volumes:
       - ws-volume:/opt/ww

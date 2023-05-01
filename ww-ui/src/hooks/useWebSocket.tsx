@@ -1,8 +1,9 @@
 import { useEffect, useMemo } from "react";
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL;
+export const WS_URL = process.env.NEXT_PUBLIC_WS_URL;
 
 const useWebSocket = (): WebSocket | null => {
+  // USE SOCKET FROM SOCKETPROVIDER, using this hook will result in instanting two websockets
   const ws = useMemo(
     () =>
       typeof window !== "undefined"
