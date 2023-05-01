@@ -1,17 +1,16 @@
-import useWebSocket from "@hooks/useWebSocket";
-import { useState } from "react";
 import styles from "./NameInput.module.css";
 
 const NameInput = ({
   setName,
   setLoading,
+  setUsername,
+  username,
 }: {
   setName: Function;
   setLoading: Function;
+  setUsername: Function;
+  username: string;
 }) => {
-  const [username, setUsername] = useState<string>("");
-  const ws = useWebSocket();
-
   const loadGame = () => {
     setName(true);
     setLoading(true);

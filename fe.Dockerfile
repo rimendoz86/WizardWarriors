@@ -1,5 +1,5 @@
 FROM node:18-alpine as deps
-RUN apk add --no-cache libc6-compat=1.2.3-r2
+RUN apk add --no-cache libc6-compat=1.2.3-r4
 WORKDIR /opt/ww-ui
 
 ARG NEXT_PUBLIC_WS_URL

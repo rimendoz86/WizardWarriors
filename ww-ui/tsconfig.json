@@ -17,6 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "@hooks/*": ["src/hooks/*"],
+      "@contexts/*": ["src/contexts/*"]
     },
     "typeRoots": ["./node_modules/phaser/types"],
     "types": ["phaser"]
