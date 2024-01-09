@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.20.3-alpine as builder
+FROM golang:1.21.5-alpine as builder
 ARG DATABASE_URL
 ARG REDIS_URL
 ENV DATABASE_URL $DATABASE_URL
@@ -21,7 +21,7 @@ WORKDIR /opt/ww/cmd/ww-srv
 
 RUN go build -o ww-srv
 
-FROM alpine:3
+FROM alpine:3.19.0
 ARG DATABASE_URL
 ARG REDIS_URL
 ENV DATABASE_URL $DATABASE_URL

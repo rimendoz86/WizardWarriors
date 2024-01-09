@@ -1,5 +1,5 @@
-FROM node:18-alpine as deps
-RUN apk add --no-cache libc6-compat=1.2.3-r4
+FROM node:20-alpine as deps
+RUN apk add --no-cache libc6-compat=1.1.0-r4
 WORKDIR /opt/ww-ui
 
 ARG NEXT_PUBLIC_WS_URL
@@ -18,7 +18,7 @@ COPY --from=deps /opt/ww-ui/node_modules ./node_modules
 COPY ./ww-ui .
 RUN npm run build
 
-FROM node:18-alpine as runner
+FROM node:20-alpine as runner
 WORKDIR /opt/ww-ui
 
 ARG NEXT_PUBLIC_WS_URL

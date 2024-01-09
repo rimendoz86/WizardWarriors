@@ -2,7 +2,7 @@ version: "3"
 
 services:
   traefik:
-    image: "traefik:v2.10.1"
+    image: "traefik:v2.11"
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"
@@ -17,7 +17,7 @@ services:
       - wiznet
 
   db:
-    image: "postgres:15"
+    image: "postgres:16.1"
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -34,7 +34,7 @@ services:
   ws:
     build:
       context: .
-      dockerfile: ws.Dockerfile
+      dockerfile: docker/websocket-server.Dockerfile
       args:
         DATABASE_URL: postgresql://postgres:postgres@db/postgres
         REDIS_URL: redis://192.168.0.2:6379/3
@@ -54,7 +54,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: fe.Dockerfile
+      dockerfile: docker/frontend.Dockerfile
       args:
         NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL}
     volumes:
