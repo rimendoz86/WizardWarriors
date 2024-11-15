@@ -11,8 +11,11 @@ interface ISocketContext {
 }
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL;
-const SocketContext = createContext<ISocketContext>({} as ISocketContext);
+if (!WS_URL) {
+  throw new Error("NEXT_PUBLIC_WS_URL environment variable is not set");
+}
 
+const SocketContext = createContext<ISocketContext>({} as ISocketContext);
 
 // GAME SOCKET BEING INSTANTIATED TWICE
 export function SocketProvider({
@@ -21,10 +24,7 @@ export function SocketProvider({
   children: ReactNode;
 }): JSX.Element {
   const ws = useMemo(
-    () =>
-      typeof window !== "undefined"
-        ? new WebSocket(`ws://${WS_URL ? WS_URL : window.location.host}/game`)
-        : null,
+    () => (typeof window !== "undefined" ? new WebSocket(`${WS_URL}`) : null),
     []
   );
 
@@ -42,6 +42,10 @@ export function SocketProvider({
       };
       ws.onopen = () => console.log("Connected to game ws server");
     }
+
+    return () => {
+      ws?.close();
+    };
   }, [ws]);
 
   return (

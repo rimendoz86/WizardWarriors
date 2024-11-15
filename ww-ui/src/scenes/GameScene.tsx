@@ -8,6 +8,8 @@ export default class GameScene extends Scene {
     super("GameScene");
   }
 
+  public cursors: object | null = null;
+
   preload() {
     this.load.image("tiles", "assets/DesertTilemap.png");
     this.load.tilemapTiledJSON("map", "assets/map1.json");
@@ -18,6 +20,14 @@ export default class GameScene extends Scene {
   }
 
   create() {
+    // this work buy typescript is complaining
+    this.input.keyboard?.addKeys({
+      w: Phaser.Input.Keyboard.KeyCodes.W,
+      a: Phaser.Input.Keyboard.KeyCodes.A,
+      s: Phaser.Input.Keyboard.KeyCodes.S,
+      d: Phaser.Input.Keyboard.KeyCodes.D,
+    });
+
     const map = this.make.tilemap({ key: "map" });
     const tileset = map.addTilesetImage("DesertTilemap", "tiles");
     if (tileset) {

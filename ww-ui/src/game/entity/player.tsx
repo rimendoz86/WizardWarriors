@@ -10,27 +10,27 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   update(): void {
-    const cursors =
-      this.scene.input.keyboard && this.scene.input.keyboard.createCursorKeys();
+    if (!this.scene.input.keyboard) return;
 
-    if (!cursors) return;
+    const KEYS = {
+      W: this.scene.input.keyboard.addKey("w"),
+      A: this.scene.input.keyboard.addKey("a"),
+      S: this.scene.input.keyboard.addKey("s"),
+      D: this.scene.input.keyboard.addKey("d"),
+    };
 
-    if (cursors.left.isDown) {
-      this.setVelocityX(-160);
-
-      this.play("left", true);
-    } else if (cursors.right.isDown) {
-      this.setVelocityX(160);
-
-      this.play("right", true);
-    } else if (cursors.up.isDown) {
+    if (KEYS.W.isDown) {
       this.setVelocityY(-160);
-
       this.play("up", true);
-    } else if (cursors.down.isDown) {
+    } else if (KEYS.A.isDown) {
+      this.setVelocityX(-160);
+      this.play("left", true);
+    } else if (KEYS.S.isDown) {
       this.setVelocityY(160);
-
       this.play("down", true);
+    } else if (KEYS.D.isDown) {
+      this.setVelocityX(160);
+      this.play("right", true);
     } else {
       this.setVelocityX(0);
       this.setVelocityY(0);

@@ -9,7 +9,7 @@ ENV REDIS_URL $REDIS_URL
 RUN mkdir /opt/ww
 WORKDIR /opt/ww
 
-RUN apk add --no-cache git=2.38.5-r0 build-base=0.5-r3
+RUN apk add --no-cache git=2.43.5-r0 build-base=0.5-r3
 
 COPY go.mod .
 COPY go.sum .
