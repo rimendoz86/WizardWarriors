@@ -34,8 +34,8 @@ services:
       context: .
       dockerfile: docker/websocket-server.Dockerfile
       args:
-        DATABASE_URL: postgresql://postgres:postgres@db/postgres
-        REDIS_URL: redis://localhost:6379/3
+        DATABASE_URL: postgresql://postgres:postgres@db/wizardwarriors
+        REDIS_URL: redis://localhost:6379/0
     depends_on: ["traefik", "db"]
     networks:
       - wiznet

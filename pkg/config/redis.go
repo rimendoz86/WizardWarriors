@@ -1,8 +1,6 @@
 package config
 
-import (
-	"github.com/go-redis/redis/v9"
-)
+import "github.com/redis/go-redis/v9"
 
 func NewRedisOpts(url string) *redis.Options {
 	opt, err := redis.ParseURL(url)

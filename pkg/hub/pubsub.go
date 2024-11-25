@@ -6,7 +6,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/go-redis/redis/v9"
+	"github.com/redis/go-redis/v9"
 	"github.com/sonastea/WizardWarriors/pkg/config"
 	"github.com/sonastea/WizardWarriors/pkg/stores/user"
 )
