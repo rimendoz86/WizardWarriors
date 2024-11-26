@@ -1,22 +1,14 @@
 import { Scene, Types } from "phaser";
 import Player from "src/game/entity/player";
+import { EventBus } from "../EventBus";
 
 let player: Types.Physics.Arcade.SpriteWithDynamicBody;
 
-export default class GameScene extends Scene {
+export class Game extends Scene {
+  cursors: object | null = null;
+
   constructor() {
-    super("GameScene");
-  }
-
-  public cursors: object | null = null;
-
-  preload() {
-    this.load.image("tiles", "assets/DesertTilemap.png");
-    this.load.tilemapTiledJSON("map", "assets/map1.json");
-    this.load.spritesheet("player", "assets/player/player.png", {
-      frameWidth: 16,
-      frameHeight: 16,
-    });
+    super("Game");
   }
 
   create() {
@@ -84,6 +76,8 @@ export default class GameScene extends Scene {
       frameRate: 8,
       repeat: -1,
     });
+
+    EventBus.emit("current-scene-ready", this);
   }
 
   update() {

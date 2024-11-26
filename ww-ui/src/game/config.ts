@@ -1,9 +1,10 @@
 import { Types } from "phaser";
-import MenuScene from "src/scenes/MenuScene";
+import MainMenu from "./scenes/MainMenu";
+import { Game as MainGame } from "./scenes/Game";
 
 export const config: Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  title: "ww",
+  title: "WizardWarriors",
   parent: "game-content",
   width: 1280,
   height: 720,
@@ -20,5 +21,5 @@ export const config: Types.Core.GameConfig = {
   antialias: false,
   pixelArt: true,
   roundPixels: true,
-  scene: [MenuScene],
+  scene: [MainMenu, MainGame],
 };

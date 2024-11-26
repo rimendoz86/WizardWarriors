@@ -6,11 +6,13 @@ const usePhaserGame = (
   containerRef: React.RefObject<HTMLDivElement>
 ): Game | undefined => {
   const [game, setGame] = useState<Game>();
+
   useEffect(() => {
     if (!game && containerRef.current) {
       const newGame = new Game({ ...config, parent: containerRef.current });
       setGame(newGame);
     }
+
     return () => {
       game?.destroy(true);
     };
@@ -18,4 +20,5 @@ const usePhaserGame = (
 
   return game;
 };
+
 export default usePhaserGame;

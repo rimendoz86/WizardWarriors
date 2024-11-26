@@ -2,9 +2,9 @@ import dynamic from "next/dynamic";
 import { NextPage } from "next/types";
 import { useState } from "react";
 /* import { MessageType } from "src/rpc/api/proto/ipc_pb"; */
-import styles from "../styles/index.module.css";
-import NameInput from "src/components/NameInput";
 import Image from "next/image";
+import NameInput from "src/components/NameInput";
+import styles from "../styles/index.module.css";
 
 const Home: NextPage = () => {
   const [username, setUsername] = useState<string>("");
