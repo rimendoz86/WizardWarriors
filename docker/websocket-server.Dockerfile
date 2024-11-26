@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.23.3-alpine as builder
+FROM golang:1.23.3-alpine AS builder
 ARG DATABASE_URL
 ARG REDIS_URL
 ENV DATABASE_URL $DATABASE_URL
