@@ -8,11 +8,15 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/redis/go-redis/v9"
 	"github.com/sonastea/WizardWarriors/pkg/config"
+	db "github.com/sonastea/WizardWarriors/pkg/database"
 	"github.com/sonastea/WizardWarriors/pkg/hub"
 	"github.com/sonastea/WizardWarriors/pkg/server"
+	"github.com/sonastea/WizardWarriors/pkg/store"
 )
 
 func main() {
+	ctx := context.Background()
+
 	cfg := &config.Config{}
 	cfg.Load(os.Args[1:])
 	cfg.RedisOpts = config.NewRedisOpts(cfg.RedisURL)
@@ -21,17 +25,18 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	pool := redis.NewClient(cfg.RedisOpts)
+	redis := redis.NewClient(cfg.RedisOpts)
+	pool := db.NewConnPool(ctx, cfg.DBConnURI)
 
 	stores := hub.Stores{}
-	//stores.UserStore = user.NewStore(db)
+	stores.UserStore = store.NewUserStore(pool)
 
-	hub, err := hub.New(cfg, stores, pool)
+	hub, err := hub.New(cfg, stores, redis)
 	if err != nil {
 		panic(err)
 	}
 
-	server, err := server.NewServer(cfg, hub)
+	server, err := server.NewServer(cfg, hub, stores.UserStore)
 	if err != nil {
 		log.Fatalln("Unable to create server")
 	}

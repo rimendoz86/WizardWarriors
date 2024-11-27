@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/sonastea/WizardWarriors/pkg/config"
 	"github.com/sonastea/WizardWarriors/pkg/hub"
+	"github.com/sonastea/WizardWarriors/pkg/store"
 )
 
 var upgrader = websocket.Upgrader{
@@ -41,11 +42,14 @@ func ServeWs(h *hub.Hub, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func NewServer(cfg *config.Config, hub *hub.Hub) (*Server, error) {
+func NewServer(cfg *config.Config, hub *hub.Hub, us *store.UserStore) (*Server, error) {
 	router := http.NewServeMux()
+
 	router.Handle("/game", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ServeWs(hub, w, r)
 	}))
+	router.Handle("/api/register", enableCors(registerHandler(us), cfg.AllowedOrigins, cfg.Debug))
+	router.Handle("/api/login", enableCors(loginHandler(us), cfg.AllowedOrigins, cfg.Debug))
 
 	srv := &http.Server{
 		Addr:         cfg.Addr,

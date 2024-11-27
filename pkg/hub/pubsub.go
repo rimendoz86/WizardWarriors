@@ -8,11 +8,11 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	"github.com/sonastea/WizardWarriors/pkg/config"
-	"github.com/sonastea/WizardWarriors/pkg/stores/user"
+	"github.com/sonastea/WizardWarriors/pkg/store"
 )
 
 type Stores struct {
-	UserStore *user.Store
+	UserStore *store.UserStore
 }
 
 type Realm string
@@ -22,7 +22,7 @@ type PubSub struct {
 	subs          []Realm
 	subscriptions map[Realm]*redis.PubSub
 
-	userStore user.UserStore
+	userStore *store.UserStore
 }
 
 func NewPubSub(cfg *config.Config, stores Stores, pool *redis.Client) (*PubSub, error) {

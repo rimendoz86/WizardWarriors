@@ -1,12 +1,11 @@
 import { GameObjects, Scene } from "phaser";
-import { SCENES } from "src/constants";
-import { EventBus } from "../EventBus";
+import { CONSTANTS } from "../constants";
 
 export default class MenuScene extends Scene {
   startButton: GameObjects.Text | null = null;
 
   constructor() {
-    super("MenuScene");
+    super(CONSTANTS.SCENES.MENU);
   }
 
   init() {
@@ -33,7 +32,7 @@ export default class MenuScene extends Scene {
       .setStyle({ fontStyle: "fff" })
       .on("pointerover", () => this.enterHoverState())
       .on("pointerout", () => this.enterRestState())
-      .on("pointerdown", () => this.scene.start("Game"));
+      .on("pointerdown", () => this.scene.start(CONSTANTS.SCENES.GAME));
   }
 
   enterHoverState() {

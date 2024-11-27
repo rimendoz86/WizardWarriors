@@ -69,3 +69,6 @@ next-env.d.ts
 *.out
 *.app
 /ww-srv
+
+# air live reload
+tmp/

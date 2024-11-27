@@ -3,12 +3,11 @@ import { NextPage } from "next/types";
 import { useState } from "react";
 /* import { MessageType } from "src/rpc/api/proto/ipc_pb"; */
 import Image from "next/image";
-import NameInput from "src/components/NameInput";
+import PlayerForm from "src/components/PlayerForm";
 import styles from "../styles/index.module.css";
 
 const Home: NextPage = () => {
-  const [username, setUsername] = useState<string>("");
-  const [name, setName] = useState<boolean>(false);
+  const [playable, setPlayable] = useState<boolean>();
   const [isLoading, setLoading] = useState<boolean>();
   /* const { ws } = useSocket(); */
 
@@ -38,15 +37,11 @@ const Home: NextPage = () => {
           />
         </div>
       )}
-      {name && <PhaserGame />}
-      {!name && (
+      {playable ? (
+        <PhaserGame />
+      ) : (
         <div className={styles.container}>
-          <NameInput
-            setName={setName}
-            setLoading={setLoading}
-            setUsername={setUsername}
-            username={username}
-          />
+          <PlayerForm setPlayable={setPlayable} setLoading={setLoading} />
         </div>
       )}
     </>

@@ -1,6 +1,7 @@
 import { Scene, Types } from "phaser";
 import Player from "src/game/entity/player";
 import { EventBus } from "../EventBus";
+import { CONSTANTS } from "../constants";
 
 let player: Types.Physics.Arcade.SpriteWithDynamicBody;
 
@@ -8,7 +9,7 @@ export class Game extends Scene {
   cursors: object | null = null;
 
   constructor() {
-    super("Game");
+    super(CONSTANTS.SCENES.GAME);
   }
 
   create() {
