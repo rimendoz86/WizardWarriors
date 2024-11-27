@@ -31,15 +31,17 @@ export function SocketProvider({
   useEffect(() => {
     if (ws) {
       ws.binaryType = "arraybuffer";
-      (readyState: number) => {
-        switch (readyState) {
-          case 1:
-            console.log("socket closed");
+
+      ws.onclose = () => {
+        if (ws.readyState === 1) {
+          console.log("socket closed");
         }
       };
+
       ws.onerror = () => {
         console.log("Websocket connection error");
       };
+
       ws.onopen = () => console.log("Connected to game ws server");
     }
 
