@@ -32,7 +32,7 @@ services:
   server:
     build:
       context: .
-      dockerfile: docker/websocket-server.Dockerfile
+      dockerfile: docker/server.Dockerfile
       args:
         DATABASE_URL: postgresql://postgres:postgres@db/wizardwarriors
         REDIS_URL: redis://localhost:6379/0
