@@ -39,6 +39,7 @@ COPY --from=builder --chown=nextjs:nodejs /opt/ww-ui/.next/static standalone/.ne
 COPY --from=builder /opt/ww-ui/public standalone/public
 
 USER nextjs
+
 EXPOSE 3000
 ENV PORT 3000
 

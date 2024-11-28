@@ -78,10 +78,7 @@ services:
       server:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "ww.dev.localhost"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
+      disable: true
     networks:
       - wiznet
     labels:
