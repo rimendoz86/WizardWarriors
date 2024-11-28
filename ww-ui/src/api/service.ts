@@ -4,8 +4,13 @@ import {
   UserResponse,
 } from "src/types/index.types";
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+if (!BASE_URL) {
+  throw new Error("NEXT_PUBLIC_API_URL environment variable is not set");
+}
+
 class ApiService {
-  private baseUrl = "http://localhost:8080";
+  private baseUrl = BASE_URL;
 
   async registerUser(
     credentials: UserCredentials
