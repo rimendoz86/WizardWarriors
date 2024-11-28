@@ -22,6 +22,12 @@ func enableCors(h http.Handler, origins []string, debug bool) http.Handler {
 	return c.Handler(h)
 }
 
+func healthcheckHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
 func registerHandler(us *store.UserStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {

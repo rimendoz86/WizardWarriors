@@ -25,7 +25,13 @@ services:
       - "5432:5432"
     volumes:
       - pg-data-volume:/var/lib/postgresql/data
-    depends_on: ["traefik"]
+    depends_on:
+      - traefik
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       - wiznet
 
@@ -36,7 +42,17 @@ services:
       args:
         DATABASE_URL: postgresql://postgres:postgres@db/wizardwarriors
         REDIS_URL: redis://localhost:6379/0
-    depends_on: ["traefik", "db"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db/wizardwarriors
+      REDIS_URL: redis://localhost:6379/0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthcheck"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       - wiznet
     labels:
@@ -56,7 +72,16 @@ services:
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
       NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL}
-    depends_on: ["db", "traefik", "server"]
+    depends_on:
+      db:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "ww.dev.localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       - wiznet
     labels:

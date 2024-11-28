@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1
 
 FROM golang:1.23.3-alpine AS builder
+
 ARG DATABASE_URL
 ARG REDIS_URL
 ENV DATABASE_URL $DATABASE_URL
@@ -23,12 +24,14 @@ WORKDIR /opt/ww/cmd/ww-srv
 RUN go build -o ww-srv
 
 FROM alpine:3.20.3
+
 ARG DATABASE_URL
 ARG REDIS_URL
 ENV DATABASE_URL $DATABASE_URL
 ENV REDIS_URL $REDIS_URL
 
-RUN mkdir /opt/ww
+RUN mkdir /opt/ww && \
+  apk add --no-cache curl=8.11.0-r2
 WORKDIR /opt/ww
 
 COPY --from=builder /go/bin/goose /usr/local/bin/goose
