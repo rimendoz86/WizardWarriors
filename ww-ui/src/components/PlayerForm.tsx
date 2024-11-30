@@ -11,9 +11,21 @@ const PlayerForm = ({
 }) => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  const disableButton = !username || !password;
   const apiService = useApiService();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const login = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    await apiService?.loginUser({ username, password }).then((res) => {
+      if (res.success) {
+        setPlayable(true);
+      }
+    });
+  };
+
+  const register = async (e: React.MouseEvent) => {
     e.preventDefault();
     setLoading(true);
     await apiService?.registerUser({ username, password }).then((res) => {
@@ -24,7 +36,7 @@ const PlayerForm = ({
   };
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <form className={styles.form}>
       <input
         autoComplete="username"
         className={styles.input}
@@ -40,15 +52,25 @@ const PlayerForm = ({
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button
-        className={styles.button}
-        aria-label="Play game"
-        disabled={!username || !password}
-      >
-        Play game
-      </button>
+      <div className={styles.buttonContainer}>
+        <button
+          className={styles.button}
+          aria-label="Login"
+          disabled={disableButton}
+          onClick={login}
+        >
+          Login
+        </button>
+        <button
+          className={`${styles.button} ${styles.grayButton}`}
+          aria-label="Register"
+          disabled={disableButton}
+          onClick={register}
+        >
+          Register
+        </button>
+      </div>
     </form>
   );
 };
-
 export default PlayerForm;

@@ -1,5 +1,6 @@
 import {
   ApiResponse,
+  GameStatsResponse,
   UserCredentials,
   UserResponse,
 } from "src/types/index.types";
@@ -62,7 +63,28 @@ class ApiService {
     }
   }
 
-  private handleError(error: unknown): ApiResponse<UserResponse> {
+  async getLeaderboard(): Promise<ApiResponse<GameStatsResponse[]>> {
+    try {
+      const response = await fetch(this.baseUrl + "/api/leaderboard", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result: ApiResponse<GameStatsResponse[]> = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to retrieve leaderboard.");
+      }
+
+      return result;
+    } catch (error: unknown) {
+      return this.handleError(error);
+    }
+  }
+
+  private handleError<T>(error: unknown): ApiResponse<T> {
     if (error instanceof Error) {
       return {
         success: false,
