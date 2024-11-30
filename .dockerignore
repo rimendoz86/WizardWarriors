@@ -1,0 +1,8 @@
+.git
+.gitignore
+.dockerignore
+.next
+.vscode
+Dockerfile**
+ww-ui/node_modules
+npm-debug.log

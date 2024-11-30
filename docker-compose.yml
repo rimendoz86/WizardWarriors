@@ -1,0 +1,97 @@
+services:
+  traefik:
+    image: "traefik:v3.1.7"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - wiznet
+
+  db:
+    image: "postgres:17.1"
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: wizardwarriors
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data-volume:/var/lib/postgresql/data
+    depends_on:
+      - traefik
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - wiznet
+
+  server:
+    build:
+      context: .
+      dockerfile: docker/server.Dockerfile
+      args:
+        DATABASE_URL: postgresql://postgres:postgres@db/wizardwarriors
+        REDIS_URL: redis://localhost:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db/wizardwarriors
+      REDIS_URL: redis://localhost:6379/0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthcheck"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - wiznet
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.server.rule=Host(`ww.api.localhost`)"
+      - "traefik.http.routers.server.service=server-service"
+      - "traefik.http.routers.server.entrypoints=web"
+      - "traefik.http.services.server-service.loadbalancer.server.port=8080"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: "http://ww.api.localhost"
+        NEXT_PUBLIC_WS_URL: "ws://ww.api.localhost/game"
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL}
+    depends_on:
+      db:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+    healthcheck:
+      disable: true
+    networks:
+      - wiznet
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ww-ui.rule=Host(`ww.dev.localhost`)"
+      - "traefik.http.routers.ww-ui.service=ww-ui-service"
+      - "traefik.http.routers.ww-ui.entrypoints=web"
+      - "traefik.http.services.ww-ui-service.loadbalancer.server.port=3000"
+
+networks:
+  wiznet:
+    driver: bridge
+
+volumes:
+  pg-data-volume:
+    external: false
