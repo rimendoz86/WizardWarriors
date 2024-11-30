@@ -1,20 +1,36 @@
 import dynamic from "next/dynamic";
 import { NextPage } from "next/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 /* import { MessageType } from "src/rpc/api/proto/ipc_pb"; */
 import Image from "next/image";
 import PlayerForm from "src/components/PlayerForm";
 import styles from "../styles/index.module.css";
+import Leaderboard from "src/components/Leaderboard";
+import useApiService from "@hooks/useApiService";
+import { GameStatsResponse } from "src/types/index.types";
 
 const Home: NextPage = () => {
   const [playable, setPlayable] = useState<boolean>();
   const [isLoading, setLoading] = useState<boolean>();
+  const [leaderboardData, setLeaderboardData] = useState<GameStatsResponse[]>(
+    []
+  );
   /* const { ws } = useSocket(); */
+  const apiService = useApiService();
 
   const PhaserGame = dynamic(
     () => import("../game/app").finally(() => setLoading(false)),
     { ssr: false }
   );
+
+  useEffect(() => {
+    apiService?.getLeaderboard().then((res) => {
+      if (res.success && res.data) {
+        setLeaderboardData(res.data);
+        console.log(res.data[0]);
+      }
+    });
+  }, [apiService]);
 
   /* useEffect(() => {
     ws?.send(`play as ${username}`);
@@ -42,6 +58,7 @@ const Home: NextPage = () => {
       ) : (
         <div className={styles.container}>
           <PlayerForm setPlayable={setPlayable} setLoading={setLoading} />
+          <Leaderboard data={leaderboardData} />
         </div>
       )}
     </>

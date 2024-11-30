@@ -96,3 +96,26 @@ func loginHandler(us *store.UserStore) http.HandlerFunc {
 		json.NewEncoder(w).Encode(response)
 	}
 }
+
+func leaderboardHandler(us *store.UserStore) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed.", http.StatusMethodNotAllowed)
+			return
+		}
+
+		data, err := us.GetLeaderboard()
+		if err != nil {
+			http.Error(w, "Error getting leaderboard.", http.StatusInternalServerError)
+			return
+		}
+
+		response := APIResponse{
+			Success: true,
+			Data:    data,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+	}
+}

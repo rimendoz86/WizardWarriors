@@ -48,8 +48,10 @@ func NewServer(cfg *config.Config, hub *hub.Hub, us *store.UserStore) (*Server, 
 	router.Handle("/game", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ServeWs(hub, w, r)
 	}))
+
 	router.Handle("/healthcheck", enableCors(healthcheckHandler(), cfg.AllowedOrigins, cfg.Debug))
 
+	router.Handle("/api/leaderboard", enableCors(leaderboardHandler(us), cfg.AllowedOrigins, cfg.Debug))
 	router.Handle("/api/register", enableCors(registerHandler(us), cfg.AllowedOrigins, cfg.Debug))
 	router.Handle("/api/login", enableCors(loginHandler(us), cfg.AllowedOrigins, cfg.Debug))
 
