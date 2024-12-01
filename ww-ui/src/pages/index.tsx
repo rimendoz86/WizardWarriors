@@ -27,7 +27,6 @@ const Home: NextPage = () => {
     apiService?.getLeaderboard().then((res) => {
       if (res.success && res.data) {
         setLeaderboardData(res.data);
-        console.log(res.data[0]);
       }
     });
   }, [apiService]);
