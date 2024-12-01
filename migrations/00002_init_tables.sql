@@ -24,12 +24,6 @@ CREATE TABLE users (
     is_active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
--- Insert initial users
-INSERT INTO users (username, password)
-VALUES
-('wizard', 'warrior'),
-('test_user', 'test_user');
-
 -- Game Statistics Table
 CREATE TABLE game_stats (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
