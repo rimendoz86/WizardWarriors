@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"log"
@@ -9,6 +10,16 @@ import (
 	"github.com/rs/cors"
 	"github.com/sonastea/WizardWarriors/pkg/store"
 )
+
+type APIResponse struct {
+	Success bool        `json:"success"`
+	Data    interface{} `json:"data,omitempty"`
+	Error   string      `json:"error,omitempty"`
+}
+
+func ErrorResponse(err string) string {
+	return `{"success": false, "error": "` + err + `"}`
+}
 
 func enableCors(h http.Handler, origins []string, debug bool) http.Handler {
 	c := cors.New(cors.Options{
@@ -28,29 +39,29 @@ func healthcheckHandler() http.HandlerFunc {
 	}
 }
 
-func registerHandler(us *store.UserStore) http.HandlerFunc {
+func registerHandler(us userService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
-			http.Error(w, "Method not allowed.", http.StatusMethodNotAllowed)
+			http.Error(w, ErrorResponse("Method not allowed."), http.StatusMethodNotAllowed)
 			return
 		}
 
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			http.Error(w, "Error reading request body.", http.StatusInternalServerError)
+			http.Error(w, ErrorResponse("Error reading request body."), http.StatusInternalServerError)
 			return
 		}
 
-		var credentials UserCredentials
+		var credentials store.UserCredentials
 		err = json.Unmarshal(body, &credentials)
 		if err != nil {
-			http.Error(w, "Error parsing request body.", http.StatusBadRequest)
+			http.Error(w, ErrorResponse("Error parsing request body."), http.StatusBadRequest)
 			return
 		}
 
 		err = us.Add(credentials.Username, credentials.Password)
 		if err != nil {
-			http.Error(w, "Error creating user.", http.StatusInternalServerError)
+			http.Error(w, ErrorResponse("Error creating user."), http.StatusInternalServerError)
 			log.Println(err)
 			return
 		}
@@ -65,31 +76,44 @@ func registerHandler(us *store.UserStore) http.HandlerFunc {
 	}
 }
 
-func loginHandler(us *store.UserStore) http.HandlerFunc {
+func loginHandler(us userService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
-			http.Error(w, "Method not allowed.", http.StatusMethodNotAllowed)
+			http.Error(w, ErrorResponse("Method not allowed."), http.StatusMethodNotAllowed)
 			return
 		}
 
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			http.Error(w, "Error reading request body.", http.StatusInternalServerError)
+			http.Error(w, ErrorResponse("Error reading request body."), http.StatusInternalServerError)
 			return
 		}
 
-		var credentials UserCredentials
+		var credentials store.UserCredentials
 		err = json.Unmarshal(body, &credentials)
 		if err != nil {
-			http.Error(w, "Error parsing request body.", http.StatusBadRequest)
+			http.Error(w, ErrorResponse("Error parsing request body."), http.StatusBadRequest)
 			return
 		}
 
-		us.Get()
+		ctx := context.Background()
+		ctx, err = us.Login(ctx, credentials.Username, credentials.Password)
+		if err != nil {
+			log.Printf("%+v\n", err)
+			http.Error(w, ErrorResponse("The username or password is incorrect."), http.StatusUnauthorized)
+			return
+		}
+
+		saves, err := us.PlayerSaves(ctx)
+		if err != nil {
+			log.Printf("%+v\n", err)
+			http.Error(w, ErrorResponse("Error getting player saves."), http.StatusInternalServerError)
+			return
+		}
 
 		response := APIResponse{
 			Success: true,
-			Data:    credentials,
+			Data:    saves,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -97,16 +121,18 @@ func loginHandler(us *store.UserStore) http.HandlerFunc {
 	}
 }
 
-func leaderboardHandler(us *store.UserStore) http.HandlerFunc {
+func leaderboardHandler(us userService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
-			http.Error(w, "Method not allowed.", http.StatusMethodNotAllowed)
+			http.Error(w, ErrorResponse("Method not allowed."), http.StatusMethodNotAllowed)
 			return
 		}
 
-		data, err := us.GetLeaderboard()
+		ctx := context.Background()
+		data, err := us.Leaderboard(ctx)
 		if err != nil {
-			http.Error(w, "Error getting leaderboard.", http.StatusInternalServerError)
+			log.Printf("%+v\n", err)
+			http.Error(w, ErrorResponse("Error getting leaderboard."), http.StatusInternalServerError)
 			return
 		}
 

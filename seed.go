@@ -69,5 +69,25 @@ func seedDatabase(ctx context.Context, pool *pgxpool.Pool) error {
 		return fmt.Errorf("Failed to seed game_stats: %v", err)
 	}
 
+	_, err = tx.Exec(ctx, `
+		INSERT INTO player_saves (
+			user_id,
+			max_level,
+			created_at,
+			created_by,
+			updated_at,
+			updated_by,
+			is_active
+		)
+		VALUES
+			(1, 30, CURRENT_TIMESTAMP, 'wizard', CURRENT_TIMESTAMP, 'wizard', TRUE),
+			(2, 25, CURRENT_TIMESTAMP, 'player1', CURRENT_TIMESTAMP, 'player1', TRUE),
+			(3, 15, CURRENT_TIMESTAMP, 'player2', CURRENT_TIMESTAMP, 'player2', TRUE),
+			(4, 10, CURRENT_TIMESTAMP, 'cheater', CURRENT_TIMESTAMP, 'cheater', FALSE);
+	`)
+	if err != nil {
+		return fmt.Errorf("Failed to seed player_saves: %v", err)
+	}
+
 	return tx.Commit(ctx)
 }

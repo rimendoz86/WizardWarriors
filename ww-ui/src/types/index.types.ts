@@ -24,8 +24,19 @@ export interface GameStatsResponse {
   updated_at: string;
 }
 
+export interface PlayerSaveResponse {
+  id: number;
+  user_id: number;
+  max_level: number;
+  created_at: string;
+  updated_at: string;
+  is_active: boolean;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
   error?: string;
 }
+
+export type PlayerSaveApiResponse = ApiResponse<PlayerSaveResponse[]>;

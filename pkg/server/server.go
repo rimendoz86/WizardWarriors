@@ -28,6 +28,13 @@ type Server struct {
 	server *http.Server
 }
 
+type userService interface {
+	Add(username, password string) error
+	Login(ctx context.Context, username, password string) (context.Context, error)
+	PlayerSaves(ctx context.Context) ([]store.PlayerSaveResponse, error)
+	Leaderboard(context.Context) ([]store.GameStatsResponse, error)
+}
+
 func ServeWs(h *hub.Hub, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -42,7 +49,7 @@ func ServeWs(h *hub.Hub, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func NewServer(cfg *config.Config, hub *hub.Hub, us *store.UserStore) (*Server, error) {
+func NewServer(cfg *config.Config, hub *hub.Hub, us userService) (*Server, error) {
 	router := http.NewServeMux()
 
 	router.Handle("/game", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
