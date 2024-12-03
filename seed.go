@@ -22,7 +22,10 @@ func main() {
 	err = seedDatabase(ctx, pool)
 	if err != nil {
 		log.Fatalf("Failed to seed database: %v", err)
+		return
 	}
+
+	log.Println("Seeded database successfully.")
 }
 
 func seedDatabase(ctx context.Context, pool *pgxpool.Pool) error {
@@ -32,6 +35,7 @@ func seedDatabase(ctx context.Context, pool *pgxpool.Pool) error {
 	}
 	defer tx.Rollback(ctx)
 
+	fmt.Println("Inserting users...")
 	_, err = tx.Exec(ctx, `
 		INSERT INTO users (username, password, created_at, updated_at, is_active)
 		VALUES
@@ -44,6 +48,7 @@ func seedDatabase(ctx context.Context, pool *pgxpool.Pool) error {
 		return fmt.Errorf("Failed to seed users: %v", err)
 	}
 
+	fmt.Println("Inserting game_stats...")
 	_, err = tx.Exec(ctx, `
 		INSERT INTO game_stats (
 			user_id,
@@ -69,6 +74,7 @@ func seedDatabase(ctx context.Context, pool *pgxpool.Pool) error {
 		return fmt.Errorf("Failed to seed game_stats: %v", err)
 	}
 
+	fmt.Println("Inserting player_saves...")
 	_, err = tx.Exec(ctx, `
 		INSERT INTO player_saves (
 			user_id,
