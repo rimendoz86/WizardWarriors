@@ -28,6 +28,7 @@ const PlayerForm = ({
     await apiService?.loginUser({ username, password }).then((res) => {
       setLoading(false);
       if (res.success) {
+        if (!res.data) handlePlayGame(true);
         setSaves(res.data);
       } else {
         setError(res.error || "Error logging in.");
@@ -50,7 +51,16 @@ const PlayerForm = ({
     setSelectedSave(save === selectedSave ? null : save);
   };
 
-  const handlePlayGame = () => {
+  const playGame = () => {
+    setLoading(true);
+    setPlayable(true);
+  };
+
+  const handlePlayGame = (forceStart: boolean) => {
+    if (forceStart) {
+      playGame();
+    }
+
     if (selectedSave) {
       // TODO: Should we store this in a cookie or session storage?
       sessionStorage.setItem(
@@ -63,9 +73,7 @@ const PlayerForm = ({
           updatedAt: selectedSave.updated_at,
         })
       );
-
-      setLoading(true);
-      setPlayable(true);
+      playGame();
     }
   };
 
@@ -103,7 +111,7 @@ const PlayerForm = ({
           </button>
           <button
             className={`${styles.button} ${!selectedSave ? styles.grayButton : ""}`}
-            onClick={handlePlayGame}
+            onClick={() => handlePlayGame(false)}
             disabled={!selectedSave}
           >
             Play
