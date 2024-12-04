@@ -1,5 +1,5 @@
 import { GameObjects, Scene } from "phaser";
-import { CONSTANTS } from "../constants";
+import { CONSTANTS, ENTITY } from "../constants";
 
 export default class MenuScene extends Scene {
   startButton: GameObjects.Text | null = null;
@@ -15,9 +15,17 @@ export default class MenuScene extends Scene {
   preload() {
     this.load.image("tiles", "assets/DesertTilemap.png");
     this.load.tilemapTiledJSON("map", "assets/map1.json");
-    this.load.spritesheet("player", "assets/player/player.png", {
+    this.load.spritesheet(ENTITY.PLAYER, "assets/player/player.png", {
       frameWidth: 16,
       frameHeight: 16,
+      startFrame: 0,
+      endFrame: 23,
+    });
+    this.load.spritesheet(ENTITY.ENEMY.SLIME, "assets/enemies/slime.png", {
+      frameWidth: 16,
+      frameHeight: 16,
+      startFrame: 0,
+      endFrame: 3,
     });
   }
 
