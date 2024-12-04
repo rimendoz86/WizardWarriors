@@ -26,13 +26,20 @@ Follow this guide to set up the project locally using Docker Compose and explore
    docker-compose up -d
    ```
 
-3. **Access the Game**
+3. **Seed the Database**
+
+   After the services are running, populate the database with initial data:
+   ```bash
+   go run seed.go
+   ```
+
+4. **Access the Game**
 
    Once the services are up:
    - Open your browser and navigate to the frontend URL: [http://ww.dev.localhost](http://ww.dev.localhost)
    - The backend server is available at: [http://ww.api.localhost](http://ww.api.localhost)
 
-4. **Stopping the Services**
+5. **Stopping the Services**
 
    To stop the running services:
    ```bash
