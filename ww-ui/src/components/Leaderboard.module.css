@@ -33,11 +33,14 @@
   align-items: center;
   padding: 12px;
   border-bottom: 1px solid #374151;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
   text-align: center;
 }
 
-.headerRow, .playerRow {
+.headerRow,
+.playerRow {
   grid-template-columns: 0.5fr 1.5fr repeat(6, 1fr);
   font-size: 0.8em;
 }
@@ -70,4 +73,69 @@
 .kills {
   color: #f59e0b;
   font-weight: 600;
+}
+
+.skeletonRow {
+  display: grid;
+  align-items: center;
+  padding: 12px;
+  place-items: center;
+  border-bottom: 1px solid #374151;
+  grid-template-columns: 0.5fr 1.5fr repeat(6, 1fr);
+  background-color: #1f2937;
+  font-size: 0.8em;
+}
+
+.skeletonRow:nth-child(odd) {
+  background-color: #111827;
+}
+
+.skeleton {
+  display: block;
+  background: #374151;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite ease-in-out;
+  height: 1.2em;
+  width: 100%;
+}
+
+.skeleton.rank {
+  width: 50%;
+}
+
+.skeleton.username {
+  width: 70%;
+}
+
+.skeleton.level,
+.skeleton.kills,
+.skeleton.deaths,
+.skeleton.enemies,
+.skeleton.allies,
+.skeleton.status {
+  width: 80%;
+}
+
+@media (max-width: 768px) {
+  .skeletonRow {
+    grid-template-columns: 1fr 2fr repeat(4, 1fr);
+  }
+
+  .skeleton {
+    height: 1em;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    background-color: #374151;
+  }
+
+  50% {
+    background-color: #4b5563;
+  }
+
+  100% {
+    background-color: #374151;
+  }
 }
