@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 	"github.com/sonastea/WizardWarriors/pkg/config"
 	db "github.com/sonastea/WizardWarriors/pkg/database"
@@ -21,7 +21,7 @@ func main() {
 	cfg.Load(os.Args[1:])
 	cfg.RedisOpts = config.NewRedisOpts(cfg.RedisURL)
 
-	_, err := pgxpool.Connect(context.Background(), cfg.DBConnURI)
+	_, err := pgxpool.New(context.Background(), cfg.DBConnURI)
 	if err != nil {
 		panic(err)
 	}

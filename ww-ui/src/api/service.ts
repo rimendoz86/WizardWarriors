@@ -1,6 +1,7 @@
 import {
   ApiResponse,
   GameStatsResponse,
+  PlayerSaveApiResponse,
   UserCredentials,
   UserResponse,
 } from "src/types/index.types";
@@ -40,7 +41,7 @@ class ApiService {
 
   async loginUser(
     credentials: UserCredentials
-  ): Promise<ApiResponse<UserResponse>> {
+  ): Promise<PlayerSaveApiResponse> {
     try {
       const response = await fetch(this.baseUrl + "/api/login", {
         method: "POST",
@@ -51,7 +52,7 @@ class ApiService {
         credentials: "include",
       });
 
-      const result: ApiResponse<UserResponse> = await response.json();
+      const result: PlayerSaveApiResponse = await response.json();
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to login user.");
