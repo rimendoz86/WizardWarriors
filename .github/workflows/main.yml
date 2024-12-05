@@ -35,7 +35,7 @@ jobs:
       - name: Install Dependencies
         run: |
           cd ww-ui
-          npm install
+          npm ci
 
       - name: Run Linter
         run: |
@@ -67,7 +67,7 @@ jobs:
       - name: Install Dependencies
         run: |
           cd ww-ui
-          npm install
+          npm ci
 
       - name: Build Project
         env:
