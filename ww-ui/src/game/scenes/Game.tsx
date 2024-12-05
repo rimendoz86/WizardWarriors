@@ -4,47 +4,44 @@ import { EventBus } from "../EventBus";
 import { ANIMS, CONSTANTS, ENTITY } from "../constants";
 import Enemy from "../entity/enemy";
 import Slime from "../entity/slime";
+import Ally from "../entity/ally";
 
 export class Game extends Scene {
   cursors: object | null;
   player: Physics.Arcade.Sprite | null;
-  enemies: Enemy[];
+  allies: Ally[] = [];
+  enemies: Enemy[] = [];
 
-  collisionLayer: Phaser.Tilemaps.TilemapLayer | null;
-  elevationLayer: Phaser.Tilemaps.TilemapLayer | null;
+  collisionLayer: Phaser.Tilemaps.TilemapLayer | null = null;
+  elevationLayer: Phaser.Tilemaps.TilemapLayer | null = null;
 
   constructor() {
     super(CONSTANTS.SCENES.GAME);
 
     this.cursors = null;
     this.player = null;
-    this.enemies = new Array<Enemy>();
-
-    this.collisionLayer = null;
-    this.elevationLayer = null;
   }
 
   spawnEnemy = () => {
-    const spawnX = Math.random() * this.physics.world.bounds.right;
-    const spawnY = Math.random() * this.physics.world.bounds.height;
-    const enemy = new Slime(this, spawnX, spawnY, ENTITY.ENEMY.SLIME);
-    this.physics.add.collider(enemy, this.collisionLayer!);
-    this.physics.add.collider(enemy, this.elevationLayer!);
-    this.physics.add.collider(enemy, this.player!);
+    let spawnX: number, spawnY: number;
+    let isOverlapping;
 
-    for (let i = 0; i < this.enemies.length; i++) {
-      this.physics.add.overlap(enemy, this.enemies[i], () => {
-        const randomX = Math.random() < 0.5 ? -2 : 2;
-        const randomY = Math.random() < 0.5 ? -2 : 2;
+    do {
+      spawnX = Math.random() * this.physics.world.bounds.right;
+      spawnY = Math.random() * this.physics.world.bounds.height;
 
-        enemy.setPosition(
-          this.enemies[i].getBounds().centerX - randomX,
-          this.enemies[i].getBounds().centerY - randomY
+      isOverlapping = this.enemies.some((existingEnemy) => {
+        const distance = Phaser.Math.Distance.Between(
+          spawnX,
+          spawnY,
+          existingEnemy.x,
+          existingEnemy.y
         );
+        return distance < existingEnemy.width;
       });
-    }
+    } while (isOverlapping);
 
-    this.enemies.push(enemy);
+    new Slime(this, spawnX, spawnY, ENTITY.ENEMY.SLIME);
   };
 
   create() {
@@ -74,6 +71,13 @@ export class Game extends Scene {
 
     this.physics.add.collider(this.player, this.collisionLayer!);
     this.physics.add.collider(this.player, this.elevationLayer!);
+
+    const ally = new Ally(this, 630, 305, ENTITY.ALLY);
+
+    this.physics.add.collider(ally, this.collisionLayer!);
+    this.physics.add.collider(ally, this.elevationLayer!);
+
+    this.allies.push(ally);
 
     // PLAYER ANIMATIONS
     this.anims.create({
@@ -122,6 +126,57 @@ export class Game extends Scene {
       repeat: -1,
     });
 
+    // ALLY ANIMATIONS
+    this.anims.create({
+      key: ANIMS.ALLY.IDLE,
+      frames: [{ key: ENTITY.ALLY, frame: 0 }],
+      frameRate: 24,
+    });
+
+    this.anims.create({
+      key: ANIMS.ALLY.UP,
+      frames: [
+        { key: ENTITY.ALLY, frame: 2 },
+        { key: ENTITY.ALLY, frame: 5 },
+        { key: ENTITY.ALLY, frame: 8 },
+      ],
+      frameRate: 8,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: ANIMS.ALLY.DOWN,
+      frames: [
+        { key: ENTITY.ALLY, frame: 0 },
+        { key: ENTITY.ALLY, frame: 3 },
+        { key: ENTITY.ALLY, frame: 6 },
+      ],
+      frameRate: 8,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: ANIMS.ALLY.LEFT,
+      frames: [
+        { key: ENTITY.ALLY, frame: 1 },
+        { key: ENTITY.ALLY, frame: 4 },
+        { key: ENTITY.ALLY, frame: 7 },
+      ],
+      frameRate: 8,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: ANIMS.ALLY.RIGHT,
+      frames: [
+        { key: ENTITY.ALLY, frame: 1 },
+        { key: ENTITY.ALLY, frame: 4 },
+        { key: ENTITY.ALLY, frame: 7 },
+      ],
+      frameRate: 8,
+      repeat: -1,
+    });
+
     // SLIME ANIMATIONS
     this.anims.create({
       key: ANIMS.SLIME.IDLE,
@@ -146,9 +201,15 @@ export class Game extends Scene {
   update(time: number, delta: number) {
     this.player?.update(time, delta);
 
+    for (let i = 0; i < this.allies.length; i++) {
+      this.allies[i].update(time, delta);
+    }
+
     for (let i = 0; i < this.enemies.length; i++) {
-      const enemy = this.enemies[i];
-      enemy.update();
+      this.enemies[i].update(time, delta);
     }
   }
 }
+
+// TODO:
+// Add friendlies, so we can start the movement logic from ally -> player & enemy -> player/ally

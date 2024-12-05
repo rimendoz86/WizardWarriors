@@ -11,6 +11,13 @@ export const ANIMS = {
     LEFT: "player-left",
     RIGHT: "player-right",
   },
+  ALLY: {
+    IDLE: "ally-idle",
+    UP: "ally-up",
+    DOWN: "ally-down",
+    LEFT: "ally-left",
+    RIGHT: "ally-right",
+  },
   SLIME: {
     IDLE: "slime-idle",
   },

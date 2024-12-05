@@ -21,6 +21,12 @@ export default class MenuScene extends Scene {
       startFrame: 0,
       endFrame: 23,
     });
+    this.load.spritesheet(ENTITY.ALLY, "assets/player/ally.png", {
+      frameWidth: 16,
+      frameHeight: 16,
+      startFrame: 9,
+      endFrame: 17,
+    });
     this.load.spritesheet(ENTITY.ENEMY.SLIME, "assets/enemies/slime.png", {
       frameWidth: 16,
       frameHeight: 16,
