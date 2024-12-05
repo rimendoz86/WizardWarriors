@@ -34,7 +34,7 @@ jobs:
 
   build-ww-ui:
     runs-on: ubuntu-latest
-    needs: lint
+    needs: lint-ww-ui
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
