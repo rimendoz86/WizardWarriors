@@ -70,6 +70,9 @@ jobs:
           npm install
 
       - name: Build Project
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_WS_URL: ${{ secrets.NEXT_PUBLIC_WS_URL }}
         run: |
           cd ww-ui
           npm run build
