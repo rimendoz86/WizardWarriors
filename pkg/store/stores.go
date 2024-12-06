@@ -29,7 +29,20 @@ type PlayerSaveResponse struct {
 	MaxLevel  int       `json:"max_level"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	IsActive  bool      `json:"is_active"`
+
+	// Game stats
+	GameStatID         int       `json:"game_id"`
+	TeamDeaths         int       `json:"team_deaths"`
+	TeamKills          int       `json:"team_kills"`
+	PlayerLevel        int       `json:"player_level"`
+	PlayerKills        int       `json:"player_kills"`
+	PlayerKillsAtLevel int       `json:"player_kills_at_level"`
+	TotalAllies        int       `json:"total_allies"`
+	TotalEnemies       int       `json:"total_enemies"`
+	IsGameOver         bool      `json:"is_game_over"`
+	GameStatCreatedAt  time.Time `json:"game_created_at"`
+	GameStatUpdatedAt  time.Time `json:"game_updated_at"`
+	GameStatIsActive   bool      `json:"game_is_active"`
 }
 
 type User struct {
@@ -92,10 +105,28 @@ func (us *UserStore) PlayerSaves(ctx context.Context) ([]PlayerSaveResponse, err
 	userId := ctx.Value("userId").(int)
 	fmt.Println("User id: ", userId)
 	query := `
-		SELECT
-			id, user_id, max_level, created_at, updated_at, is_active FROM player_saves
-		WHERE
-			user_id = $1
+    SELECT
+        ps.id,
+        ps.user_id,
+        ps.max_level,
+        ps.created_at,
+        ps.updated_at,
+        gs.id AS game_id,
+        gs.team_deaths,
+        gs.team_kills,
+        gs.player_level,
+        gs.player_kills,
+        gs.player_kills_at_level,
+        gs.total_allies,
+        gs.total_enemies,
+        gs.is_game_over,
+        gs.created_at AS game_created_at,
+        gs.updated_at AS game_updated_at,
+        gs.is_active AS game_is_active
+    FROM player_saves ps
+    INNER JOIN game_stats gs ON gs.user_id = ps.user_id
+    WHERE ps.user_id = $1
+      AND gs.is_game_over = FALSE
 	`
 
 	rows, err := us.pool.Query(ctx, query, userId)
@@ -109,7 +140,23 @@ func (us *UserStore) PlayerSaves(ctx context.Context) ([]PlayerSaveResponse, err
 	for rows.Next() {
 		var save PlayerSaveResponse
 		err := rows.Scan(
-			&save.ID, &save.UserID, &save.MaxLevel, &save.CreatedAt, &save.UpdatedAt, &save.IsActive,
+			&save.ID,
+			&save.UserID,
+			&save.MaxLevel,
+			&save.CreatedAt,
+			&save.UpdatedAt,
+			&save.GameStatID,
+			&save.TeamDeaths,
+			&save.TeamKills,
+			&save.PlayerLevel,
+			&save.PlayerKills,
+			&save.PlayerKillsAtLevel,
+			&save.TotalAllies,
+			&save.TotalEnemies,
+			&save.IsGameOver,
+			&save.GameStatCreatedAt,
+			&save.GameStatUpdatedAt,
+			&save.GameStatIsActive,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("Failed to scan row: %w", err)
