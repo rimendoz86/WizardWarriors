@@ -10,7 +10,6 @@ on:
 
 jobs:
   lint-ww-ui:
-    if: github.repository == 'sonastea/WizardWarriors'
     runs-on: ubuntu-latest
 
     steps:
