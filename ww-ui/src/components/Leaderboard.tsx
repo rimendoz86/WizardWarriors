@@ -2,7 +2,7 @@ import { GameStatsResponse } from "src/types/index.types";
 import styles from "./Leaderboard.module.css";
 
 const Leaderboard = ({ data }: { data: GameStatsResponse[] }) => {
-  const isLoading = !data || data.length === 0;
+  const isLoading = !data;
   const placeholderRows = Array(15).fill(null);
 
   return (
@@ -18,6 +18,9 @@ const Leaderboard = ({ data }: { data: GameStatsResponse[] }) => {
         <span>Allies</span>
         <span>Game Status</span>
       </div>
+      {data.length === 0 && (
+        <div className={styles.title}>No data available</div>
+      )}
       {isLoading
         ? placeholderRows.map((_, index) => (
             <div

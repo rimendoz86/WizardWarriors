@@ -210,6 +210,3 @@ export class Game extends Scene {
     }
   }
 }
-
-// TODO:
-// Add friendlies, so we can start the movement logic from ally -> player & enemy -> player/ally
