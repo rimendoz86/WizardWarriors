@@ -130,41 +130,28 @@ func (us *UserStore) PlayerSave(ctx context.Context, game_id int) (PlayerSaveRes
 			gs.id = $1
 	`
 
-	rows, err := us.pool.Query(ctx, query, game_id)
+	var save PlayerSaveResponse
+	err := us.pool.QueryRow(ctx, query, game_id).Scan(
+		&save.ID,
+		&save.UserID,
+		&save.MaxLevel,
+		&save.CreatedAt,
+		&save.UpdatedAt,
+		&save.GameStatID,
+		&save.TeamDeaths,
+		&save.TeamKills,
+		&save.PlayerLevel,
+		&save.PlayerKills,
+		&save.PlayerKillsAtLevel,
+		&save.TotalAllies,
+		&save.TotalEnemies,
+		&save.IsGameOver,
+		&save.GameStatCreatedAt,
+		&save.GameStatUpdatedAt,
+		&save.GameStatIsActive,
+	)
 	if err != nil {
 		return PlayerSaveResponse{}, fmt.Errorf("Failed to get player save: %w", err)
-	}
-	defer rows.Close()
-
-	var save PlayerSaveResponse
-
-	for rows.Next() {
-		err := rows.Scan(
-			&save.ID,
-			&save.UserID,
-			&save.MaxLevel,
-			&save.CreatedAt,
-			&save.UpdatedAt,
-			&save.GameStatID,
-			&save.TeamDeaths,
-			&save.TeamKills,
-			&save.PlayerLevel,
-			&save.PlayerKills,
-			&save.PlayerKillsAtLevel,
-			&save.TotalAllies,
-			&save.TotalEnemies,
-			&save.IsGameOver,
-			&save.GameStatCreatedAt,
-			&save.GameStatUpdatedAt,
-			&save.GameStatIsActive,
-		)
-		if err != nil {
-			return PlayerSaveResponse{}, fmt.Errorf("Failed to scan row: %w", err)
-		}
-	}
-
-	if rows.Err() != nil {
-		return PlayerSaveResponse{}, fmt.Errorf("Failed to iterate rows: %w", err)
 	}
 
 	return save, nil

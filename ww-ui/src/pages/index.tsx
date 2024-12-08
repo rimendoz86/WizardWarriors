@@ -2,12 +2,14 @@ import dynamic from "next/dynamic";
 import { NextPage } from "next/types";
 import { useEffect, useState } from "react";
 /* import { MessageType } from "src/rpc/api/proto/ipc_pb"; */
-import Image from "next/image";
-import PlayerForm from "src/components/PlayerForm";
-import styles from "../styles/index.module.css";
-import Leaderboard from "src/components/Leaderboard";
 import useApiService from "@hooks/useApiService";
+import { Provider } from "jotai";
+import Image from "next/image";
+import Leaderboard from "src/components/Leaderboard";
+import PlayerForm from "src/components/PlayerForm";
 import { GameStatsResponse } from "src/types/index.types";
+import styles from "../styles/index.module.css";
+import { getStore } from "src/state";
 
 const Home: NextPage = () => {
   const [playable, setPlayable] = useState<boolean>();
@@ -41,7 +43,7 @@ const Home: NextPage = () => {
   }, [ws, username]); */
 
   return (
-    <>
+    <Provider store={getStore()}>
       {isLoading && (
         <div className={styles.container}>
           <Image
@@ -60,7 +62,7 @@ const Home: NextPage = () => {
           <Leaderboard data={leaderboardData} />
         </div>
       )}
-    </>
+    </Provider>
   );
 };
 

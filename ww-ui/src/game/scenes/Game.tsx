@@ -2,9 +2,9 @@ import { Physics, Scene } from "phaser";
 import Player from "src/game/entity/player";
 import { EventBus } from "../EventBus";
 import { ANIMS, CONSTANTS, ENTITY } from "../constants";
+import Ally from "../entity/ally";
 import Enemy from "../entity/enemy";
 import Slime from "../entity/slime";
-import Ally from "../entity/ally";
 
 export class Game extends Scene {
   cursors: object | null;
@@ -195,7 +195,7 @@ export class Game extends Scene {
       callbackScope: this,
     });
 
-    EventBus.emit("current-scene-ready", this);
+    EventBus?.emit("current-scene-ready", this);
   }
 
   update(time: number, delta: number) {

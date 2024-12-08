@@ -1,3 +1,4 @@
+import { EventBus } from "../EventBus";
 import { Game as GameScene } from "../scenes/Game";
 
 export default class Enemy extends Phaser.Physics.Arcade.Sprite {

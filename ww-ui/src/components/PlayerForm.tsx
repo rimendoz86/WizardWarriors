@@ -2,6 +2,8 @@ import { Dispatch, SetStateAction, useState } from "react";
 import styles from "./PlayerForm.module.css";
 import useApiService from "@hooks/useApiService";
 import { PlayerSaveResponse } from "src/types/index.types";
+import { useAtom } from "jotai";
+import { gameStatsAtom } from "src/state";
 
 const PlayerForm = ({
   setPlayable,
@@ -19,8 +21,10 @@ const PlayerForm = ({
   const [selectedSave, setSelectedSave] = useState<PlayerSaveResponse | null>(
     null
   );
+
   const disableButton = !username || !password;
   const apiService = useApiService();
+  const [_gameStats, setGameStats] = useAtom(gameStatsAtom);
 
   const login = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -63,17 +67,23 @@ const PlayerForm = ({
         alert("This save is no longer playable.");
         return;
       }
-      // TODO: Should we store this in a cookie or session storage?
-      sessionStorage.setItem(
-        "playerGameStats",
-        JSON.stringify({
-          userId: selectedSave.user_id,
-          saveId: selectedSave.id,
-          maxLevel: selectedSave.max_level,
-          createdAt: selectedSave.created_at,
-          updatedAt: selectedSave.updated_at,
-        })
-      );
+      console.log(save);
+      setGameStats({
+        game_id: save.data.game_id,
+        username,
+        user_id: save.data.user_id,
+        team_deaths: save.data.team_deaths,
+        team_kills: save.data.team_kills,
+        player_level: save.data.player_level,
+        player_kills: save.data.player_kills,
+        player_kills_at_level: save.data.player_kills_at_level,
+        total_allies: save.data.total_allies,
+        total_enemies: save.data.total_enemies,
+        is_game_over: save.data.is_game_over,
+        game_created_at: save.data.game_created_at,
+        game_updated_at: save.data.game_updated_at,
+      });
+      console.log("ok");
     }
     playGame();
   };
