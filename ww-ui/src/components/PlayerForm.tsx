@@ -28,7 +28,7 @@ const PlayerForm = ({
     await apiService?.loginUser({ username, password }).then((res) => {
       setLoading(false);
       if (res.success) {
-        if (!res.data) handlePlayGame(true);
+        if (!res.data) handlePlayGame();
         setSaves(res.data);
       } else {
         setError(res.error || "Error logging in.");
@@ -56,12 +56,13 @@ const PlayerForm = ({
     setPlayable(true);
   };
 
-  const handlePlayGame = (forceStart: boolean) => {
-    if (forceStart) {
-      playGame();
-    }
-
+  const handlePlayGame = async () => {
     if (selectedSave) {
+      const save = await apiService?.getPlayerSave(selectedSave.game_id);
+      if (save?.data?.is_game_over || !save?.data?.game_is_active) {
+        alert("This save is no longer playable.");
+        return;
+      }
       // TODO: Should we store this in a cookie or session storage?
       sessionStorage.setItem(
         "playerGameStats",
@@ -73,8 +74,8 @@ const PlayerForm = ({
           updatedAt: selectedSave.updated_at,
         })
       );
-      playGame();
     }
+    playGame();
   };
 
   if (saves) {
@@ -82,25 +83,33 @@ const PlayerForm = ({
       <div className={styles.savesContainer}>
         <h2>Player Saves</h2>
         <div className={styles.savesGrid}>
-          {saves.map((save) => (
-            <div
-              key={save.id}
-              className={`${styles.save} ${selectedSave?.id === save.id ? styles.selectedSave : ""}`}
-              onClick={() => handleSaveSelection(save)}
-            >
-              <p>Save ID: {save.id}</p>
-              <p>
-                User ID: <span className={styles.value}>{save.user_id}</span>
-              </p>
-              <p>
-                Max Level:{" "}
-                <span className={styles["max-level"]}>{save.max_level}</span>
-              </p>
-              <p>Created: {new Date(save.created_at).toLocaleString()}</p>
-              <p>Updated: {new Date(save.updated_at).toLocaleString()}</p>
-              <p>Active: {save.is_active ? "Yes" : "No"}</p>
-            </div>
-          ))}
+          {saves.map((save) => {
+            const isDisabled = !save.game_is_active || save.is_game_over;
+
+            return (
+              <div
+                key={save.id}
+                className={`${styles.save} ${selectedSave?.id === save.id ? styles.selectedSave : ""} ${
+                  isDisabled ? styles.disabledSave : ""
+                }`}
+                onClick={() => {
+                  if (!isDisabled) handleSaveSelection(save);
+                }}
+              >
+                <p>Save ID: {save.id}</p>
+                <p>
+                  User ID: <span className={styles.value}>{save.user_id}</span>
+                </p>
+                <p>
+                  Max Level:{" "}
+                  <span className={styles["max-level"]}>{save.max_level}</span>
+                </p>
+                <p>Created: {new Date(save.created_at).toLocaleString()}</p>
+                <p>Updated: {new Date(save.updated_at).toLocaleString()}</p>
+                <p>Game Over: {save.is_game_over ? "Yes" : "No"}</p>
+              </div>
+            );
+          })}
         </div>
         <div className={styles.buttonContainer}>
           <button
@@ -109,12 +118,8 @@ const PlayerForm = ({
           >
             Back
           </button>
-          <button
-            className={`${styles.button} ${!selectedSave ? styles.grayButton : ""}`}
-            onClick={() => handlePlayGame(false)}
-            disabled={!selectedSave}
-          >
-            Play
+          <button className={styles.button} onClick={() => handlePlayGame()}>
+            {selectedSave ? "Continue" : "Start New Game"}
           </button>
         </div>
       </div>

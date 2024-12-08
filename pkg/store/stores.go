@@ -63,9 +63,10 @@ type userStore interface {
 	Add(username, password string) error
 	Remove()
 	Login(ctx context.Context, username, password string) (context.Context, error)
-	PlayerSaves() ([]PlayerSaveResponse, error)
+	PlayerSave(ctx context.Context, game_id int) (PlayerSaveResponse, error)
+	PlayerSaves(ctx context.Context) ([]PlayerSaveResponse, error)
 	GetAll()
-	Leaderboard() ([]GameStatsResponse, error)
+	Leaderboard(ctx context.Context) ([]GameStatsResponse, error)
 }
 
 type UserStore struct {
@@ -101,32 +102,103 @@ func (us *UserStore) Login(ctx context.Context, username, password string) (cont
 	return ctx, nil
 }
 
+func (us *UserStore) PlayerSave(ctx context.Context, game_id int) (PlayerSaveResponse, error) {
+	query := `
+    SELECT
+			ps.id,
+			ps.user_id,
+			ps.max_level,
+			ps.created_at,
+			ps.updated_at,
+			gs.id AS game_id,
+			gs.team_deaths,
+			gs.team_kills,
+			gs.player_level,
+			gs.player_kills,
+			gs.player_kills_at_level,
+			gs.total_allies,
+			gs.total_enemies,
+			gs.is_game_over,
+			gs.created_at AS game_created_at,
+			gs.updated_at AS game_updated_at,
+			gs.is_active AS game_is_active
+    FROM
+			player_saves ps
+    INNER JOIN
+			game_stats gs ON gs.user_id = ps.user_id
+    WHERE
+			gs.id = $1
+	`
+
+	rows, err := us.pool.Query(ctx, query, game_id)
+	if err != nil {
+		return PlayerSaveResponse{}, fmt.Errorf("Failed to get player save: %w", err)
+	}
+	defer rows.Close()
+
+	var save PlayerSaveResponse
+
+	for rows.Next() {
+		err := rows.Scan(
+			&save.ID,
+			&save.UserID,
+			&save.MaxLevel,
+			&save.CreatedAt,
+			&save.UpdatedAt,
+			&save.GameStatID,
+			&save.TeamDeaths,
+			&save.TeamKills,
+			&save.PlayerLevel,
+			&save.PlayerKills,
+			&save.PlayerKillsAtLevel,
+			&save.TotalAllies,
+			&save.TotalEnemies,
+			&save.IsGameOver,
+			&save.GameStatCreatedAt,
+			&save.GameStatUpdatedAt,
+			&save.GameStatIsActive,
+		)
+		if err != nil {
+			return PlayerSaveResponse{}, fmt.Errorf("Failed to scan row: %w", err)
+		}
+	}
+
+	if rows.Err() != nil {
+		return PlayerSaveResponse{}, fmt.Errorf("Failed to iterate rows: %w", err)
+	}
+
+	return save, nil
+}
+
 func (us *UserStore) PlayerSaves(ctx context.Context) ([]PlayerSaveResponse, error) {
-	userId := ctx.Value("userId").(int)
+	userId, ok := ctx.Value("userId").(int)
+	if !ok {
+		return nil, fmt.Errorf("User is not logged in.")
+	}
+
 	fmt.Println("User id: ", userId)
 	query := `
     SELECT
-        ps.id,
-        ps.user_id,
-        ps.max_level,
-        ps.created_at,
-        ps.updated_at,
-        gs.id AS game_id,
-        gs.team_deaths,
-        gs.team_kills,
-        gs.player_level,
-        gs.player_kills,
-        gs.player_kills_at_level,
-        gs.total_allies,
-        gs.total_enemies,
-        gs.is_game_over,
-        gs.created_at AS game_created_at,
-        gs.updated_at AS game_updated_at,
-        gs.is_active AS game_is_active
+			ps.id,
+			ps.user_id,
+			ps.max_level,
+			ps.created_at,
+			ps.updated_at,
+			gs.id AS game_id,
+			gs.team_deaths,
+			gs.team_kills,
+			gs.player_level,
+			gs.player_kills,
+			gs.player_kills_at_level,
+			gs.total_allies,
+			gs.total_enemies,
+			gs.is_game_over,
+			gs.created_at AS game_created_at,
+			gs.updated_at AS game_updated_at,
+			gs.is_active AS game_is_active
     FROM player_saves ps
     INNER JOIN game_stats gs ON gs.user_id = ps.user_id
     WHERE ps.user_id = $1
-      AND gs.is_game_over = FALSE
 	`
 
 	rows, err := us.pool.Query(ctx, query, userId)
@@ -174,18 +246,20 @@ func (us *UserStore) PlayerSaves(ctx context.Context) ([]PlayerSaveResponse, err
 func (us *UserStore) GetAll() {}
 
 func (us *UserStore) Leaderboard(ctx context.Context) ([]GameStatsResponse, error) {
-	query := ` SELECT eGS.id,
-    eU.username AS login,
-    eGS.user_id,
-    eGS.team_deaths,
-    eGS.team_kills,
-    eGS.player_level,
-    eGS.player_kills,
-    eGS.player_kills_at_level,
-    eGS.total_allies,
-    eGS.total_enemies,
-    eGS.is_game_over,
-    eGS.updated_at
+	query := `
+		SELECT
+			eGS.id,
+			eU.username AS login,
+			eGS.user_id,
+			eGS.team_deaths,
+			eGS.team_kills,
+			eGS.player_level,
+			eGS.player_kills,
+			eGS.player_kills_at_level,
+			eGS.total_allies,
+			eGS.total_enemies,
+			eGS.is_game_over,
+			eGS.updated_at
 		FROM
 				game_stats AS eGS
 		INNER JOIN

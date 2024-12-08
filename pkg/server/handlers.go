@@ -17,6 +17,10 @@ type APIResponse struct {
 	Error   string      `json:"error,omitempty"`
 }
 
+type PlayerSaveRequestBody struct {
+	GameId int `json:"game_id"`
+}
+
 func ErrorResponse(err string) string {
 	return `{"success": false, "error": "` + err + `"}`
 }
@@ -114,6 +118,43 @@ func loginHandler(us userService) http.HandlerFunc {
 		response := APIResponse{
 			Success: true,
 			Data:    saves,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+	}
+}
+
+func playersaveHandler(us userService) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, ErrorResponse("Method not allowed."), http.StatusMethodNotAllowed)
+			return
+		}
+		var game PlayerSaveRequestBody
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Invalid request.", http.StatusBadRequest)
+			return
+		}
+		defer r.Body.Close()
+
+		if err := json.Unmarshal(body, &game); err != nil {
+			http.Error(w, "Invalid json format.", http.StatusBadRequest)
+			return
+		}
+
+		ctx := context.Background()
+		save, err := us.PlayerSave(ctx, game.GameId)
+		if err != nil {
+			log.Printf("%+v\n", err)
+			http.Error(w, ErrorResponse(err.Error()), http.StatusInternalServerError)
+			return
+		}
+
+		response := APIResponse{
+			Success: true,
+			Data:    save,
 		}
 
 		w.Header().Set("Content-Type", "application/json")

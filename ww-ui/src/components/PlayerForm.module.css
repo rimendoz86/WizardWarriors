@@ -208,3 +208,9 @@
   font-weight: bold;
   color: #fbbf24;
 }
+
+.disabledSave {
+  pointer-events: none;
+  opacity: 0.80;
+  cursor: not-allowed;
+}

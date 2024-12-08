@@ -1,6 +1,7 @@
 import {
   ApiResponse,
   GameStatsResponse,
+  GetPlayerSaveApiResponse,
   PlayerSaveApiResponse,
   UserCredentials,
   UserResponse,
@@ -77,6 +78,28 @@ class ApiService {
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to retrieve leaderboard.");
+      }
+
+      return result;
+    } catch (error: unknown) {
+      return this.handleError(error);
+    }
+  }
+
+  async getPlayerSave(gameId: number): Promise<GetPlayerSaveApiResponse> {
+    try {
+      const response = await fetch(this.baseUrl + "/api/player-save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ game_id: gameId }),
+      });
+
+      const result: GetPlayerSaveApiResponse = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to get player save.");
       }
 
       return result;

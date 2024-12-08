@@ -31,6 +31,7 @@ type Server struct {
 type userService interface {
 	Add(username, password string) error
 	Login(ctx context.Context, username, password string) (context.Context, error)
+	PlayerSave(ctx context.Context, game_id int) (store.PlayerSaveResponse, error)
 	PlayerSaves(ctx context.Context) ([]store.PlayerSaveResponse, error)
 	Leaderboard(context.Context) ([]store.GameStatsResponse, error)
 }
@@ -59,6 +60,7 @@ func NewServer(cfg *config.Config, hub *hub.Hub, us userService) (*Server, error
 	router.Handle("/healthcheck", enableCors(healthcheckHandler(), cfg.AllowedOrigins, cfg.Debug))
 
 	router.Handle("/api/leaderboard", enableCors(leaderboardHandler(us), cfg.AllowedOrigins, cfg.Debug))
+	router.Handle("/api/player-save", enableCors(playersaveHandler(us), cfg.AllowedOrigins, cfg.Debug))
 	router.Handle("/api/register", enableCors(registerHandler(us), cfg.AllowedOrigins, cfg.Debug))
 	router.Handle("/api/login", enableCors(loginHandler(us), cfg.AllowedOrigins, cfg.Debug))
 
