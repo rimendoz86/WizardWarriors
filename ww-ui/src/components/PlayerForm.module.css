@@ -157,9 +157,9 @@
 }
 
 .selectedSave {
-  border: 2px solid #3b82f6;
+  border: 1px solid #3b82f6;
   background-color: #1f2937;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3), 0 6px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3), 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
 .selectedSave::after {
