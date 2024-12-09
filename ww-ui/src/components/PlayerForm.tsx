@@ -67,7 +67,6 @@ const PlayerForm = ({
         alert("This save is no longer playable.");
         return;
       }
-      console.log(save);
       setGameStats({
         game_id: save.data.game_id,
         username,
@@ -83,7 +82,6 @@ const PlayerForm = ({
         game_created_at: save.data.game_created_at,
         game_updated_at: save.data.game_updated_at,
       });
-      console.log("ok");
     }
     playGame();
   };

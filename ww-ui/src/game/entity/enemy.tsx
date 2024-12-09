@@ -1,4 +1,5 @@
-import { EventBus } from "../EventBus";
+import { setGameStats } from "src/state";
+import { GameStats } from "src/types/index.types";
 import { Game as GameScene } from "../scenes/Game";
 
 export default class Enemy extends Phaser.Physics.Arcade.Sprite {
@@ -28,8 +29,16 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.collider(this, scene.player!);
   }
 
+  incPlayerKills = () => {
+    setGameStats((prev: GameStats) => ({
+      ...prev,
+      player_kills: prev.player_kills + 1,
+    }));
+  };
+
   hit = () => {
     this.setActive(false).setVisible(false);
+    this.incPlayerKills();
   };
 
   setTarget = (target: Phaser.Physics.Arcade.Sprite | null) => {

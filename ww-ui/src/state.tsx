@@ -24,9 +24,9 @@ export const gameStatsAtom = atom<GameStats>(gameStats);
 
 export const getGameStats = () => store.get(gameStatsAtom);
 
-export const setGameStats = (update: Partial<GameStats>) => {
+export const setGameStats = (updater: (prev: GameStats) => GameStats) => {
   const current = store.get(gameStatsAtom);
-  store.set(gameStatsAtom, { ...current, ...update });
+  store.set(gameStatsAtom, updater(current));
 };
 
 export const getStore = () => store;
