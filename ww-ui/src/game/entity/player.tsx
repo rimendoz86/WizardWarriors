@@ -1,6 +1,13 @@
 import { ANIMS } from "../constants";
+import { Game as GameScene } from "../scenes/Game";
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
+  declare scene: GameScene;
+
+  level: number = 1;
+  health: number = 100;
+  speed: number = 100;
+
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
 
@@ -10,6 +17,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.setScale(2);
     this.setImmovable(true);
     this.setCollideWorldBounds(true);
+  }
+
+  setLevel(level: number) {
+    this.level = level;
+  }
+
+  setHealth(health: number) {
+    this.health = health;
   }
 
   update(): void {
@@ -27,16 +42,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     };
 
     if (KEYS.W.isDown || KEYS.UP.isDown) {
-      this.setVelocityY(-160);
+      this.setVelocityY(-1 * this.speed);
       this.play(ANIMS.PLAYER.UP, true);
     } else if (KEYS.A.isDown || KEYS.LEFT.isDown) {
-      this.setVelocityX(-160);
+      this.setVelocityX(-1 * this.speed);
       this.play(ANIMS.PLAYER.LEFT, true);
     } else if (KEYS.S.isDown || KEYS.DOWN.isDown) {
-      this.setVelocityY(160);
+      this.setVelocityY(1 * this.speed);
       this.play(ANIMS.PLAYER.DOWN, true);
     } else if (KEYS.D.isDown || KEYS.RIGHT.isDown) {
-      this.setVelocityX(160);
+      this.setVelocityX(1 * this.speed);
       this.play(ANIMS.PLAYER.RIGHT, true);
     } else {
       this.setVelocityX(0);

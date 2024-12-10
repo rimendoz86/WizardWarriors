@@ -3,6 +3,10 @@ import { Game as GameScene } from "../scenes/Game";
 export default class Ally extends Phaser.Physics.Arcade.Sprite {
   declare scene: GameScene;
 
+  level: number = 1;
+  health: number = 100;
+  speed: number = 100;
+
   minDistanceToPlayer: number = 20;
 
   constructor(scene: GameScene, x: number, y: number, texture: string) {
@@ -13,6 +17,14 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
 
     this.setScale(2);
     this.setCollideWorldBounds(true);
+  }
+
+  setLevel(level: number) {
+    this.level = level;
+  }
+
+  setHealth(health: number) {
+    this.health = health;
   }
 
   moveToTarget = () => {

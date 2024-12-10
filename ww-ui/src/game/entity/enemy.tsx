@@ -3,12 +3,14 @@ import { GameStats } from "src/types/index.types";
 import { Game as GameScene } from "../scenes/Game";
 
 export default class Enemy extends Phaser.Physics.Arcade.Sprite {
-  health: number = 0;
-  speed: number = 50;
-  target: Phaser.Physics.Arcade.Sprite | null = null;
-  detectionRange: number = 200;
-
   declare scene: GameScene;
+
+  level: number = 1;
+  health: number = 0;
+  speed: number = 75;
+
+  detectionRange: number = 200;
+  target: Phaser.Physics.Arcade.Sprite | null = null;
 
   constructor(scene: GameScene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
