@@ -27,7 +27,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.health = health;
   }
 
-  update(): void {
+  update(_time: number, _delta: number): void {
     if (!this.scene.input.keyboard) return;
 
     const KEYS = {

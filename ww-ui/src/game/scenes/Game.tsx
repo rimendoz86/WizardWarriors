@@ -1,5 +1,7 @@
-import { Physics, Scene } from "phaser";
+import { Scene } from "phaser";
 import Player from "src/game/entity/player";
+import { getGameStats } from "src/state";
+import { GameStats } from "src/types/index.types";
 import { EventBus } from "../EventBus";
 import { ANIMS, CONSTANTS, ENTITY } from "../constants";
 import Ally from "../entity/ally";
@@ -8,7 +10,7 @@ import Slime from "../entity/slime";
 
 export class Game extends Scene {
   cursors: object | null;
-  player: Physics.Arcade.Sprite | null;
+  player: Player | null;
   allies: Ally[] = [];
   enemies: Enemy[] = [];
 
@@ -21,6 +23,31 @@ export class Game extends Scene {
     this.cursors = null;
     this.player = null;
   }
+
+  loadGameStats = (gameStats: GameStats) => {
+    if (!gameStats || gameStats.game_id === 0) return;
+
+    const { player_level, total_allies, total_enemies } = gameStats;
+
+    this.player?.setLevel(player_level);
+
+    for (let i = 0; i < total_allies; i++) {
+      this.spawnAlly();
+    }
+
+    for (let i = 0; i < total_enemies; i++) {
+      this.spawnEnemy();
+    }
+  };
+
+  spawnAlly = () => {
+    const ally = new Ally(this, 630, 305, ENTITY.ALLY);
+
+    this.physics.add.collider(ally, this.collisionLayer!);
+    this.physics.add.collider(ally, this.elevationLayer!);
+
+    this.allies.push(ally);
+  };
 
   spawnEnemy = () => {
     let spawnX: number, spawnY: number;
@@ -71,13 +98,6 @@ export class Game extends Scene {
 
     this.physics.add.collider(this.player, this.collisionLayer!);
     this.physics.add.collider(this.player, this.elevationLayer!);
-
-    const ally = new Ally(this, 630, 305, ENTITY.ALLY);
-
-    this.physics.add.collider(ally, this.collisionLayer!);
-    this.physics.add.collider(ally, this.elevationLayer!);
-
-    this.allies.push(ally);
 
     // PLAYER ANIMATIONS
     this.anims.create({
@@ -194,6 +214,8 @@ export class Game extends Scene {
       callback: this.spawnEnemy,
       callbackScope: this,
     });
+
+    this.loadGameStats(getGameStats());
 
     EventBus?.emit("current-scene-ready", this);
   }

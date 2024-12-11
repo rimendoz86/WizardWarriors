@@ -13,11 +13,11 @@ export const gameStats: GameStats = {
   player_level: 1,
   player_kills: 0,
   player_kills_at_level: 0,
-  total_allies: 0,
-  total_enemies: 0,
+  total_allies: 1,
+  total_enemies: 1,
   is_game_over: false,
-  game_created_at: "",
-  game_updated_at: "",
+  game_created_at: new Date().toISOString(),
+  game_updated_at: new Date().toISOString(),
 };
 
 export const gameStatsAtom = atom<GameStats>(gameStats);
@@ -30,3 +30,7 @@ export const setGameStats = (updater: (prev: GameStats) => GameStats) => {
 };
 
 export const getStore = () => store;
+
+// TODO:
+// Send game stats to the backend.
+// Allies and enemies need damage capability and health.
