@@ -7,10 +7,8 @@ import { gameStatsAtom } from "src/state";
 
 const PlayerForm = ({
   setPlayable,
-  setLoading,
 }: {
   setPlayable: Dispatch<SetStateAction<boolean | undefined>>;
-  setLoading: Dispatch<SetStateAction<boolean | undefined>>;
 }) => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -28,9 +26,7 @@ const PlayerForm = ({
 
   const login = async (e: React.MouseEvent) => {
     e.preventDefault();
-    setLoading(true);
     await apiService?.loginUser({ username, password }).then((res) => {
-      setLoading(false);
       if (res.success) {
         if (!res.data) handlePlayGame();
         setSaves(res.data);
@@ -42,9 +38,7 @@ const PlayerForm = ({
 
   const register = async (e: React.MouseEvent) => {
     e.preventDefault();
-    setLoading(true);
     await apiService?.registerUser({ username, password }).then((res) => {
-      setLoading(false);
       if (res.success) {
         setPlayable(true);
       }
@@ -56,7 +50,6 @@ const PlayerForm = ({
   };
 
   const playGame = () => {
-    setLoading(true);
     setPlayable(true);
   };
 
