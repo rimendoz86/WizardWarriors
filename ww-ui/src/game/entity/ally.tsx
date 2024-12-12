@@ -17,6 +17,11 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
 
     this.setScale(2);
     this.setCollideWorldBounds(true);
+
+    scene.allies.push(this);
+
+    scene.physics.add.collider(this, scene.collisionLayer!);
+    scene.physics.add.collider(this, scene.elevationLayer!);
   }
 
   setLevel(level: number) {

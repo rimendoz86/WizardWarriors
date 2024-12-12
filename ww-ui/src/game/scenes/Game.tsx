@@ -7,6 +7,7 @@ import { ANIMS, CONSTANTS, ENTITY } from "../constants";
 import Ally from "../entity/ally";
 import Enemy from "../entity/enemy";
 import Slime from "../entity/slime";
+import { Game as GameScene } from "../scenes/Game";
 
 export class Game extends Scene {
   cursors: object | null;
@@ -40,35 +41,43 @@ export class Game extends Scene {
     }
   };
 
-  spawnAlly = () => {
-    const ally = new Ally(this, 630, 305, ENTITY.ALLY);
-
-    this.physics.add.collider(ally, this.collisionLayer!);
-    this.physics.add.collider(ally, this.elevationLayer!);
-
-    this.allies.push(ally);
-  };
-
-  spawnEnemy = () => {
+  private spawnEntity<T extends Phaser.GameObjects.Sprite>(
+    entityClass: new (
+      scene: GameScene,
+      x: number,
+      y: number,
+      type: string
+    ) => T,
+    entityType: string,
+    existingEntities: T[]
+  ): void {
     let spawnX: number, spawnY: number;
-    let isOverlapping;
+    let isOverlapping: boolean;
 
     do {
       spawnX = Math.random() * this.physics.world.bounds.right;
       spawnY = Math.random() * this.physics.world.bounds.height;
 
-      isOverlapping = this.enemies.some((existingEnemy) => {
+      isOverlapping = existingEntities.some((existingEntity) => {
         const distance = Phaser.Math.Distance.Between(
           spawnX,
           spawnY,
-          existingEnemy.x,
-          existingEnemy.y
+          existingEntity.x,
+          existingEntity.y
         );
-        return distance < existingEnemy.width;
+        return distance < existingEntity.width;
       });
     } while (isOverlapping);
 
-    new Slime(this, spawnX, spawnY, ENTITY.ENEMY.SLIME);
+    new entityClass(this, spawnX, spawnY, entityType);
+  }
+
+  spawnAlly = () => {
+    this.spawnEntity(Ally, ENTITY.ALLY, this.allies);
+  };
+
+  spawnEnemy = () => {
+    this.spawnEntity(Slime, ENTITY.ENEMY.SLIME, this.enemies);
   };
 
   create() {

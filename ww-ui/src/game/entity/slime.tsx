@@ -2,9 +2,9 @@ import { Game as GameScene } from "../scenes/Game";
 import Enemy from "./enemy";
 
 export default class Slime extends Enemy {
-  health = 3;
-
   declare scene: GameScene;
+
+  health = 3;
 
   constructor(scene: GameScene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
