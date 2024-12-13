@@ -10,7 +10,6 @@ import Slime from "../entity/slime";
 import { Game as GameScene } from "../scenes/Game";
 
 export class Game extends Scene {
-  cursors: object | null;
   player: Player | null;
   allies: Ally[] = [];
   enemies: Enemy[] = [];
@@ -21,13 +20,10 @@ export class Game extends Scene {
   constructor() {
     super(CONSTANTS.SCENES.GAME);
 
-    this.cursors = null;
     this.player = null;
   }
 
   loadGameStats = (gameStats: GameStats) => {
-    if (!gameStats || gameStats.game_id === 0) return;
-
     const { player_level, total_allies, total_enemies } = gameStats;
 
     this.player?.setLevel(player_level);
@@ -104,9 +100,6 @@ export class Game extends Scene {
     this.elevationLayer?.setCollisionBetween(107, 109);
 
     this.player = new Player(this, 640, 310, ENTITY.PLAYER);
-
-    this.physics.add.collider(this.player, this.collisionLayer!);
-    this.physics.add.collider(this.player, this.elevationLayer!);
 
     // PLAYER ANIMATIONS
     this.anims.create({

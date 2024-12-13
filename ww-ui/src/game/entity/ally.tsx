@@ -1,4 +1,7 @@
+import { setGameStats } from "src/state";
 import { Game as GameScene } from "../scenes/Game";
+import Enemy from "./enemy";
+import { GameStats } from "src/types/index.types";
 
 export default class Ally extends Phaser.Physics.Arcade.Sprite {
   declare scene: GameScene;
@@ -6,6 +9,7 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
   level: number = 1;
   health: number = 100;
   speed: number = 100;
+  attack: number = 2;
 
   minDistanceToPlayer: number = 20;
 
@@ -22,6 +26,11 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
 
     scene.physics.add.collider(this, scene.collisionLayer!);
     scene.physics.add.collider(this, scene.elevationLayer!);
+
+    scene.physics.add.overlap(this, scene.player!, () => {
+      // TODO: Projectile to hit ally
+      console.log("health: ", this.health);
+    });
   }
 
   setLevel(level: number) {
@@ -31,6 +40,30 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
   setHealth(health: number) {
     this.health = health;
   }
+
+  incPlayerKills = () => {
+    setGameStats((prev: GameStats) => ({
+      ...prev,
+      player_kills: prev.player_kills + 1,
+    }));
+  };
+
+  attackTarget = (target: Enemy) => {
+    target.takeDamage(this.attack);
+  };
+
+  takeDamage = (damage: number) => {
+    this.setTint(0xff6666);
+    this.health -= damage;
+
+    this.scene.time.delayedCall(750, () => {
+      this.clearTint();
+      if (this.health <= 0) {
+        this.setActive(false).setVisible(false);
+        this.incPlayerKills();
+      }
+    });
+  };
 
   moveToTarget = () => {
     const player = this.scene.player!;
