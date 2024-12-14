@@ -30,7 +30,7 @@ func enableCors(h http.Handler, origins []string, debug bool) http.Handler {
 		AllowedOrigins:   origins,
 		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodOptions},
 		AllowCredentials: true,
-		Debug:            debug,
+		Debug:            true,
 	})
 
 	return c.Handler(h)
