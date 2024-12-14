@@ -48,5 +48,10 @@ func parseOrigins(allowedOrigins string) []string {
 		return []string{"http://localhost:3000"}
 	}
 
-	return strings.Split(allowedOrigins, ",")
+	origins := strings.Split(allowedOrigins, ",")
+	for i, origin := range origins {
+		origins[i] = strings.TrimSpace(origin)
+	}
+
+	return origins
 }
