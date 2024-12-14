@@ -29,7 +29,6 @@ func enableCors(h http.Handler, origins []string, debug bool) http.Handler {
 	c := cors.New(cors.Options{
 		AllowedOrigins:   origins,
 		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodOptions},
-		AllowedHeaders:   []string{"Content-Type", "Authorization"},
 		AllowCredentials: true,
 		Debug:            debug,
 	})
@@ -164,10 +163,10 @@ func playersaveHandler(us userService) http.HandlerFunc {
 
 func leaderboardHandler(us userService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		/* if r.Method != http.MethodGet {
+		if r.Method != http.MethodGet {
 			http.Error(w, ErrorResponse("Method not allowed."), http.StatusMethodNotAllowed)
 			return
-		} */
+		}
 
 		ctx := context.Background()
 		data, err := us.Leaderboard(ctx)
