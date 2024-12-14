@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/redis/go-redis/v9"
 	"github.com/sonastea/WizardWarriors/pkg/config"
 	db "github.com/sonastea/WizardWarriors/pkg/database"
 	"github.com/sonastea/WizardWarriors/pkg/hub"
@@ -25,13 +24,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	redis := redis.NewClient(cfg.RedisOpts)
+	// redis := redis.NewClient(cfg.RedisOpts)
 	pool := db.NewConnPool(ctx, cfg.DBConnURI)
 
 	stores := hub.Stores{}
 	stores.UserStore = store.NewUserStore(pool)
 
-	hub, err := hub.New(cfg, stores, redis)
+	hub, err := hub.New(cfg, stores, nil)
 	if err != nil {
 		panic(err)
 	}
