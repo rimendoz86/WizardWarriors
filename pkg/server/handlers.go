@@ -26,9 +26,11 @@ func ErrorResponse(err string) string {
 }
 
 func enableCors(h http.Handler, origins []string, debug bool) http.Handler {
+	log.Printf("%+v: , origins \n", origins)
 	c := cors.New(cors.Options{
 		AllowedOrigins:   origins,
 		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodOptions},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
 		AllowCredentials: true,
 		Debug:            true,
 	})
