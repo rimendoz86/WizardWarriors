@@ -8,7 +8,7 @@ ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-$NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_WS_URL=${NEXT_PUBLIC_WS_URL:-$NEXT_PUBLIC_WS_URL}
 
 COPY ./ww-ui/package*.json ./
-RUN npm ci
+RUN npm ci --only=production
 
 FROM node:22-alpine AS builder
 WORKDIR /opt/ww-ui
@@ -36,7 +36,7 @@ RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs &&
 
 COPY --from=builder --chown=nextjs:nodejs /opt/ww-ui/.next/standalone ./standalone
 COPY --from=builder --chown=nextjs:nodejs /opt/ww-ui/.next/static standalone/.next/static
-COPY --from=builder /opt/ww-ui/public standalone/public
+COPY --from=builder --chown=nextjs:nodejs /opt/ww-ui/public standalone/public
 
 USER nextjs
 
