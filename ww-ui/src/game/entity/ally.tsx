@@ -31,6 +31,12 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
       // TODO: Projectile to hit ally
       console.log("health: ", this.health);
     });
+
+    for (let i = 0; i < scene.enemies.length; i++) {
+      scene.physics.add.overlap(this, scene.enemies[i], () =>
+        this.attackTarget(scene.enemies[i])
+      );
+    }
   }
 
   setLevel(level: number) {

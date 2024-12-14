@@ -36,7 +36,7 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     );
 
     for (let i = 0; i < scene.allies.length; i++) {
-      scene.physics.add.collider(this, scene.allies[i], () =>
+      scene.physics.add.overlap(this, scene.allies[i], () =>
         this.attackTarget(scene.allies[i])
       );
     }
