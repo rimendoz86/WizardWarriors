@@ -164,10 +164,10 @@ func playersaveHandler(us userService) http.HandlerFunc {
 
 func leaderboardHandler(us userService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
+		/* if r.Method != http.MethodGet {
 			http.Error(w, ErrorResponse("Method not allowed."), http.StatusMethodNotAllowed)
 			return
-		}
+		} */
 
 		ctx := context.Background()
 		data, err := us.Leaderboard(ctx)
