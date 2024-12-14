@@ -31,7 +31,7 @@ func (c *Config) Load(args []string) error {
 	fs.StringVar(&c.RedisURL, "REDIS_URL", "redis://localhost:6379/0", "redis url")
 
 	var allowedOrigins string
-	fs.StringVar(&allowedOrigins, "ALLOWED_ORIGINS", "http://ww.dev.localhost,http://localhost:3000,https://wizardwarriors.com", "comma-separated list of allowed origins for CORS")
+	fs.StringVar(&allowedOrigins, "ALLOWED_ORIGINS", "http://ww.dev.localhost,http://localhost:3000", "comma-separated list of allowed origins for CORS")
 
 	if err := fs.Parse(args); err != nil {
 		return err
