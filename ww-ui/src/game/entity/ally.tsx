@@ -65,7 +65,9 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
     this.scene.time.delayedCall(750, () => {
       this.clearTint();
       if (this.health <= 0) {
-        this.setActive(false).setVisible(false);
+        this.scene.time.delayedCall(150, () => {
+          this.setActive(false).setVisible(false);
+        });
         this.incPlayerKills();
       }
     });

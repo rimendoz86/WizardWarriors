@@ -50,10 +50,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.setTint(0xff6666);
     this.health -= damage;
 
-    this.scene.time.delayedCall(750, () => {
+    this.scene.time.delayedCall(350, () => {
       this.clearTint();
       if (this.health <= 0) {
-        this.setActive(false).setVisible(false);
+        this.scene.time.delayedCall(150, () => {
+          this.setActive(false).setVisible(false);
+        });
         this.incPlayerKills();
       }
     });
