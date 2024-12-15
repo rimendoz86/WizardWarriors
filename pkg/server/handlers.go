@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -108,6 +109,20 @@ func loginHandler(us userService) http.HandlerFunc {
 			return
 		}
 
+		userId, ok := ctx.Value("userId").(int)
+		if !ok {
+			http.Error(w, ErrorResponse("Error retrieving userId."), http.StatusInternalServerError)
+			return
+		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "ww-userId",
+			Value:    fmt.Sprintf("%d", userId),
+			Path:     "/",
+			Secure:   true,
+			SameSite: http.SameSiteLaxMode,
+		})
+
 		saves, err := us.PlayerSaves(ctx)
 		if err != nil {
 			log.Printf("%+v\n", err)
@@ -149,6 +164,43 @@ func playersaveHandler(us userService) http.HandlerFunc {
 		if err != nil {
 			log.Printf("%+v\n", err)
 			http.Error(w, ErrorResponse(err.Error()), http.StatusInternalServerError)
+			return
+		}
+
+		response := APIResponse{
+			Success: true,
+			Data:    save,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+	}
+}
+
+func saveGameHandler(us userService) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, ErrorResponse("Method not allowed."), http.StatusMethodNotAllowed)
+			return
+		}
+		var stats store.GameStats
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Invalid request.", http.StatusBadRequest)
+			return
+		}
+		defer r.Body.Close()
+
+		if err := json.Unmarshal(body, &stats); err != nil {
+			http.Error(w, "Invalid json format.", http.StatusBadRequest)
+			return
+		}
+
+		ctx := context.Background()
+		save, err := us.SaveGame(ctx, stats)
+		if err != nil {
+			log.Printf("[Save-Game] %+v\n", err)
+			http.Error(w, ErrorResponse("Error saving game."), http.StatusInternalServerError)
 			return
 		}
 

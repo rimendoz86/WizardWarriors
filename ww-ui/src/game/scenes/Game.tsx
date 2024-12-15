@@ -3,7 +3,7 @@ import Player from "src/game/entity/player";
 import { getGameStats } from "src/state";
 import { GameStats } from "src/types/index.types";
 import { EventBus } from "../EventBus";
-import { ANIMS, CONSTANTS, ENTITY } from "../constants";
+import { CONSTANTS, ENTITY } from "../constants";
 import Ally from "../entity/ally";
 import Enemy from "../entity/enemy";
 import Slime from "../entity/slime";
@@ -68,6 +68,19 @@ export class Game extends Scene {
     new entityClass(this, spawnX, spawnY, entityType);
   }
 
+  gameOver() {
+    this.player?.destroy();
+    this.allies.forEach((ally) => ally.destroy());
+    this.enemies.forEach((enemy) => enemy.destroy());
+
+    this.allies = [];
+    this.enemies = [];
+    this.player = null;
+
+    this.scene.stop();
+    this.scene.start(CONSTANTS.SCENES.GAME_OVER);
+  }
+
   spawnAlly = () => {
     this.spawnEntity(Ally, ENTITY.ALLY, this.allies);
   };
@@ -114,115 +127,6 @@ export class Game extends Scene {
     this.elevationLayer?.setCollisionBetween(107, 109);
 
     this.player = new Player(this, 640, 310, ENTITY.PLAYER);
-
-    // PLAYER ANIMATIONS
-    this.anims.create({
-      key: ANIMS.PLAYER.IDLE,
-      frames: [{ key: ENTITY.PLAYER, frame: 1 }],
-      frameRate: 24,
-    });
-
-    this.anims.create({
-      key: ANIMS.PLAYER.UP,
-      frames: this.anims.generateFrameNumbers(ENTITY.PLAYER, {
-        start: 18,
-        end: 20,
-      }),
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: ANIMS.PLAYER.DOWN,
-      frames: this.anims.generateFrameNumbers(ENTITY.PLAYER, {
-        start: 0,
-        end: 2,
-      }),
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: ANIMS.PLAYER.LEFT,
-      frames: this.anims.generateFrameNumbers(ENTITY.PLAYER, {
-        start: 6,
-        end: 8,
-      }),
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: ANIMS.PLAYER.RIGHT,
-      frames: this.anims.generateFrameNumbers(ENTITY.PLAYER, {
-        start: 12,
-        end: 14,
-      }),
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    // ALLY ANIMATIONS
-    this.anims.create({
-      key: ANIMS.ALLY.IDLE,
-      frames: [{ key: ENTITY.ALLY, frame: 0 }],
-      frameRate: 24,
-    });
-
-    this.anims.create({
-      key: ANIMS.ALLY.UP,
-      frames: [
-        { key: ENTITY.ALLY, frame: 2 },
-        { key: ENTITY.ALLY, frame: 5 },
-        { key: ENTITY.ALLY, frame: 8 },
-      ],
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: ANIMS.ALLY.DOWN,
-      frames: [
-        { key: ENTITY.ALLY, frame: 0 },
-        { key: ENTITY.ALLY, frame: 3 },
-        { key: ENTITY.ALLY, frame: 6 },
-      ],
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: ANIMS.ALLY.LEFT,
-      frames: [
-        { key: ENTITY.ALLY, frame: 1 },
-        { key: ENTITY.ALLY, frame: 4 },
-        { key: ENTITY.ALLY, frame: 7 },
-      ],
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: ANIMS.ALLY.RIGHT,
-      frames: [
-        { key: ENTITY.ALLY, frame: 1 },
-        { key: ENTITY.ALLY, frame: 4 },
-        { key: ENTITY.ALLY, frame: 7 },
-      ],
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    // SLIME ANIMATIONS
-    this.anims.create({
-      key: ANIMS.SLIME.IDLE,
-      frames: this.anims.generateFrameNumbers(ENTITY.ENEMY.SLIME, {
-        start: 0,
-        end: 3,
-      }),
-      frameRate: 8,
-      repeat: -1,
-    });
 
     this.time.addEvent({
       delay: 5000,

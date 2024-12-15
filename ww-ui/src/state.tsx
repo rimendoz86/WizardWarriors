@@ -30,7 +30,3 @@ export const setGameStats = (updater: (prev: GameStats) => GameStats) => {
 };
 
 export const getStore = () => store;
-
-// TODO:
-// Send game stats to the backend.
-// Allies and enemies need damage capability and health.

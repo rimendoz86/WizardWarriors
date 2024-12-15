@@ -34,6 +34,7 @@ type userService interface {
 	PlayerSave(ctx context.Context, game_id int) (store.PlayerSaveResponse, error)
 	PlayerSaves(ctx context.Context) ([]store.PlayerSaveResponse, error)
 	Leaderboard(context.Context) ([]store.GameStatsResponse, error)
+	SaveGame(ctx context.Context, game_stats store.GameStats) (store.GameStats, error)
 }
 
 func ServeWs(h *hub.Hub, w http.ResponseWriter, r *http.Request) {
@@ -61,6 +62,7 @@ func NewServer(cfg *config.Config, hub *hub.Hub, us userService) (*Server, error
 
 	router.Handle("/api/leaderboard", enableCors(leaderboardHandler(us), cfg.AllowedOrigins, cfg.Debug))
 	router.Handle("/api/player-save", enableCors(playersaveHandler(us), cfg.AllowedOrigins, cfg.Debug))
+	router.Handle("/api/save-game", enableCors(saveGameHandler(us), cfg.AllowedOrigins, cfg.Debug))
 	router.Handle("/api/register", enableCors(registerHandler(us), cfg.AllowedOrigins, cfg.Debug))
 	router.Handle("/api/login", enableCors(loginHandler(us), cfg.AllowedOrigins, cfg.Debug))
 

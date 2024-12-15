@@ -5,6 +5,12 @@ import { PlayerSaveResponse } from "src/types/index.types";
 import { useAtom } from "jotai";
 import { gameStatsAtom } from "src/state";
 
+const getCookie = (name: string) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift();
+};
+
 const PlayerForm = ({
   setPlayable,
 }: {
@@ -30,6 +36,11 @@ const PlayerForm = ({
       if (res.success) {
         if (!res.data) handlePlayGame();
         setSaves(res.data);
+        setGameStats((prev) => ({
+          ...prev,
+          user_id: parseInt(getCookie("ww-userId") || "0"),
+          username,
+        }));
       } else {
         setError(res.error || "Error logging in.");
       }
@@ -41,6 +52,11 @@ const PlayerForm = ({
     await apiService?.registerUser({ username, password }).then((res) => {
       if (res.success) {
         setPlayable(true);
+        setGameStats((prev) => ({
+          ...prev,
+          user_id: res.data!.id,
+          username,
+        }));
       }
     });
   };

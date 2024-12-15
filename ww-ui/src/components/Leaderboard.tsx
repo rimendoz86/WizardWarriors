@@ -38,7 +38,7 @@ const Leaderboard = ({ data }: { data: GameStatsResponse[] }) => {
             </div>
           ))
         : data.slice(0, 15).map((player, index) => (
-            <div key={player.username} className={styles.playerRow}>
+            <div key={player.id} className={styles.playerRow}>
               <span className={styles.rank}>{index + 1}</span>
               <span className={styles.username}>{player.username}</span>
               <span>{player.player_level}</span>

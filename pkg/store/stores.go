@@ -8,6 +8,22 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+type GameStats struct {
+	GameID             int       `json:"game_id"`
+	Username           string    `json:"username"`
+	UserID             int       `json:"user_id"`
+	TeamDeaths         int       `json:"team_deaths"`
+	TeamKills          int       `json:"team_kills"`
+	PlayerLevel        int       `json:"player_level"`
+	PlayerKills        int       `json:"player_kills"`
+	PlayerKillsAtLevel int       `json:"player_kills_at_level"`
+	TotalAllies        int       `json:"total_allies"`
+	TotalEnemies       int       `json:"total_enemies"`
+	IsGameOver         bool      `json:"is_game_over"`
+	GameCreatedAt      time.Time `json:"game_created_at"`
+	GameUpdatedAt      time.Time `json:"game_updated_at"`
+}
+
 type GameStatsResponse struct {
 	ID                 int       `json:"id"`
 	Username           string    `json:"username"`
@@ -67,6 +83,7 @@ type userStore interface {
 	PlayerSaves(ctx context.Context) ([]PlayerSaveResponse, error)
 	GetAll()
 	Leaderboard(ctx context.Context) ([]GameStatsResponse, error)
+	SaveGame(ctx context.Context, game_stats GameStats) (PlayerSaveResponse, error)
 }
 
 type UserStore struct {
@@ -104,7 +121,7 @@ func (us *UserStore) Login(ctx context.Context, username, password string) (cont
 
 func (us *UserStore) PlayerSave(ctx context.Context, game_id int) (PlayerSaveResponse, error) {
 	query := `
-    SELECT
+    SELECT DISTINCT ON (ps.id)
 			ps.id,
 			ps.user_id,
 			ps.max_level,
@@ -165,7 +182,7 @@ func (us *UserStore) PlayerSaves(ctx context.Context) ([]PlayerSaveResponse, err
 
 	fmt.Println("User id: ", userId)
 	query := `
-    SELECT
+    SELECT DISTINCT ON (ps.id)
 			ps.id,
 			ps.user_id,
 			ps.max_level,
@@ -295,4 +312,83 @@ func (us *UserStore) Leaderboard(ctx context.Context) ([]GameStatsResponse, erro
 	}
 
 	return results, nil
+}
+
+func (us *UserStore) SaveGame(ctx context.Context, game_stats GameStats) (GameStats, error) {
+	gameStatsQuery := `
+		INSERT INTO game_stats (
+			user_id,
+			team_deaths,
+			team_kills,
+			player_level,
+			player_kills,
+			player_kills_at_level,
+			total_allies,
+			total_enemies,
+			is_game_over,
+			created_at,
+			updated_at,
+			is_active
+		)
+		VALUES
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+		RETURNING
+			user_id, team_deaths, team_kills, player_level,
+      player_kills, player_kills_at_level, total_allies, total_enemies,
+      is_game_over, created_at, updated_at;
+	`
+
+	playerSaveQuery := `
+		INSERT INTO player_saves (
+			user_id,
+			max_level,
+			created_at,
+			created_by,
+			updated_at,
+			updated_by,
+			is_active
+		)
+		VALUES
+			($1, $2, CURRENT_TIMESTAMP, $3, CURRENT_TIMESTAMP, $3, TRUE)
+		RETURNING user_id, max_level, created_at, updated_at;
+	`
+
+	tx, err := us.pool.Begin(ctx)
+	if err != nil {
+		return GameStats{}, fmt.Errorf("Failed to start transaction: %w", err)
+	}
+
+	var gs GameStats
+	err = tx.QueryRow(
+		ctx,
+		gameStatsQuery,
+		game_stats.UserID, game_stats.TeamDeaths, game_stats.TeamKills,
+		game_stats.PlayerLevel, game_stats.PlayerKills, game_stats.PlayerKillsAtLevel,
+		game_stats.TotalAllies, game_stats.TotalEnemies, game_stats.IsGameOver,
+		game_stats.GameCreatedAt, game_stats.GameUpdatedAt, true,
+	).Scan(
+		&gs.UserID, &gs.TeamDeaths, &gs.TeamKills, &gs.PlayerLevel, &gs.PlayerKills,
+		&gs.PlayerKillsAtLevel, &gs.TotalAllies, &gs.TotalEnemies, &gs.IsGameOver, &gs.GameCreatedAt,
+		&gs.GameUpdatedAt)
+	if err != nil {
+		return GameStats{}, fmt.Errorf("Failed to save game stats: %w", err)
+	}
+	defer tx.Rollback(ctx)
+
+	var ps PlayerSaveResponse
+	err = tx.QueryRow(
+		ctx,
+		playerSaveQuery,
+		game_stats.UserID, game_stats.PlayerLevel, game_stats.Username,
+	).Scan(&ps.UserID, &ps.MaxLevel, &ps.CreatedAt, &ps.UpdatedAt)
+	if err != nil {
+		return GameStats{}, fmt.Errorf("Failed to save player save: %w", err)
+	}
+
+	err = tx.Commit(ctx)
+	if err != nil {
+		return GameStats{}, fmt.Errorf("Failed to commit transaction: %w", err)
+	}
+
+	return gs, nil
 }

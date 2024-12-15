@@ -70,4 +70,5 @@ export interface ApiResponse<T> {
 }
 
 export type GetPlayerSaveApiResponse = ApiResponse<PlayerSaveResponse>;
+export type SavePlayerSaveApiResponse = GetPlayerSaveApiResponse;
 export type PlayerSaveApiResponse = ApiResponse<PlayerSaveResponse[]>;

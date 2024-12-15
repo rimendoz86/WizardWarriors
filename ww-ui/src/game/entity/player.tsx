@@ -9,7 +9,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   declare scene: GameScene;
 
   level: number = 1;
-  health: number = 100;
+  // health: number = 100;
+  health: number = 0;
   speed: number = 100;
   attack: number = 1;
 
@@ -56,7 +57,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.scene.time.delayedCall(150, () => {
           this.setActive(false).setVisible(false);
         });
-        this.incPlayerKills();
+        this.scene.gameOver();
       }
     });
   };
