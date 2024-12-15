@@ -29,7 +29,6 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
 
     scene.physics.add.overlap(this, scene.player!, () => {
       // TODO: Projectile to hit ally
-      console.log("health: ", this.health);
     });
 
     for (let i = 0; i < scene.enemies.length; i++) {
@@ -38,6 +37,12 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
       );
     }
   }
+
+  private setDead = () => {
+    this.setActive(false).setVisible(false);
+    this.scene.removeFromAllies(this);
+    this.destroy();
+  };
 
   setLevel(level: number) {
     this.level = level;
@@ -74,7 +79,9 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
   };
 
   moveToTarget = () => {
-    const player = this.scene.player!;
+    if (!this.scene.player) return;
+
+    const player = this.scene.player;
     const playerBounds = player.getBounds();
     const distance = Phaser.Math.Distance.Between(
       this.x,

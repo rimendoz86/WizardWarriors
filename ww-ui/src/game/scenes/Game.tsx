@@ -76,6 +76,20 @@ export class Game extends Scene {
     this.spawnEntity(Slime, ENTITY.ENEMY.SLIME, this.enemies);
   };
 
+  removeFromAllies = (ally: Ally) => {
+    const index = this.allies.indexOf(ally);
+    if (index > -1) {
+      this.allies.splice(index, 1);
+    }
+  };
+
+  removeFromEnemies = (enemy: Enemy) => {
+    const index = this.enemies.indexOf(enemy);
+    if (index > -1) {
+      this.enemies.splice(index, 1);
+    }
+  };
+
   create() {
     this.input.keyboard?.addKeys({
       w: Phaser.Input.Keyboard.KeyCodes.W,
