@@ -220,6 +220,8 @@ func saveGameHandler(us userService) http.HandlerFunc {
 			return
 		}
 
+		log.Printf("ww-userId cookie: %+v, value: %+v \n", cookie, cookie.Value)
+
 		userID, err := strconv.Atoi(cookie.Value)
 		if err != nil {
 			http.Error(w, ErrorResponse("Invalid cookie value."), http.StatusBadRequest)
