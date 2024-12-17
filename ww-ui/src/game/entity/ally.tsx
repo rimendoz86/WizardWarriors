@@ -1,7 +1,15 @@
+import { setGameStats } from "src/state";
 import { Game as GameScene } from "../scenes/Game";
+import Enemy from "./enemy";
+import { GameStats } from "src/types/index.types";
 
 export default class Ally extends Phaser.Physics.Arcade.Sprite {
   declare scene: GameScene;
+
+  level: number = 1;
+  health: number = 100;
+  speed: number = 100;
+  attack: number = 2;
 
   minDistanceToPlayer: number = 20;
 
@@ -13,10 +21,67 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
 
     this.setScale(2);
     this.setCollideWorldBounds(true);
+
+    scene.allies.push(this);
+
+    scene.physics.add.collider(this, scene.collisionLayer!);
+    scene.physics.add.collider(this, scene.elevationLayer!);
+
+    scene.physics.add.overlap(this, scene.player!, () => {
+      // TODO: Projectile to hit ally
+    });
+
+    for (let i = 0; i < scene.enemies.length; i++) {
+      scene.physics.add.overlap(this, scene.enemies[i], () =>
+        this.attackTarget(scene.enemies[i])
+      );
+    }
   }
 
+  private setDead = () => {
+    this.setActive(false).setVisible(false);
+    this.scene.removeFromAllies(this);
+    this.destroy();
+  };
+
+  setLevel(level: number) {
+    this.level = level;
+  }
+
+  setHealth(health: number) {
+    this.health = health;
+  }
+
+  incPlayerKills = () => {
+    setGameStats((prev: GameStats) => ({
+      ...prev,
+      player_kills: prev.player_kills + 1,
+    }));
+  };
+
+  attackTarget = (target: Enemy) => {
+    target.takeDamage(this.attack);
+  };
+
+  takeDamage = (damage: number) => {
+    this.setTint(0xff6666);
+    this.health -= damage;
+
+    this.scene.time.delayedCall(750, () => {
+      this.clearTint();
+      if (this.health <= 0) {
+        this.scene.time.delayedCall(150, () => {
+          this.setActive(false).setVisible(false);
+        });
+        this.incPlayerKills();
+      }
+    });
+  };
+
   moveToTarget = () => {
-    const player = this.scene.player!;
+    if (!this.scene.player) return;
+
+    const player = this.scene.player;
     const playerBounds = player.getBounds();
     const distance = Phaser.Math.Distance.Between(
       this.x,

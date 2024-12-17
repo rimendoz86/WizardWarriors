@@ -1,7 +1,10 @@
 import {
   ApiResponse,
+  GameStats,
   GameStatsResponse,
+  GetPlayerSaveApiResponse,
   PlayerSaveApiResponse,
+  SavePlayerSaveApiResponse,
   UserCredentials,
   UserResponse,
 } from "src/types/index.types";
@@ -84,6 +87,53 @@ class ApiService {
       return this.handleError(error);
     }
   }
+
+  async getPlayerSave(gameId: number): Promise<GetPlayerSaveApiResponse> {
+    try {
+      const response = await fetch(this.baseUrl + "/api/player-save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ game_id: gameId }),
+      });
+
+      const result: GetPlayerSaveApiResponse = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to get player save.");
+      }
+
+      return result;
+    } catch (error: unknown) {
+      return this.handleError(error);
+    }
+  }
+
+  async saveGame(gamestats: GameStats): Promise<SavePlayerSaveApiResponse> {
+    try {
+      const response = await fetch(this.baseUrl + "/api/save-game", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(gamestats),
+        credentials: "include",
+      });
+
+      const result: SavePlayerSaveApiResponse = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to save.");
+      }
+
+      return result;
+    } catch (error: unknown) {
+      return this.handleError(error);
+    }
+  }
+
+  // TODO: Save unfinished game using existing game_id, different scene with a save button.
 
   private handleError<T>(error: unknown): ApiResponse<T> {
     if (error instanceof Error) {

@@ -1,14 +1,23 @@
-import { Dispatch, SetStateAction, useState } from "react";
-import styles from "./PlayerForm.module.css";
 import useApiService from "@hooks/useApiService";
+import { useAtom } from "jotai";
+import { Dispatch, SetStateAction, useState } from "react";
+import { gameStatsAtom } from "src/state";
 import { PlayerSaveResponse } from "src/types/index.types";
+import styles from "./PlayerForm.module.css";
+
+const getCookie = (name: string): string | undefined => {
+  const cookies = document.cookie.split("; ");
+  for (const cookie of cookies) {
+    const [key, value] = cookie.split("=");
+    if (key === name) return decodeURIComponent(value);
+  }
+  return undefined;
+};
 
 const PlayerForm = ({
   setPlayable,
-  setLoading,
 }: {
   setPlayable: Dispatch<SetStateAction<boolean | undefined>>;
-  setLoading: Dispatch<SetStateAction<boolean | undefined>>;
 }) => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -19,17 +28,22 @@ const PlayerForm = ({
   const [selectedSave, setSelectedSave] = useState<PlayerSaveResponse | null>(
     null
   );
+
   const disableButton = !username || !password;
   const apiService = useApiService();
+  const [_gameStats, setGameStats] = useAtom(gameStatsAtom);
 
   const login = async (e: React.MouseEvent) => {
     e.preventDefault();
-    setLoading(true);
     await apiService?.loginUser({ username, password }).then((res) => {
-      setLoading(false);
       if (res.success) {
-        if (!res.data) handlePlayGame(true);
+        if (!res.data) handlePlayGame();
         setSaves(res.data);
+        setGameStats((prev) => ({
+          ...prev,
+          user_id: parseInt(getCookie("ww-userId") || "-1"),
+          username,
+        }));
       } else {
         setError(res.error || "Error logging in.");
       }
@@ -38,11 +52,16 @@ const PlayerForm = ({
 
   const register = async (e: React.MouseEvent) => {
     e.preventDefault();
-    setLoading(true);
     await apiService?.registerUser({ username, password }).then((res) => {
-      setLoading(false);
       if (res.success) {
         setPlayable(true);
+        setGameStats((prev) => ({
+          ...prev,
+          user_id: parseInt(getCookie("ww-userId") || "-1"),
+          username: username,
+        }));
+      } else {
+        setError(res.error || "Error registering.");
       }
     });
   };
@@ -52,29 +71,33 @@ const PlayerForm = ({
   };
 
   const playGame = () => {
-    setLoading(true);
     setPlayable(true);
   };
 
-  const handlePlayGame = (forceStart: boolean) => {
-    if (forceStart) {
-      playGame();
-    }
-
+  const handlePlayGame = async () => {
     if (selectedSave) {
-      // TODO: Should we store this in a cookie or session storage?
-      sessionStorage.setItem(
-        "playerGameStats",
-        JSON.stringify({
-          userId: selectedSave.user_id,
-          saveId: selectedSave.id,
-          maxLevel: selectedSave.max_level,
-          createdAt: selectedSave.created_at,
-          updatedAt: selectedSave.updated_at,
-        })
-      );
-      playGame();
+      const save = await apiService?.getPlayerSave(selectedSave.game_id);
+      if (save?.data?.is_game_over || !save?.data?.game_is_active) {
+        alert("This save is no longer playable.");
+        return;
+      }
+      setGameStats({
+        game_id: save.data.game_id,
+        username,
+        user_id: save.data.user_id,
+        team_deaths: save.data.team_deaths,
+        team_kills: save.data.team_kills,
+        player_level: save.data.player_level,
+        player_kills: save.data.player_kills,
+        player_kills_at_level: save.data.player_kills_at_level,
+        total_allies: save.data.total_allies,
+        total_enemies: save.data.total_enemies,
+        is_game_over: save.data.is_game_over,
+        game_created_at: save.data.game_created_at,
+        game_updated_at: save.data.game_updated_at,
+      });
     }
+    playGame();
   };
 
   if (saves) {
@@ -82,25 +105,47 @@ const PlayerForm = ({
       <div className={styles.savesContainer}>
         <h2>Player Saves</h2>
         <div className={styles.savesGrid}>
-          {saves.map((save) => (
-            <div
-              key={save.id}
-              className={`${styles.save} ${selectedSave?.id === save.id ? styles.selectedSave : ""}`}
-              onClick={() => handleSaveSelection(save)}
-            >
-              <p>Save ID: {save.id}</p>
-              <p>
-                User ID: <span className={styles.value}>{save.user_id}</span>
-              </p>
-              <p>
-                Max Level:{" "}
-                <span className={styles["max-level"]}>{save.max_level}</span>
-              </p>
-              <p>Created: {new Date(save.created_at).toLocaleString()}</p>
-              <p>Updated: {new Date(save.updated_at).toLocaleString()}</p>
-              <p>Active: {save.is_active ? "Yes" : "No"}</p>
-            </div>
-          ))}
+          {saves.map((save) => {
+            const isDisabled = !save.game_is_active || save.is_game_over;
+
+            return (
+              <div
+                key={save.game_id}
+                className={`${styles.save} ${selectedSave?.game_id === save.game_id ? styles.selectedSave : ""} ${
+                  isDisabled ? styles.disabledSave : ""
+                }`}
+                onClick={() => {
+                  if (!isDisabled) handleSaveSelection(save);
+                }}
+              >
+                <p>Game ID: {save.game_id}</p>
+                <p>
+                  User ID: <span className={styles.value}>{save.user_id}</span>
+                </p>
+                <p>
+                  Total Kills:{" "}
+                  <span className={styles["max-level"]}>
+                    {save.player_kills}
+                  </span>
+                </p>
+                <p>
+                  Total Allies:{" "}
+                  <span className={styles["max-level"]}>
+                    {save.total_allies}
+                  </span>
+                </p>
+                <p>
+                  Total Enemies:{" "}
+                  <span className={styles["max-level"]}>
+                    {save.total_enemies}
+                  </span>
+                </p>
+                <p>Created: {new Date(save.created_at).toLocaleString()}</p>
+                <p>Updated: {new Date(save.updated_at).toLocaleString()}</p>
+                <p>Game Over: {save.is_game_over ? "Yes" : "No"}</p>
+              </div>
+            );
+          })}
         </div>
         <div className={styles.buttonContainer}>
           <button
@@ -109,12 +154,8 @@ const PlayerForm = ({
           >
             Back
           </button>
-          <button
-            className={`${styles.button} ${!selectedSave ? styles.grayButton : ""}`}
-            onClick={() => handlePlayGame(false)}
-            disabled={!selectedSave}
-          >
-            Play
+          <button className={styles.button} onClick={() => handlePlayGame()}>
+            {selectedSave ? "Continue" : "Start New Game"}
           </button>
         </div>
       </div>

@@ -29,10 +29,12 @@ type Server struct {
 }
 
 type userService interface {
-	Add(username, password string) error
+	Add(username, password string) (userID int, err error)
 	Login(ctx context.Context, username, password string) (context.Context, error)
+	PlayerSave(ctx context.Context, game_id int) (store.PlayerSaveResponse, error)
 	PlayerSaves(ctx context.Context) ([]store.PlayerSaveResponse, error)
 	Leaderboard(context.Context) ([]store.GameStatsResponse, error)
+	SaveGame(ctx context.Context, game_stats store.GameStats) (store.GameStats, error)
 }
 
 func ServeWs(h *hub.Hub, w http.ResponseWriter, r *http.Request) {
@@ -59,6 +61,8 @@ func NewServer(cfg *config.Config, hub *hub.Hub, us userService) (*Server, error
 	router.Handle("/healthcheck", enableCors(healthcheckHandler(), cfg.AllowedOrigins, cfg.Debug))
 
 	router.Handle("/api/leaderboard", enableCors(leaderboardHandler(us), cfg.AllowedOrigins, cfg.Debug))
+	router.Handle("/api/player-save", enableCors(playersaveHandler(us), cfg.AllowedOrigins, cfg.Debug))
+	router.Handle("/api/save-game", enableCors(saveGameHandler(us), cfg.AllowedOrigins, cfg.Debug))
 	router.Handle("/api/register", enableCors(registerHandler(us), cfg.AllowedOrigins, cfg.Debug))
 	router.Handle("/api/login", enableCors(loginHandler(us), cfg.AllowedOrigins, cfg.Debug))
 
@@ -97,4 +101,15 @@ func (s *Server) Start(hub *hub.Hub) {
 	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("HTTP server ListenAndServe: %v", err)
 	}
+}
+
+func isProduction() bool {
+	return os.Getenv("ENV") == "production"
+}
+
+func getDomain() string {
+	if isProduction() {
+		return ".wizardwarriors.com"
+	}
+	return ""
 }

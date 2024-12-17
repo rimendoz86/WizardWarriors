@@ -1,14 +1,16 @@
-import { Physics, Scene } from "phaser";
+import { Scene } from "phaser";
 import Player from "src/game/entity/player";
+import { getGameStats } from "src/state";
+import { GameStats } from "src/types/index.types";
 import { EventBus } from "../EventBus";
-import { ANIMS, CONSTANTS, ENTITY } from "../constants";
+import { CONSTANTS, ENTITY } from "../constants";
+import Ally from "../entity/ally";
 import Enemy from "../entity/enemy";
 import Slime from "../entity/slime";
-import Ally from "../entity/ally";
+import { Game as GameScene } from "../scenes/Game";
 
 export class Game extends Scene {
-  cursors: object | null;
-  player: Physics.Arcade.Sprite | null;
+  player: Player | null;
   allies: Ally[] = [];
   enemies: Enemy[] = [];
 
@@ -18,33 +20,101 @@ export class Game extends Scene {
   constructor() {
     super(CONSTANTS.SCENES.GAME);
 
-    this.cursors = null;
     this.player = null;
   }
 
-  spawnEnemy = () => {
+  loadGameStats = (gameStats: GameStats) => {
+    const { player_level, total_allies, total_enemies } = gameStats;
+
+    this.player?.setLevel(player_level);
+
+    for (let i = 0; i < total_allies; i++) {
+      this.spawnAlly();
+    }
+
+    for (let i = 0; i < total_enemies; i++) {
+      this.spawnEnemy();
+    }
+  };
+
+  private spawnEntity<T extends Phaser.GameObjects.Sprite>(
+    entityClass: new (
+      scene: GameScene,
+      x: number,
+      y: number,
+      type: string
+    ) => T,
+    entityType: string,
+    existingEntities: T[]
+  ): void {
     let spawnX: number, spawnY: number;
-    let isOverlapping;
+    let isOverlapping: boolean;
 
     do {
       spawnX = Math.random() * this.physics.world.bounds.right;
       spawnY = Math.random() * this.physics.world.bounds.height;
 
-      isOverlapping = this.enemies.some((existingEnemy) => {
+      isOverlapping = existingEntities.some((existingEntity) => {
         const distance = Phaser.Math.Distance.Between(
           spawnX,
           spawnY,
-          existingEnemy.x,
-          existingEnemy.y
+          existingEntity.x,
+          existingEntity.y
         );
-        return distance < existingEnemy.width;
+        return distance < existingEntity.width;
       });
     } while (isOverlapping);
 
-    new Slime(this, spawnX, spawnY, ENTITY.ENEMY.SLIME);
+    new entityClass(this, spawnX, spawnY, entityType);
+  }
+
+  private setupBeforeUnload = (): void => {
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      EventBus.emit("save-game", getGameStats());
+    };
+
+    window.addEventListener("beforeunload", onBeforeUnload);
+  };
+
+  gameOver() {
+    this.player?.destroy();
+    this.allies.forEach((ally) => ally.destroy());
+    this.enemies.forEach((enemy) => enemy.destroy());
+
+    this.allies = [];
+    this.enemies = [];
+    this.player = null;
+
+    this.scene.stop();
+    this.scene.start(CONSTANTS.SCENES.GAME_OVER);
+  }
+
+  spawnAlly = () => {
+    this.spawnEntity(Ally, ENTITY.ALLY, this.allies);
+  };
+
+  spawnEnemy = () => {
+    this.spawnEntity(Slime, ENTITY.ENEMY.SLIME, this.enemies);
+  };
+
+  removeFromAllies = (ally: Ally) => {
+    const index = this.allies.indexOf(ally);
+    if (index > -1) {
+      this.allies.splice(index, 1);
+    }
+  };
+
+  removeFromEnemies = (enemy: Enemy) => {
+    const index = this.enemies.indexOf(enemy);
+    if (index > -1) {
+      this.enemies.splice(index, 1);
+    }
   };
 
   create() {
+    this.setupBeforeUnload();
+
     this.input.keyboard?.addKeys({
       w: Phaser.Input.Keyboard.KeyCodes.W,
       a: Phaser.Input.Keyboard.KeyCodes.A,
@@ -69,125 +139,6 @@ export class Game extends Scene {
 
     this.player = new Player(this, 640, 310, ENTITY.PLAYER);
 
-    this.physics.add.collider(this.player, this.collisionLayer!);
-    this.physics.add.collider(this.player, this.elevationLayer!);
-
-    const ally = new Ally(this, 630, 305, ENTITY.ALLY);
-
-    this.physics.add.collider(ally, this.collisionLayer!);
-    this.physics.add.collider(ally, this.elevationLayer!);
-
-    this.allies.push(ally);
-
-    // PLAYER ANIMATIONS
-    this.anims.create({
-      key: ANIMS.PLAYER.IDLE,
-      frames: [{ key: ENTITY.PLAYER, frame: 1 }],
-      frameRate: 24,
-    });
-
-    this.anims.create({
-      key: ANIMS.PLAYER.UP,
-      frames: this.anims.generateFrameNumbers(ENTITY.PLAYER, {
-        start: 18,
-        end: 20,
-      }),
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: ANIMS.PLAYER.DOWN,
-      frames: this.anims.generateFrameNumbers(ENTITY.PLAYER, {
-        start: 0,
-        end: 2,
-      }),
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: ANIMS.PLAYER.LEFT,
-      frames: this.anims.generateFrameNumbers(ENTITY.PLAYER, {
-        start: 6,
-        end: 8,
-      }),
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: ANIMS.PLAYER.RIGHT,
-      frames: this.anims.generateFrameNumbers(ENTITY.PLAYER, {
-        start: 12,
-        end: 14,
-      }),
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    // ALLY ANIMATIONS
-    this.anims.create({
-      key: ANIMS.ALLY.IDLE,
-      frames: [{ key: ENTITY.ALLY, frame: 0 }],
-      frameRate: 24,
-    });
-
-    this.anims.create({
-      key: ANIMS.ALLY.UP,
-      frames: [
-        { key: ENTITY.ALLY, frame: 2 },
-        { key: ENTITY.ALLY, frame: 5 },
-        { key: ENTITY.ALLY, frame: 8 },
-      ],
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: ANIMS.ALLY.DOWN,
-      frames: [
-        { key: ENTITY.ALLY, frame: 0 },
-        { key: ENTITY.ALLY, frame: 3 },
-        { key: ENTITY.ALLY, frame: 6 },
-      ],
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: ANIMS.ALLY.LEFT,
-      frames: [
-        { key: ENTITY.ALLY, frame: 1 },
-        { key: ENTITY.ALLY, frame: 4 },
-        { key: ENTITY.ALLY, frame: 7 },
-      ],
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: ANIMS.ALLY.RIGHT,
-      frames: [
-        { key: ENTITY.ALLY, frame: 1 },
-        { key: ENTITY.ALLY, frame: 4 },
-        { key: ENTITY.ALLY, frame: 7 },
-      ],
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    // SLIME ANIMATIONS
-    this.anims.create({
-      key: ANIMS.SLIME.IDLE,
-      frames: this.anims.generateFrameNumbers(ENTITY.ENEMY.SLIME, {
-        start: 0,
-        end: 3,
-      }),
-      frameRate: 8,
-      repeat: -1,
-    });
-
     this.time.addEvent({
       delay: 5000,
       loop: true,
@@ -195,7 +146,9 @@ export class Game extends Scene {
       callbackScope: this,
     });
 
-    EventBus.emit("current-scene-ready", this);
+    this.loadGameStats(getGameStats());
+
+    EventBus?.emit("current-scene-ready", this);
   }
 
   update(time: number, delta: number) {
@@ -210,6 +163,3 @@ export class Game extends Scene {
     }
   }
 }
-
-// TODO:
-// Add friendlies, so we can start the movement logic from ally -> player & enemy -> player/ally

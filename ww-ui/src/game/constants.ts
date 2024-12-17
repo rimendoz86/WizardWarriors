@@ -1,6 +1,8 @@
 export const SCENES = {
   MENU: "MenuScene",
   GAME: "GameScene",
+  PRELOAD: "PreloadScene",
+  GAME_OVER: "GameOverScene",
 };
 
 export const ANIMS = {

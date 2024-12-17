@@ -30,8 +30,7 @@ ARG REDIS_URL
 ENV DATABASE_URL $DATABASE_URL
 ENV REDIS_URL $REDIS_URL
 
-RUN mkdir /opt/ww && \
-  apk add --no-cache curl=8.11.0-r2
+RUN mkdir /opt/ww && apk add --no-cache curl=8.11.1-r0
 WORKDIR /opt/ww
 
 COPY --from=builder /go/bin/goose /usr/local/bin/goose

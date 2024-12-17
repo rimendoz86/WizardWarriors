@@ -2,6 +2,8 @@ import usePhaserGame from "@hooks/usePhaserGame";
 import { useEffect, useRef } from "react";
 import { config } from "./config";
 import { EventBus } from "./EventBus";
+import { GameStats } from "src/types/index.types";
+import useApiService from "@hooks/useApiService";
 
 export interface IRefPhaserGame {
   game: Phaser.Game | null;
@@ -15,6 +17,8 @@ interface PhaserGameProps {
 const PhaserGame = ({ currentActiveScene }: PhaserGameProps) => {
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<IRefPhaserGame>({ game: null, scene: null });
+
+  const apiService = useApiService();
 
   usePhaserGame(config, gameRef);
 
@@ -40,6 +44,18 @@ const PhaserGame = ({ currentActiveScene }: PhaserGameProps) => {
       EventBus.removeListener("current-scene-ready");
     };
   }, [currentActiveScene]);
+
+  useEffect(() => {
+    const handleSaveGame = async (stats: GameStats) => {
+      const res = await apiService?.saveGame(stats);
+      console.log(res);
+    };
+
+    EventBus.on("save-game", handleSaveGame);
+    return () => {
+      EventBus.removeListener("save-game");
+    };
+  }, [apiService]);
 
   return <div ref={gameRef} />;
 };
