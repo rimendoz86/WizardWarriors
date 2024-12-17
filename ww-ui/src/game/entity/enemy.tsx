@@ -67,8 +67,10 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
 
   private setDead = () => {
     this.setActive(false).setVisible(false);
-    this.scene.removeFromEnemies(this);
-    this.incPlayerKills();
+    if (this.scene) {
+      this.scene.removeFromEnemies(this);
+      this.incPlayerKills();
+    }
     this.destroy();
   };
 
