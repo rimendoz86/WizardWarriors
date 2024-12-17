@@ -68,6 +68,15 @@ export class Game extends Scene {
     new entityClass(this, spawnX, spawnY, entityType);
   }
 
+  private setupBeforeUnload = (): void => {
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      EventBus.emit("save-game", getGameStats());
+    };
+
+    window.addEventListener("beforeunload", onBeforeUnload);
+  };
+
   gameOver() {
     this.player?.destroy();
     this.allies.forEach((ally) => ally.destroy());
@@ -104,6 +113,8 @@ export class Game extends Scene {
   };
 
   create() {
+    this.setupBeforeUnload();
+
     this.input.keyboard?.addKeys({
       w: Phaser.Input.Keyboard.KeyCodes.W,
       a: Phaser.Input.Keyboard.KeyCodes.A,

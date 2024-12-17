@@ -55,14 +55,16 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setTint(0xff6666);
     this.health = this.health - this.scene.player!.attack!;
 
-    this.scene.time.delayedCall(350, () => {
-      this.clearTint();
-      if (this.health <= 0) {
-        this.scene.time.delayedCall(150, () => {
-          this.setDead();
-        });
-      }
-    });
+    if (this.scene) {
+      this.scene.time.delayedCall(350, () => {
+        this.clearTint();
+        if (this.health <= 0) {
+          this.scene.time.delayedCall(150, () => {
+            this.setDead();
+          });
+        }
+      });
+    }
   };
 
   private setDead = () => {

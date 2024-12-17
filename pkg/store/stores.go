@@ -188,7 +188,7 @@ func (us *UserStore) PlayerSaves(ctx context.Context) ([]PlayerSaveResponse, err
 
 	fmt.Println("User id: ", userId)
 	query := `
-    SELECT DISTINCT ON (ps.id)
+    SELECT DISTINCT ON (gs.id, gs.is_game_over)
 			ps.id,
 			ps.user_id,
 			ps.max_level,
