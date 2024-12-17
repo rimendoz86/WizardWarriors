@@ -3,7 +3,7 @@ import styles from "./PlayerForm.module.css";
 import useApiService from "@hooks/useApiService";
 import { PlayerSaveResponse } from "src/types/index.types";
 import { useAtom } from "jotai";
-import { gameStatsAtom } from "src/state";
+import { gameStatsAtom, getGameStats } from "src/state";
 
 const getCookie = (name: string) => {
   const value = `; ${document.cookie}`;
@@ -69,6 +69,7 @@ const PlayerForm = ({
 
   const playGame = () => {
     setPlayable(true);
+    console.log(getGameStats());
   };
 
   const handlePlayGame = async () => {
