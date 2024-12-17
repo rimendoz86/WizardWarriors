@@ -107,21 +107,35 @@ const PlayerForm = ({
 
             return (
               <div
-                key={save.id}
-                className={`${styles.save} ${selectedSave?.id === save.id ? styles.selectedSave : ""} ${
+                key={save.game_id}
+                className={`${styles.save} ${selectedSave?.game_id === save.game_id ? styles.selectedSave : ""} ${
                   isDisabled ? styles.disabledSave : ""
                 }`}
                 onClick={() => {
                   if (!isDisabled) handleSaveSelection(save);
                 }}
               >
-                <p>Save ID: {save.id}</p>
+                <p>Game ID: {save.game_id}</p>
                 <p>
                   User ID: <span className={styles.value}>{save.user_id}</span>
                 </p>
                 <p>
-                  Max Level:{" "}
-                  <span className={styles["max-level"]}>{save.max_level}</span>
+                  Total Kills:{" "}
+                  <span className={styles["max-level"]}>
+                    {save.player_kills}
+                  </span>
+                </p>
+                <p>
+                  Total Allies:{" "}
+                  <span className={styles["max-level"]}>
+                    {save.total_allies}
+                  </span>
+                </p>
+                <p>
+                  Total Enemies:{" "}
+                  <span className={styles["max-level"]}>
+                    {save.total_enemies}
+                  </span>
                 </p>
                 <p>Created: {new Date(save.created_at).toLocaleString()}</p>
                 <p>Updated: {new Date(save.updated_at).toLocaleString()}</p>
