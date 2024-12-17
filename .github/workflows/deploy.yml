@@ -18,7 +18,8 @@ jobs:
         if: ${{ !contains(github.event.head_commit.modified, 'ww-ui/') }}
         run: |
           echo "Deploying ww-srv..."
-          curl --request GET '${{ secrets.COOLIFY_WW_SRV_WEBHOOK }}' \
+          curl --request GET \
+            --url '${{ secrets.COOLIFY_WW_SRV_WEBHOOK }}' \
             --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
 
   deploy-ww-ui:
@@ -32,5 +33,6 @@ jobs:
         if: contains(github.event.head_commit.modified, 'ww-ui/')
         run: |
           echo "Deploying ww-ui..."
-          curl --request GET '${{ secrets.COOLIFY_WW_UI_WEBHOOK }}' \
+          curl --request GET \
+            --url '${{ secrets.COOLIFY_WW_UI_WEBHOOK }}' \
             --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
