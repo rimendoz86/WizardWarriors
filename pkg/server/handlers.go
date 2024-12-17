@@ -80,7 +80,8 @@ func registerHandler(us userService) http.HandlerFunc {
 		http.SetCookie(w, &http.Cookie{
 			Name:     "ww-userId",
 			Value:    fmt.Sprintf("%d", userId),
-			Path:     ".wizardwarriors.com",
+			Path:     "/",
+			Domain:   getDomain(),
 			Secure:   true,
 			SameSite: http.SameSiteNoneMode,
 		})
@@ -132,7 +133,8 @@ func loginHandler(us userService) http.HandlerFunc {
 		http.SetCookie(w, &http.Cookie{
 			Name:     "ww-userId",
 			Value:    fmt.Sprintf("%d", userId),
-			Path:     ".wizardwarriors.com",
+			Path:     "/",
+			Domain:   getDomain(),
 			Secure:   true,
 			SameSite: http.SameSiteNoneMode,
 		})
@@ -229,9 +231,9 @@ func saveGameHandler(us userService) http.HandlerFunc {
 		}
 
 		if userID != stats.UserID {
-      http.Error(w, ErrorResponse("You are not authorized to save this game."), http.StatusUnauthorized)
-      return
-    }
+			http.Error(w, ErrorResponse("You are not authorized to save this game."), http.StatusUnauthorized)
+			return
+		}
 
 		ctx := context.Background()
 		save, err := us.SaveGame(ctx, stats)

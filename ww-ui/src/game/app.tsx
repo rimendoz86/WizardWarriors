@@ -47,7 +47,6 @@ const PhaserGame = ({ currentActiveScene }: PhaserGameProps) => {
 
   useEffect(() => {
     const handleSaveGame = async (stats: GameStats) => {
-      console.log("save-game: ", stats);
       const res = await apiService?.saveGame(stats);
       console.log(res);
     };

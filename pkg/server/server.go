@@ -102,3 +102,14 @@ func (s *Server) Start(hub *hub.Hub) {
 		log.Fatalf("HTTP server ListenAndServe: %v", err)
 	}
 }
+
+func isProduction() bool {
+	return os.Getenv("ENV") == "production"
+}
+
+func getDomain() string {
+	if isProduction() {
+		return ".wizardwarriors.com"
+	}
+	return ""
+}
