@@ -7,6 +7,7 @@
   overflow-y: auto;
   color: #e2e8f0;
   font-family: Arial, sans-serif;
+  height: calc(80vh);
 }
 
 .title {
@@ -17,6 +18,11 @@
   margin: 0;
   font-size: 1.3em;
   font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  height: 52px;
+  box-sizing: border-box;
 }
 
 .headerRow {
@@ -26,6 +32,12 @@
   font-weight: 600;
   padding: 12px;
   text-align: center;
+  position: sticky;
+  top: 52px;
+  z-index: 1;
+  box-sizing: border-box;
+  margin: 0;
+  border-bottom: 1px solid #374151;
 }
 
 .playerRow {
