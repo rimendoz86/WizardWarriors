@@ -226,6 +226,8 @@ func saveGameHandler(us userService) http.HandlerFunc {
 			return
 		}
 
+		fmt.Printf("cookie: %s, userID: %d\n", cookie.Value, userID)
+
 		if userID != stats.UserID {
       http.Error(w, ErrorResponse("Invalid cookie value."), http.StatusBadRequest)
       return
