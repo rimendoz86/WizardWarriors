@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "jotai": "^2.10.3",
     "next": "^15.0.3",
     "phaser": "^3.87.0",
     "react": "^18.3.1",

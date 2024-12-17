@@ -4,9 +4,10 @@
   background-color: #1e293b;
   border-radius: 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow-y: auto;
   color: #e2e8f0;
   font-family: Arial, sans-serif;
+  height: calc(80vh);
 }
 
 .title {
@@ -17,6 +18,11 @@
   margin: 0;
   font-size: 1.3em;
   font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  height: 52px;
+  box-sizing: border-box;
 }
 
 .headerRow {
@@ -26,6 +32,12 @@
   font-weight: 600;
   padding: 12px;
   text-align: center;
+  position: sticky;
+  top: 52px;
+  z-index: 1;
+  box-sizing: border-box;
+  margin: 0;
+  border-bottom: 1px solid #374151;
 }
 
 .playerRow {
@@ -64,7 +76,7 @@
 
 .username {
   font-weight: 600;
-  color: #3b82f6;
+  color: #488eff;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

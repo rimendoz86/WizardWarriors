@@ -1,5 +1,6 @@
 import { GameObjects, Scene } from "phaser";
-import { CONSTANTS, ENTITY } from "../constants";
+import { CONSTANTS } from "../constants";
+import { EventBus } from "../EventBus";
 
 export default class MenuScene extends Scene {
   startButton: GameObjects.Text | null = null;
@@ -12,41 +13,25 @@ export default class MenuScene extends Scene {
     this.scale.on("resize", this.resize, this);
   }
 
-  preload() {
-    this.load.image("tiles", "assets/DesertTilemap.png");
-    this.load.tilemapTiledJSON("map", "assets/map1.json");
-    this.load.spritesheet(ENTITY.PLAYER, "assets/player/player.png", {
-      frameWidth: 16,
-      frameHeight: 16,
-      startFrame: 0,
-      endFrame: 23,
-    });
-    this.load.spritesheet(ENTITY.ALLY, "assets/player/ally.png", {
-      frameWidth: 16,
-      frameHeight: 16,
-      startFrame: 9,
-      endFrame: 17,
-    });
-    this.load.spritesheet(ENTITY.ENEMY.SLIME, "assets/enemies/slime.png", {
-      frameWidth: 16,
-      frameHeight: 16,
-      startFrame: 0,
-      endFrame: 3,
-    });
-  }
-
   create() {
-    this.startButton = this.add.text(600, 320, "Start Game", {
-      fixedHeight: 40,
-      color: "#ff0",
-    });
+    this.startButton = this.add.text(
+      this.scale.width / 2,
+      this.scale.height / 2,
+      "Start Game",
+      {
+        fontSize: "32px",
+        color: "#ff0",
+      }
+    );
 
     this.startButton
       .setInteractive({ useHandCursor: true })
-      .setStyle({ fontStyle: "fff" })
+      .setOrigin(0.5)
       .on("pointerover", () => this.enterHoverState())
       .on("pointerout", () => this.enterRestState())
-      .on("pointerdown", () => this.scene.start(CONSTANTS.SCENES.GAME));
+      .on("pointerdown", () => this.scene.switch(CONSTANTS.SCENES.GAME));
+
+    EventBus?.emit("current-scene-ready", this);
   }
 
   enterHoverState() {
