@@ -226,6 +226,7 @@ func saveGameHandler(us userService) http.HandlerFunc {
 			return
 		}
 
+		fmt.Printf("%+v\n", userID != stats.UserID)
 		if userID != stats.UserID {
       http.Error(w, ErrorResponse("You are not authorized to save this game."), http.StatusUnauthorized)
       return
