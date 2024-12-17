@@ -76,7 +76,7 @@ type UserCredentials struct {
 }
 
 type userStore interface {
-	Add(username, password string) error
+	Add(username, password string) (int, error)
 	Remove()
 	Login(ctx context.Context, username, password string) (context.Context, error)
 	PlayerSave(ctx context.Context, game_id int) (PlayerSaveResponse, error)
@@ -94,13 +94,19 @@ func NewUserStore(pool *pgxpool.Pool) *UserStore {
 	return &UserStore{pool: pool}
 }
 
-func (us *UserStore) Add(username, password string) error {
+// Add adds a new user and returns the user id.
+func (us *UserStore) Add(username, password string) (int, error) {
 	query := `
-		INSERT INTO users (username, password)
-		VALUES ($1, $2)
+		INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id;
 	`
-	_, err := us.pool.Exec(context.Background(), query, username, password)
-	return err
+
+	var userID int
+	err := us.pool.QueryRow(context.Background(), query, username, password).Scan(&userID)
+	if err != nil {
+		return 0, fmt.Errorf("Failed to create user: %w", err)
+	}
+
+	return userID, err
 }
 
 func (us *UserStore) Remove() {}
@@ -389,6 +395,9 @@ func (us *UserStore) SaveGame(ctx context.Context, game_stats GameStats) (GameSt
 	if err != nil {
 		return GameStats{}, fmt.Errorf("Failed to commit transaction: %w", err)
 	}
+
+	// Username is not returned by the query
+	gs.Username = game_stats.Username
 
 	return gs, nil
 }

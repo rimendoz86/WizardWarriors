@@ -29,7 +29,7 @@ type Server struct {
 }
 
 type userService interface {
-	Add(username, password string) error
+	Add(username, password string) (userID int, err error)
 	Login(ctx context.Context, username, password string) (context.Context, error)
 	PlayerSave(ctx context.Context, game_id int) (store.PlayerSaveResponse, error)
 	PlayerSaves(ctx context.Context) ([]store.PlayerSaveResponse, error)

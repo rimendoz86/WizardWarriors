@@ -7,6 +7,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/rs/cors"
 	"github.com/sonastea/WizardWarriors/pkg/store"
@@ -64,16 +66,28 @@ func registerHandler(us userService) http.HandlerFunc {
 			return
 		}
 
-		err = us.Add(credentials.Username, credentials.Password)
+		userId, err := us.Add(credentials.Username, credentials.Password)
 		if err != nil {
-			http.Error(w, ErrorResponse("Error creating user."), http.StatusInternalServerError)
+			if strings.Contains(err.Error(), "23505") {
+				http.Error(w, ErrorResponse("This username already exists."), http.StatusInternalServerError)
+			} else {
+				http.Error(w, ErrorResponse("Error creating user."), http.StatusInternalServerError)
+			}
 			log.Println(err)
 			return
 		}
 
+		http.SetCookie(w, &http.Cookie{
+			Name:     "ww-userId",
+			Value:    fmt.Sprintf("%d", userId),
+			Path:     "/",
+			Secure:   true,
+			SameSite: http.SameSiteLaxMode,
+		})
+
 		response := APIResponse{
 			Success: true,
-			Data:    credentials,
+			Data:    json.RawMessage(fmt.Sprintf(`{"id": %v}`, userId)),
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -195,6 +209,27 @@ func saveGameHandler(us userService) http.HandlerFunc {
 			http.Error(w, "Invalid json format.", http.StatusBadRequest)
 			return
 		}
+
+		cookie, err := r.Cookie("ww-userId")
+		if err != nil {
+			if err == http.ErrNoCookie {
+				http.Error(w, ErrorResponse("Cookie not found."), http.StatusBadRequest)
+				return
+			}
+			http.Error(w, ErrorResponse("Error retrieving cookie."), http.StatusInternalServerError)
+			return
+		}
+
+		userID, err := strconv.Atoi(cookie.Value)
+		if err != nil {
+			http.Error(w, ErrorResponse("Invalid cookie value."), http.StatusBadRequest)
+			return
+		}
+
+		if userID != stats.UserID {
+      http.Error(w, ErrorResponse("Invalid cookie value."), http.StatusBadRequest)
+      return
+    }
 
 		ctx := context.Background()
 		save, err := us.SaveGame(ctx, stats)

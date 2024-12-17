@@ -54,9 +54,11 @@ const PlayerForm = ({
         setPlayable(true);
         setGameStats((prev) => ({
           ...prev,
-          user_id: res.data!.id,
-          username,
+          user_id: parseInt(getCookie("ww-userId") || "0"),
+          username: username,
         }));
+      } else {
+        setError(res.error || "Error registering.");
       }
     });
   };
