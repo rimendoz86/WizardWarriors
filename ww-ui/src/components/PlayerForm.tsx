@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction, useState } from "react";
-import styles from "./PlayerForm.module.css";
 import useApiService from "@hooks/useApiService";
-import { PlayerSaveResponse } from "src/types/index.types";
 import { useAtom } from "jotai";
-import { gameStatsAtom, getGameStats } from "src/state";
+import { Dispatch, SetStateAction, useState } from "react";
+import { gameStatsAtom } from "src/state";
+import { PlayerSaveResponse } from "src/types/index.types";
+import styles from "./PlayerForm.module.css";
 
 const getCookie = (name: string) => {
   const value = `; ${document.cookie}`;
@@ -54,7 +54,7 @@ const PlayerForm = ({
         setPlayable(true);
         setGameStats((prev) => ({
           ...prev,
-          user_id: parseInt(getCookie("ww-userId") || "0"),
+          user_id: parseInt(getCookie("ww-userId") || "-1"),
           username: username,
         }));
       } else {
@@ -68,8 +68,12 @@ const PlayerForm = ({
   };
 
   const playGame = () => {
+    setGameStats((prev) => ({
+      ...prev,
+      user_id: parseInt(getCookie("ww-userId") || "-1"),
+      username: username,
+    }));
     setPlayable(true);
-    console.log(getGameStats());
   };
 
   const handlePlayGame = async () => {

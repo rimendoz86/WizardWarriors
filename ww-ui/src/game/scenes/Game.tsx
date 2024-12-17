@@ -71,8 +71,6 @@ export class Game extends Scene {
   private setupBeforeUnload = (): void => {
     const onBeforeUnload = (event: BeforeUnloadEvent) => {
       event.preventDefault();
-      // why this is default values?
-      console.log(getGameStats());
       EventBus.emit("save-game", getGameStats());
     };
 
