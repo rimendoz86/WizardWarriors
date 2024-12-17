@@ -63,12 +63,12 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
         });
       }
     });
-    this.incPlayerKills();
   };
 
   private setDead = () => {
     this.setActive(false).setVisible(false);
     this.scene.removeFromEnemies(this);
+    this.incPlayerKills();
     this.destroy();
   };
 
@@ -84,9 +84,8 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
       this.clearTint();
       if (this.health <= 0) {
         this.scene.time.delayedCall(150, () => {
-          this.setActive(false).setVisible(false);
+          this.setDead();
         });
-        this.incPlayerKills();
       }
     });
   };
