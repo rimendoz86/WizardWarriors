@@ -4,7 +4,7 @@
   background-color: #1e293b;
   border-radius: 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow-y: auto;
   color: #e2e8f0;
   font-family: Arial, sans-serif;
 }

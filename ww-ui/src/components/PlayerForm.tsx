@@ -1,7 +1,7 @@
 import useApiService from "@hooks/useApiService";
 import { useAtom } from "jotai";
 import { Dispatch, SetStateAction, useState } from "react";
-import { gameStatsAtom, getGameStats } from "src/state";
+import { gameStatsAtom } from "src/state";
 import { PlayerSaveResponse } from "src/types/index.types";
 import styles from "./PlayerForm.module.css";
 
