@@ -20,7 +20,9 @@ jobs:
           echo "Deploying ww-srv..."
           curl --request GET \
             --url '${{ secrets.COOLIFY_WW_SRV_WEBHOOK }}' \
-            --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+            --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}' \
+            --header 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
+
 
   deploy-ww-ui:
     if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'ww-ui/')
@@ -35,4 +37,5 @@ jobs:
           echo "Deploying ww-ui..."
           curl --request GET \
             --url '${{ secrets.COOLIFY_WW_UI_WEBHOOK }}' \
-            --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+            --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}' \
+            --header 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
