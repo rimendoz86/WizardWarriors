@@ -38,7 +38,7 @@ const PlayerForm = ({
         setSaves(res.data);
         setGameStats((prev) => ({
           ...prev,
-          user_id: parseInt(getCookie("ww-userId") || "0"),
+          user_id: parseInt(getCookie("ww-userId") || "-1"),
           username,
         }));
       } else {
@@ -68,11 +68,6 @@ const PlayerForm = ({
   };
 
   const playGame = () => {
-    setGameStats((prev) => ({
-      ...prev,
-      user_id: parseInt(getCookie("ww-userId") || "-1"),
-      username: username,
-    }));
     setPlayable(true);
   };
 

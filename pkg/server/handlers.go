@@ -80,9 +80,9 @@ func registerHandler(us userService) http.HandlerFunc {
 		http.SetCookie(w, &http.Cookie{
 			Name:     "ww-userId",
 			Value:    fmt.Sprintf("%d", userId),
-			Path:     "/",
+			Path:     ".wizardwarriors.com",
 			Secure:   true,
-			SameSite: http.SameSiteLaxMode,
+			SameSite: http.SameSiteNoneMode,
 		})
 
 		response := APIResponse{
@@ -132,9 +132,9 @@ func loginHandler(us userService) http.HandlerFunc {
 		http.SetCookie(w, &http.Cookie{
 			Name:     "ww-userId",
 			Value:    fmt.Sprintf("%d", userId),
-			Path:     "/",
+			Path:     ".wizardwarriors.com",
 			Secure:   true,
-			SameSite: http.SameSiteLaxMode,
+			SameSite: http.SameSiteNoneMode,
 		})
 
 		saves, err := us.PlayerSaves(ctx)
