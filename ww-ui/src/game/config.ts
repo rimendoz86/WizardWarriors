@@ -2,6 +2,7 @@ import { Types } from "phaser";
 import { Game as MainGame } from "./scenes/Game";
 import GameOverScene from "./scenes/GameOverScene";
 import MainMenu from "./scenes/MainMenu";
+import PreloadScene from "./scenes/PreloadScene";
 
 export const config: Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -22,5 +23,5 @@ export const config: Types.Core.GameConfig = {
   antialias: false,
   pixelArt: true,
   roundPixels: true,
-  scene: [MainMenu, MainGame, GameOverScene],
+  scene: [PreloadScene, MainMenu, MainGame, GameOverScene],
 };
