@@ -21,6 +21,7 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     scene.physics.add.existing(this, false);
 
+    this.scene = scene;
     this.setScale(2);
     this.setImmovable(true);
     this.setCollideWorldBounds(true);
@@ -55,25 +56,20 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setTint(0xff6666);
     this.health = this.health - this.scene.player!.attack!;
 
-    if (this.scene) {
-      this.scene.time.delayedCall(350, () => {
-        this.clearTint();
-        if (this.health <= 0) {
-          this.scene.time.delayedCall(150, () => {
-            this.setDead();
-          });
-        }
-      });
-    }
+    this.scene.time.delayedCall(350, () => {
+      this.clearTint();
+      if (this.health <= 0) {
+        this.scene.time.delayedCall(150, () => {
+          this.setDead();
+        });
+      }
+    });
   };
 
   private setDead = () => {
     this.setActive(false).setVisible(false);
-    if (this.scene) {
-      this.scene.removeFromEnemies(this);
-      this.incPlayerKills();
-    }
-    this.destroy();
+    this.scene.removeFromEnemies(this);
+    this.incPlayerKills();
   };
 
   attackTarget = (target: Player | Ally) => {

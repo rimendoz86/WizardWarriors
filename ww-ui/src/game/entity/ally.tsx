@@ -19,6 +19,7 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     scene.physics.add.existing(this, false);
 
+    this.scene = scene;
     this.setScale(2);
     this.setCollideWorldBounds(true);
 
@@ -41,7 +42,6 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
   private setDead = () => {
     this.setActive(false).setVisible(false);
     this.scene.removeFromAllies(this);
-    this.destroy();
   };
 
   setLevel(level: number) {
