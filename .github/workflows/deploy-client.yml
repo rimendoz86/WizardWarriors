@@ -10,7 +10,6 @@ on:
 
 jobs:
   deploy-ww-ui:
-    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
