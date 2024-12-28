@@ -99,17 +99,25 @@ export class Game extends Scene {
   };
 
   removeFromAllies = (ally: Ally) => {
+    if (!ally) return;
+
     const index = this.allies.indexOf(ally);
     if (index > -1) {
       this.allies.splice(index, 1);
     }
+
+    ally.destroy();
   };
 
   removeFromEnemies = (enemy: Enemy) => {
+    if (!enemy) return;
+
     const index = this.enemies.indexOf(enemy);
     if (index > -1) {
       this.enemies.splice(index, 1);
     }
+
+    enemy.destroy();
   };
 
   create() {

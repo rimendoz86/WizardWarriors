@@ -56,23 +56,27 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setTint(0xff6666);
     this.health = this.health - this.scene.player!.attack!;
 
-    this.scene.time.delayedCall(350, () => {
+    const delayedCalled = this.scene.time.delayedCall(350, () => {
       this.clearTint();
+    });
+    const delayedDeath = this.scene.time.delayedCall(500, () => {
       if (this.health <= 0) {
-        this.scene.time.delayedCall(150, () => {
-          this.setDead();
-        });
+        delayedCalled.remove();
+        delayedDeath.remove();
+        this.setDead();
       }
     });
   };
 
   private setDead = () => {
-    this.setActive(false).setVisible(false);
+    if (!this.scene) return;
     this.scene.removeFromEnemies(this);
+    this.setActive(false).setVisible(false);
     this.incPlayerKills();
   };
 
   attackTarget = (target: Player | Ally) => {
+    if (!target) return;
     target.takeDamage(this.attack);
   };
 
@@ -80,12 +84,14 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setTint(0xff6666);
     this.health -= damage;
 
-    this.scene.time.delayedCall(350, () => {
+    const delayedCalled = this.scene.time.delayedCall(350, () => {
       this.clearTint();
+    });
+    const delayedDeath = this.scene.time.delayedCall(500, () => {
       if (this.health <= 0) {
-        this.scene.time.delayedCall(150, () => {
-          this.setDead();
-        });
+        delayedCalled.remove();
+        delayedDeath.remove();
+        this.setDead();
       }
     });
   };

@@ -18,6 +18,7 @@ export const config: Types.Core.GameConfig = {
     default: "arcade",
     arcade: {
       gravity: { x: 0, y: 0 },
+      debug: process.env.NEXT_PUBLIC_DEBUG === "true",
     },
   },
   antialias: false,

@@ -45,6 +45,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   };
 
   attackTarget = (target: Ally | Enemy) => {
+    if (!target) return;
     target.takeDamage(this.attack);
   };
 

@@ -40,6 +40,7 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
   }
 
   private setDead = () => {
+    if (!this.scene) return;
     this.setActive(false).setVisible(false);
     this.scene.removeFromAllies(this);
   };
@@ -60,6 +61,7 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
   };
 
   attackTarget = (target: Enemy) => {
+    if (!target) return;
     target.takeDamage(this.attack);
   };
 
@@ -67,13 +69,14 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
     this.setTint(0xff6666);
     this.health -= damage;
 
-    this.scene.time.delayedCall(750, () => {
+    const delayedCall = this.scene.time.delayedCall(750, () => {
       this.clearTint();
+    });
+    const delayedDeath = this.scene.time.delayedCall(900, () => {
       if (this.health <= 0) {
-        this.scene.time.delayedCall(150, () => {
-          this.setActive(false).setVisible(false);
-        });
-        this.incPlayerKills();
+        delayedCall.remove();
+        delayedDeath.remove();
+        this.setDead();
       }
     });
   };
