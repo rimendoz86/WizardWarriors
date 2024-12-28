@@ -1,0 +1,19 @@
+name: Deploy ww-srv
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy-ww-srv:
+    if: github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, 'ww-ui/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Trigger Coolify Deployment for Backend
+        run: |
+          curl --request GET "${{ secrets.COOLIFY_WW_SRV_WEBHOOK }}" --header "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}"
