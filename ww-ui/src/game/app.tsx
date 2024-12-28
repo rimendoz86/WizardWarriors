@@ -52,6 +52,7 @@ const PhaserGame = ({ currentActiveScene }: PhaserGameProps) => {
     };
 
     EventBus.on("save-game", handleSaveGame);
+
     return () => {
       EventBus.removeListener("save-game");
     };

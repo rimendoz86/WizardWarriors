@@ -20,6 +20,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     scene.physics.add.existing(this, false);
 
+    this.scene = scene;
     this.setScale(2);
     this.setImmovable(true);
     this.setCollideWorldBounds(true);
@@ -44,6 +45,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   };
 
   attackTarget = (target: Ally | Enemy) => {
+    if (!target) return;
     target.takeDamage(this.attack);
   };
 
