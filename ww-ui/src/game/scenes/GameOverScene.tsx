@@ -1,7 +1,12 @@
 import { GameObjects, Scene } from "phaser";
+import {
+  getGameStats,
+  isGameSaved,
+  setGameSaved,
+  setGameStats,
+} from "src/state";
 import { CONSTANTS } from "../constants";
 import { EventBus } from "../EventBus";
-import { getGameStats, setGameStats } from "src/state";
 
 export default class GameOverScene extends Scene {
   buttons: GameObjects.Text[] = [];
@@ -17,7 +22,11 @@ export default class GameOverScene extends Scene {
       ...prev,
       is_game_over: true,
     }));
-    EventBus.emit("save-game", getGameStats());
+
+    if (!isGameSaved()) {
+      EventBus.emit("save-game", getGameStats());
+      setGameSaved(true);
+    }
   }
 
   create() {
@@ -29,10 +38,12 @@ export default class GameOverScene extends Scene {
       .setOrigin(0.5);
 
     const newGameButton = this.createButton(600, 300, "New Game", () => {
+      setGameSaved(false);
       this.scene.start(CONSTANTS.SCENES.GAME);
     });
 
     const menuButton = this.createButton(600, 360, "Main Menu", () => {
+      setGameSaved(false);
       this.scene.start(CONSTANTS.SCENES.MENU);
     });
 

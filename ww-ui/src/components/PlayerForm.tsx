@@ -1,7 +1,7 @@
 import useApiService from "@hooks/useApiService";
 import { useAtom } from "jotai";
 import { Dispatch, SetStateAction, useState } from "react";
-import { gameStatsAtom } from "src/state";
+import { gameStatsAtom, setGameSaved } from "src/state";
 import { PlayerSaveResponse } from "src/types/index.types";
 import styles from "./PlayerForm.module.css";
 
@@ -72,6 +72,7 @@ const PlayerForm = ({
 
   const playGame = () => {
     setPlayable(true);
+    setGameSaved(false);
   };
 
   const handlePlayGame = async () => {

@@ -1,6 +1,6 @@
 import { Scene } from "phaser";
 import Player from "src/game/entity/player";
-import { getGameStats } from "src/state";
+import { getGameStats, isGameSaved, setGameSaved } from "src/state";
 import { GameStats } from "src/types/index.types";
 import { EventBus } from "../EventBus";
 import { CONSTANTS, ENTITY } from "../constants";
@@ -71,7 +71,11 @@ export class Game extends Scene {
   private setupBeforeUnload = (): void => {
     const onBeforeUnload = (event: BeforeUnloadEvent) => {
       event.preventDefault();
-      EventBus.emit("save-game", getGameStats());
+
+      if (!isGameSaved()) {
+        EventBus.emit("save-game", getGameStats());
+        setGameSaved(true);
+      }
     };
 
     window.addEventListener("beforeunload", onBeforeUnload);
