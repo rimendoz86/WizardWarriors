@@ -13,6 +13,31 @@ END $$;
 
 GRANT CONNECT ON DATABASE wizardwarriors TO wizardwarrior;
 
+GRANT USAGE ON SCHEMA public TO wizardwarrior;
+GRANT CREATE ON SCHEMA public TO wizardwarrior;
+
+DO $$
+DECLARE
+    tbl RECORD;
+BEGIN
+    FOR tbl IN
+        SELECT tablename FROM pg_tables WHERE schemaname = 'public'
+    LOOP
+        EXECUTE format('GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.%I TO wizardwarrior', tbl.tablename);
+    END LOOP;
+END $$;
+
+DO $$
+DECLARE
+    seq RECORD;
+BEGIN
+    FOR seq IN
+        SELECT sequencename FROM pg_sequences WHERE schemaname = 'public'
+    LOOP
+        EXECUTE format('GRANT USAGE, SELECT, UPDATE ON SEQUENCE public.%I TO wizardwarrior', seq.sequencename);
+    END LOOP;
+END $$;
+
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, DELETE, UPDATE, INSERT ON TABLES TO wizardwarrior;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO wizardwarrior;
 -- +goose StatementEnd

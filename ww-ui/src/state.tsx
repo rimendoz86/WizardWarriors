@@ -22,11 +22,19 @@ export const gameStats: GameStats = {
 
 export const gameStatsAtom = atom<GameStats>(gameStats);
 
+export const savedStateAtom = atom(false);
+
 export const getGameStats = () => store.get(gameStatsAtom);
 
 export const setGameStats = (updater: (prev: GameStats) => GameStats) => {
   const current = store.get(gameStatsAtom);
   store.set(gameStatsAtom, updater(current));
+};
+
+export const isGameSaved = () => store.get(savedStateAtom);
+
+export const setGameSaved = (state: boolean) => {
+  store.set(savedStateAtom, state);
 };
 
 export const getStore = () => store;
