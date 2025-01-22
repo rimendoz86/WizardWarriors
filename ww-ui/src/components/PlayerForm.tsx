@@ -1,6 +1,6 @@
 import useApiService from "@hooks/useApiService";
 import { useAtom } from "jotai";
-import { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { gameStatsAtom, setGameSaved } from "src/state";
 import { PlayerSaveResponse } from "src/types/index.types";
 import styles from "./PlayerForm.module.css";
@@ -34,7 +34,7 @@ const PlayerForm = ({
   const [_gameStats, setGameStats] = useAtom(gameStatsAtom);
 
   const login = async (e: React.MouseEvent) => {
-    e.preventDefault();
+    deleteCookie(e, "ww-userId");
     await apiService?.loginUser({ username, password }).then((res) => {
       if (res.success) {
         if (!res.data) handlePlayGame();
@@ -51,7 +51,7 @@ const PlayerForm = ({
   };
 
   const register = async (e: React.MouseEvent) => {
-    e.preventDefault();
+    deleteCookie(e, "ww-userId");
     await apiService?.registerUser({ username, password }).then((res) => {
       if (res.success) {
         setPlayable(true);
@@ -64,6 +64,11 @@ const PlayerForm = ({
         setError(res.error || "Error registering.");
       }
     });
+  };
+
+  const deleteCookie = (event: React.UIEvent, name: string) => {
+    event.preventDefault();
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
   };
 
   const handleSaveSelection = (save: PlayerSaveResponse) => {
