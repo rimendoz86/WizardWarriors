@@ -2,15 +2,11 @@ import { setGameStats } from "src/state";
 import { GameStats } from "src/types/index.types";
 import { Game as GameScene } from "../scenes/Game";
 import Ally from "./ally";
+import Entity from "./entity";
 import Player from "./player";
 
-export default class Enemy extends Phaser.Physics.Arcade.Sprite {
+export default class Enemy extends Entity {
   declare scene: GameScene;
-
-  level: number = 1;
-  health: number = 0;
-  speed: number = 75;
-  attack: number = 5;
 
   detectionRange: number = 200;
   target: Phaser.Physics.Arcade.Sprite | null = null;
@@ -18,20 +14,21 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
   constructor(scene: GameScene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
 
-    scene.add.existing(this);
-    scene.physics.add.existing(this, false);
+    this.level = 1;
+    this.health = 2;
+    this.speed = 75;
+    this.attack = 5;
 
     this.scene = scene;
     this.setScale(2);
     this.setImmovable(true);
     this.setCollideWorldBounds(true);
+    this.initializeHealthBar(x, y, this.width, 4);
 
     this.setInteractive().on("pointerdown", this.hit);
 
     scene.enemies.push(this);
 
-    scene.physics.add.collider(this, scene.collisionLayer!);
-    scene.physics.add.collider(this, scene.elevationLayer!);
     scene.physics.add.collider(this, scene.player!, () =>
       this.attackTarget(scene.player!)
     );
@@ -53,8 +50,10 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
   hit = (_pointer: Phaser.Input.Pointer) => {
     // TODO: Temporary until we implement a projectile to hit the enemy.
     // TODO: Enemies have to deal damage and take damage from player's allies.
+    // TODO: Health bar shouldn't be done here either.
     this.setTint(0xff6666);
-    this.health = this.health - this.scene.player!.attack!;
+    this.health -= this.scene.player!.attack!;
+    this.healthBar.updateHealth(this.health);
 
     const delayedCalled = this.scene.time.delayedCall(350, () => {
       this.clearTint();
@@ -83,6 +82,7 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
   takeDamage = (damage: number) => {
     this.setTint(0xff6666);
     this.health -= damage;
+    this.healthBar.updateHealth(this.health);
 
     const delayedCalled = this.scene.time.delayedCall(350, () => {
       this.clearTint();

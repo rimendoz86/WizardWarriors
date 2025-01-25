@@ -4,29 +4,20 @@ import { ANIMS } from "../constants";
 import { Game as GameScene } from "../scenes/Game";
 import Ally from "./ally";
 import Enemy from "./enemy";
+import Entity from "./entity";
 
-export default class Player extends Phaser.Physics.Arcade.Sprite {
+export default class Player extends Entity {
   declare scene: GameScene;
-
-  level: number = 1;
-  // health: number = 100;
-  health: number = 0;
-  speed: number = 100;
-  attack: number = 1;
 
   constructor(scene: GameScene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
-
-    scene.add.existing(this);
-    scene.physics.add.existing(this, false);
 
     this.scene = scene;
     this.setScale(2);
     this.setImmovable(true);
     this.setCollideWorldBounds(true);
 
-    this.scene.physics.add.collider(this, scene.collisionLayer!);
-    this.scene.physics.add.collider(this, scene.elevationLayer!);
+    this.initializeHealthBar(x, y, this.width, 4);
   }
 
   setLevel(level: number) {
@@ -54,6 +45,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.health -= damage;
 
     this.scene.time.delayedCall(350, () => {
+      this.healthBar.updateHealth(this.health);
       this.clearTint();
       if (this.health <= 0) {
         this.scene.time.delayedCall(150, () => {

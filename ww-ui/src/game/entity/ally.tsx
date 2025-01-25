@@ -1,32 +1,28 @@
 import { setGameStats } from "src/state";
+import { GameStats } from "src/types/index.types";
 import { Game as GameScene } from "../scenes/Game";
 import Enemy from "./enemy";
-import { GameStats } from "src/types/index.types";
+import Entity from "./entity";
 
-export default class Ally extends Phaser.Physics.Arcade.Sprite {
+export default class Ally extends Entity {
   declare scene: GameScene;
-
-  level: number = 1;
-  health: number = 100;
-  speed: number = 100;
-  attack: number = 2;
 
   minDistanceToPlayer: number = 20;
 
   constructor(scene: GameScene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
 
-    scene.add.existing(this);
-    scene.physics.add.existing(this, false);
+    this.level = 1;
+    this.health = 100;
+    this.speed = 100;
+    this.attack = 2;
 
     this.scene = scene;
     this.setScale(2);
     this.setCollideWorldBounds(true);
+    this.initializeHealthBar(x, y, this.width, 4);
 
     scene.allies.push(this);
-
-    scene.physics.add.collider(this, scene.collisionLayer!);
-    scene.physics.add.collider(this, scene.elevationLayer!);
 
     scene.physics.add.overlap(this, scene.player!, () => {
       // TODO: Projectile to hit ally
@@ -68,6 +64,7 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
   takeDamage = (damage: number) => {
     this.setTint(0xff6666);
     this.health -= damage;
+    this.healthBar.updateHealth(this.health);
 
     const delayedCall = this.scene.time.delayedCall(750, () => {
       this.clearTint();
