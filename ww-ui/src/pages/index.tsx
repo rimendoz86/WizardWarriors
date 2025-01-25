@@ -10,9 +10,9 @@ import styles from "../styles/index.module.css";
 
 const Home: NextPage = () => {
   const [playable, setPlayable] = useState<boolean>();
-  const [leaderboardData, setLeaderboardData] = useState<GameStatsResponse[]>(
-    []
-  );
+  const [leaderboardData, setLeaderboardData] = useState<
+    GameStatsResponse[] | null
+  >(null);
 
   const apiService = useApiService();
 
@@ -24,7 +24,9 @@ const Home: NextPage = () => {
     const fetchLeaderboard = async () => {
       const res = await apiService.getLeaderboard();
       if (res.success && res.data) {
-        setLeaderboardData(res.data);
+        setTimeout(() => {
+          setLeaderboardData(res.data || null);
+        }, 500);
       }
     };
 
