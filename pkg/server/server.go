@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/sonastea/WizardWarriors/pkg/config"
@@ -91,15 +92,26 @@ func (s *Server) Start(hub *hub.Hub) {
 		<-cleanup
 		log.Println("Received quit signal . . .")
 		ctx, shutdownCancel := context.WithTimeout(context.Background(), 30)
+		defer shutdownCancel()
+
 		if err := s.server.Shutdown(ctx); err != nil {
+			log.Printf("Error during server shutdown: %v\n", err)
 		}
-		shutdownCancel()
 		pubsubCancel()
 	}()
 
-	log.Printf("Listening on %s\n", s.server.Addr)
+	id := time.Now().Format("20060102-150405")
+
+	resetColor := "\033[0m"
+	blueColor := "\033[94m"
+	boldText := "\033[1m"
+
+	log.Printf("[ID: %s%s%s%s] WizardWarriors websocket server listening on %s \n",
+		boldText, blueColor, id, resetColor, s.server.Addr)
+
 	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		log.Fatalf("HTTP server ListenAndServe: %v", err)
+		log.Fatalf("HTTP server ListenAndServe: %v [ID: %s%s%s%s]\n",
+			err, boldText, blueColor, id, resetColor)
 	}
 }
 

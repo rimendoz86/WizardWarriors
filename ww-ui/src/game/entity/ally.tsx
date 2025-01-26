@@ -1,32 +1,29 @@
 import { setGameStats } from "src/state";
+import { GameStats } from "src/types/index.types";
 import { Game as GameScene } from "../scenes/Game";
 import Enemy from "./enemy";
-import { GameStats } from "src/types/index.types";
+import Entity from "./entity";
 
-export default class Ally extends Phaser.Physics.Arcade.Sprite {
+export default class Ally extends Entity {
   declare scene: GameScene;
-
-  level: number = 1;
-  health: number = 100;
-  speed: number = 100;
-  attack: number = 2;
 
   minDistanceToPlayer: number = 20;
 
   constructor(scene: GameScene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
 
-    scene.add.existing(this);
-    scene.physics.add.existing(this, false);
+    this.level = 1;
+    this.health = 100;
+    this.speed = 100;
+    this.attack = 2;
 
     this.scene = scene;
     this.setScale(2);
     this.setCollideWorldBounds(true);
+    this.initializeHealthBar(x, y, this.width, 4);
+    this.setTarget(scene.player); // allies should always be following the player
 
     scene.allies.push(this);
-
-    scene.physics.add.collider(this, scene.collisionLayer!);
-    scene.physics.add.collider(this, scene.elevationLayer!);
 
     scene.physics.add.overlap(this, scene.player!, () => {
       // TODO: Projectile to hit ally
@@ -39,19 +36,11 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
-  private setDead = () => {
+  setDead = () => {
     if (!this.scene) return;
     this.setActive(false).setVisible(false);
     this.scene.removeFromAllies(this);
   };
-
-  setLevel(level: number) {
-    this.level = level;
-  }
-
-  setHealth(health: number) {
-    this.health = health;
-  }
 
   incPlayerKills = () => {
     setGameStats((prev: GameStats) => ({
@@ -65,46 +54,8 @@ export default class Ally extends Phaser.Physics.Arcade.Sprite {
     target.takeDamage(this.attack);
   };
 
-  takeDamage = (damage: number) => {
-    this.setTint(0xff6666);
-    this.health -= damage;
-
-    const delayedCall = this.scene.time.delayedCall(750, () => {
-      this.clearTint();
-    });
-    const delayedDeath = this.scene.time.delayedCall(900, () => {
-      if (this.health <= 0) {
-        delayedCall.remove();
-        delayedDeath.remove();
-        this.setDead();
-      }
-    });
-  };
-
-  moveToTarget = () => {
-    if (!this.scene.player) return;
-
-    const player = this.scene.player;
-    const playerBounds = player.getBounds();
-    const distance = Phaser.Math.Distance.Between(
-      this.x,
-      this.y,
-      playerBounds.centerX,
-      playerBounds.centerY
-    );
-
-    if (distance < this.minDistanceToPlayer) {
-      this.setVelocity(0, 0);
-      return;
-    }
-
-    const angle = Phaser.Math.Angle.Between(
-      this.x,
-      this.y,
-      playerBounds.centerX,
-      playerBounds.centerY
-    );
-    this.setVelocity(Math.cos(angle) * 50, Math.sin(angle) * 50);
+  shouldStopMoving = (distance: number): boolean => {
+    return distance < this.minDistanceToPlayer;
   };
 
   update(_time: number, _delta: number): void {
