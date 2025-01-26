@@ -20,14 +20,6 @@ export default class Player extends Entity {
     this.initializeHealthBar(x, y, this.width, 4);
   }
 
-  setLevel(level: number) {
-    this.level = level;
-  }
-
-  setHealth(health: number) {
-    this.health = health;
-  }
-
   incPlayerKills = () => {
     setGameStats((prev: GameStats) => ({
       ...prev,

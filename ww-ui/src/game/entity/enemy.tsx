@@ -8,9 +8,6 @@ import Player from "./player";
 export default class Enemy extends Entity {
   declare scene: GameScene;
 
-  detectionRange: number = 200;
-  target: Phaser.Physics.Arcade.Sprite | null = null;
-
   constructor(scene: GameScene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
 
@@ -25,7 +22,9 @@ export default class Enemy extends Entity {
     this.setCollideWorldBounds(true);
     this.initializeHealthBar(x, y, this.width, 4);
 
-    this.setInteractive().on("pointerdown", this.hit);
+    this.setInteractive().on("pointerdown", () => {
+      this.takeDamage(scene.player!.attack);
+    });
 
     scene.enemies.push(this);
 
@@ -47,27 +46,7 @@ export default class Enemy extends Entity {
     }));
   };
 
-  hit = (_pointer: Phaser.Input.Pointer) => {
-    // TODO: Temporary until we implement a projectile to hit the enemy.
-    // TODO: Enemies have to deal damage and take damage from player's allies.
-    // TODO: Health bar shouldn't be done here either.
-    this.setTint(0xff6666);
-    this.health -= this.scene.player!.attack!;
-    this.healthBar.updateHealth(this.health);
-
-    const delayedCalled = this.scene.time.delayedCall(350, () => {
-      this.clearTint();
-    });
-    const delayedDeath = this.scene.time.delayedCall(500, () => {
-      if (this.health <= 0) {
-        delayedCalled.remove();
-        delayedDeath.remove();
-        this.setDead();
-      }
-    });
-  };
-
-  private setDead = () => {
+  setDead = () => {
     if (!this.scene) return;
     this.scene.removeFromEnemies(this);
     this.setActive(false).setVisible(false);
@@ -79,29 +58,8 @@ export default class Enemy extends Entity {
     target.takeDamage(this.attack);
   };
 
-  takeDamage = (damage: number) => {
-    this.setTint(0xff6666);
-    this.health -= damage;
-    this.healthBar.updateHealth(this.health);
-
-    const delayedCalled = this.scene.time.delayedCall(350, () => {
-      this.clearTint();
-    });
-    const delayedDeath = this.scene.time.delayedCall(500, () => {
-      if (this.health <= 0) {
-        delayedCalled.remove();
-        delayedDeath.remove();
-        this.setDead();
-      }
-    });
-  };
-
-  setTarget = (target: Phaser.Physics.Arcade.Sprite | null) => {
-    this.target = target;
-  };
-
   findClosestTarget = () => {
-    let closestTarget: Phaser.Physics.Arcade.Sprite | null = null;
+    let closestTarget: Entity | null = null;
     let closestDistance = this.detectionRange;
 
     const player = this.scene.player;
@@ -133,26 +91,11 @@ export default class Enemy extends Entity {
       }
     }
 
-    this.target = closestTarget;
+    this.setTarget(closestTarget);
   };
 
-  moveToTarget = () => {
-    if (!this.target || this.health <= 0) {
-      this.setVelocity(0, 0);
-      return;
-    }
-
-    const angle = Phaser.Math.Angle.Between(
-      this.x,
-      this.y,
-      this.target.x,
-      this.target.y
-    );
-
-    this.setVelocity(
-      Math.cos(angle) * this.speed,
-      Math.sin(angle) * this.speed
-    );
+  setTarget = (target: Entity | null) => {
+    this.target = target;
   };
 
   update(_time: number, _delta: number): void {

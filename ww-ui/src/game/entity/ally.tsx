@@ -21,6 +21,7 @@ export default class Ally extends Entity {
     this.setScale(2);
     this.setCollideWorldBounds(true);
     this.initializeHealthBar(x, y, this.width, 4);
+    this.setTarget(scene.player); // allies should always be following the player
 
     scene.allies.push(this);
 
@@ -35,19 +36,11 @@ export default class Ally extends Entity {
     }
   }
 
-  private setDead = () => {
+  setDead = () => {
     if (!this.scene) return;
     this.setActive(false).setVisible(false);
     this.scene.removeFromAllies(this);
   };
-
-  setLevel(level: number) {
-    this.level = level;
-  }
-
-  setHealth(health: number) {
-    this.health = health;
-  }
 
   incPlayerKills = () => {
     setGameStats((prev: GameStats) => ({
@@ -61,47 +54,8 @@ export default class Ally extends Entity {
     target.takeDamage(this.attack);
   };
 
-  takeDamage = (damage: number) => {
-    this.setTint(0xff6666);
-    this.health -= damage;
-    this.healthBar.updateHealth(this.health);
-
-    const delayedCall = this.scene.time.delayedCall(750, () => {
-      this.clearTint();
-    });
-    const delayedDeath = this.scene.time.delayedCall(900, () => {
-      if (this.health <= 0) {
-        delayedCall.remove();
-        delayedDeath.remove();
-        this.setDead();
-      }
-    });
-  };
-
-  moveToTarget = () => {
-    if (!this.scene.player) return;
-
-    const player = this.scene.player;
-    const playerBounds = player.getBounds();
-    const distance = Phaser.Math.Distance.Between(
-      this.x,
-      this.y,
-      playerBounds.centerX,
-      playerBounds.centerY
-    );
-
-    if (distance < this.minDistanceToPlayer) {
-      this.setVelocity(0, 0);
-      return;
-    }
-
-    const angle = Phaser.Math.Angle.Between(
-      this.x,
-      this.y,
-      playerBounds.centerX,
-      playerBounds.centerY
-    );
-    this.setVelocity(Math.cos(angle) * 50, Math.sin(angle) * 50);
+  shouldStopMoving = (distance: number): boolean => {
+    return distance < this.minDistanceToPlayer;
   };
 
   update(_time: number, _delta: number): void {
