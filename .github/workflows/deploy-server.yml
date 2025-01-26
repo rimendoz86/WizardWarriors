@@ -10,8 +10,10 @@ jobs:
   deploy-ww-srv:
     if: >
       github.event_name == 'workflow_dispatch' ||
-      !contains(github.event.head_commit.message, 'ww-ui/') ||
-      !contains(github.event.head_commit.message, 'from sonastea/master')
+      (
+        !contains(github.event.head_commit.message, 'ww-ui/') &&
+        !contains(github.event.head_commit.message, 'from sonastea/master')
+      )
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
