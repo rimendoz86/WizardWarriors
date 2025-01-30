@@ -182,8 +182,7 @@ export class Game extends Scene {
   ) {
     if (sprite.name !== "fireball") return;
     const fireball = sprite as Fireball;
-    fireball.setActive(false);
-    fireball.setVisible(false);
+    fireball.explode();
   }
 
   update(time: number, delta: number) {

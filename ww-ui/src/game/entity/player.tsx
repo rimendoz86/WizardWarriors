@@ -41,6 +41,7 @@ export default class Player extends Entity {
       this.y,
       destX,
       destY,
+      this.attack,
       ENTITY.SKILL.FIREBALL
     );
 
@@ -49,16 +50,6 @@ export default class Player extends Entity {
       Math.cos(angle) * fireball.speed,
       Math.sin(angle) * fireball.speed
     );
-
-    this.scene.physics.overlap(fireball, this.scene.enemies, (f, e) => {
-      const fireball = f as Fireball;
-      const enemy = e as Enemy;
-
-      console.log("IS THIS WORKING?", fireball, enemy);
-
-      enemy.setDead();
-      fireball.setVisible(false);
-    });
   };
 
   takeDamage = (damage: number) => {
