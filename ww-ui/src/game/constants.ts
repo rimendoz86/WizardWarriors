@@ -23,6 +23,9 @@ export const ANIMS = {
   SLIME: {
     IDLE: "slime-idle",
   },
+  SKILL: {
+    FIREBALL: "fireball-loop",
+  },
 };
 
 export const ENTITY = {
@@ -30,6 +33,9 @@ export const ENTITY = {
   ALLY: "ally",
   ENEMY: {
     SLIME: "slime",
+  },
+  SKILL: {
+    FIREBALL: "fireball",
   },
 };
 

@@ -31,6 +31,12 @@ export default class PreloadScene extends Scene {
       startFrame: 0,
       endFrame: 3,
     });
+    this.load.spritesheet(ENTITY.SKILL.FIREBALL, "assets/skills/fireball.png", {
+      frameWidth: 16,
+      frameHeight: 16,
+      startFrame: 0,
+      endFrame: 4,
+    });
   }
 
   create() {
@@ -138,6 +144,18 @@ export default class PreloadScene extends Scene {
       frames: this.anims.generateFrameNumbers(ENTITY.ENEMY.SLIME, {
         start: 0,
         end: 3,
+      }),
+      frameRate: 8,
+      repeat: -1,
+    });
+
+    // SKILL ANIMATIONS
+    // FIREBALL
+    this.anims.create({
+      key: ANIMS.SKILL.FIREBALL,
+      frames: this.anims.generateFrameNumbers(ENTITY.SKILL.FIREBALL, {
+        start: 0,
+        end: 4,
       }),
       frameRate: 8,
       repeat: -1,

@@ -8,6 +8,7 @@ import Ally from "../entity/ally";
 import Enemy from "../entity/enemy";
 import Slime from "../entity/slime";
 import { Game as GameScene } from "../scenes/Game";
+import Fireball from "../entity/fireball";
 
 export class Game extends Scene {
   player: Player | null;
@@ -139,7 +140,9 @@ export class Game extends Scene {
     });
 
     const map = this.make.tilemap({ key: "map" });
-    const tileset = map.addTilesetImage("DesertTilemap", "tiles")!;
+    const tileset = map.addTilesetImage("DesertTilemap", "tiles");
+    if (!tileset) return Error("Tileset not found.");
+
     map.createLayer("ground", tileset, 0, 0);
     this.elevationLayer = map.createLayer("elevation", tileset, 0, 0);
     this.collisionLayer = map.createLayer("collisions", tileset, 0, 0);
@@ -149,7 +152,17 @@ export class Game extends Scene {
     this.elevationLayer?.setCollisionBetween(93, 95);
     this.elevationLayer?.setCollisionBetween(107, 109);
 
+    this.collisionLayer?.setTileIndexCallback(
+      [45, 46, 47, 48, 49, 50, 51, 52, 53, 54],
+      this.onCollideWithObstacleTiles,
+      this
+    );
+
     this.player = new Player(this, 640, 310, ENTITY.PLAYER);
+
+    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      this.player?.castFireball(pointer.x, pointer.y);
+    });
 
     this.time.addEvent({
       delay: 5000,
@@ -161,6 +174,16 @@ export class Game extends Scene {
     this.loadGameStats(getGameStats());
 
     EventBus?.emit("current-scene-ready", this);
+  }
+
+  private onCollideWithObstacleTiles(
+    sprite: Phaser.GameObjects.GameObject,
+    _tile: Phaser.Tilemaps.Tile
+  ) {
+    if (sprite.name !== "fireball") return;
+    const fireball = sprite as Fireball;
+    fireball.setActive(false);
+    fireball.setVisible(false);
   }
 
   update(time: number, delta: number) {

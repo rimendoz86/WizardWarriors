@@ -1,10 +1,11 @@
 import { setGameStats } from "src/state";
 import { GameStats } from "src/types/index.types";
-import { ANIMS } from "../constants";
+import { ANIMS, ENTITY } from "../constants";
 import { Game as GameScene } from "../scenes/Game";
 import Ally from "./ally";
 import Enemy from "./enemy";
 import Entity from "./entity";
+import Fireball from "./fireball";
 
 export default class Player extends Entity {
   declare scene: GameScene;
@@ -30,6 +31,34 @@ export default class Player extends Entity {
   attackTarget = (target: Ally | Enemy) => {
     if (!target) return;
     target.takeDamage(this.attack);
+  };
+
+  castFireball = (destX: number, destY: number) => {
+    const angle = Phaser.Math.Angle.Between(this.x, this.y, destX, destY);
+    const fireball = new Fireball(
+      this.scene,
+      this.x,
+      this.y,
+      destX,
+      destY,
+      ENTITY.SKILL.FIREBALL
+    );
+
+    fireball.setRotation(angle);
+    fireball.setVelocity(
+      Math.cos(angle) * fireball.speed,
+      Math.sin(angle) * fireball.speed
+    );
+
+    this.scene.physics.overlap(fireball, this.scene.enemies, (f, e) => {
+      const fireball = f as Fireball;
+      const enemy = e as Enemy;
+
+      console.log("IS THIS WORKING?", fireball, enemy);
+
+      enemy.setDead();
+      fireball.setVisible(false);
+    });
   };
 
   takeDamage = (damage: number) => {
