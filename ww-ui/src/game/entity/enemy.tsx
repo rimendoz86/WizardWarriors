@@ -22,10 +22,6 @@ export default class Enemy extends Entity {
     this.setCollideWorldBounds(true);
     this.initializeHealthBar(x, y, this.width, 4);
 
-    this.setInteractive().on("pointerdown", () => {
-      this.takeDamage(scene.player!.attack);
-    });
-
     scene.enemies.push(this);
 
     scene.physics.add.collider(this, scene.player!, () =>
