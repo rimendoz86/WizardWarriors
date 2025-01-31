@@ -8,6 +8,7 @@ export const config: Types.Core.GameConfig = {
   type: Phaser.AUTO,
   title: "WizardWarriors",
   parent: "game-content",
+  backgroundColor: "#fff",
   width: 1280,
   height: 720,
   scale: {

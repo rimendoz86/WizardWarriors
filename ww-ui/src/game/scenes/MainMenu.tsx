@@ -3,6 +3,7 @@ import { CONSTANTS } from "../constants";
 import { EventBus } from "../EventBus";
 
 export default class MenuScene extends Scene {
+  backgroundImage: GameObjects.Image | null = null;
   startButton: GameObjects.Text | null = null;
 
   constructor() {
@@ -14,13 +15,20 @@ export default class MenuScene extends Scene {
   }
 
   create() {
+    this.backgroundImage = this.add
+      .image(this.scale.width / 2, this.scale.height / 2, "wizard-magus")
+      .setDisplaySize(this.scale.width, this.scale.height);
+
     this.startButton = this.add.text(
       this.scale.width / 2,
       this.scale.height / 2,
       "Start Game",
       {
         fontSize: "32px",
-        color: "#ff0",
+        fontStyle: "bold",
+        color: "#00ff00",
+        strokeThickness: 2,
+        stroke: "#000",
       }
     );
 
@@ -39,7 +47,7 @@ export default class MenuScene extends Scene {
   }
 
   enterRestState() {
-    this.startButton?.setStyle({ fill: "#ff0" });
+    this.startButton?.setStyle({ fill: "#00ff00" });
   }
 
   resize(gameSize: GameObjects.Components.Size) {

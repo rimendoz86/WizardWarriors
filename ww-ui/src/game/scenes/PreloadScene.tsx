@@ -11,6 +11,7 @@ export default class PreloadScene extends Scene {
   }
 
   preload() {
+    this.load.image("wizard-magus", "assets/wizard-magus.png");
     this.load.image("tiles", "assets/DesertTilemap.png");
     this.load.tilemapTiledJSON("map", "assets/map1.json");
     this.load.spritesheet(ENTITY.PLAYER, "assets/player/player.png", {
