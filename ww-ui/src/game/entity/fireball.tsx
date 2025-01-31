@@ -26,7 +26,7 @@ export default class Fireball extends Projectile {
     this.speed = 250;
     this.play(ANIMS.SKILL.FIREBALL);
 
-    scene.physics.add.overlap(this, scene.enemies, this.onHitEntity);
+    scene.physics.add.overlap(scene.enemies, this, this.onHitEntity);
   }
 
   explode = () => {
@@ -36,11 +36,13 @@ export default class Fireball extends Projectile {
     this.destroy();
   };
 
-  onHitEntity: Phaser.Types.Physics.Arcade.ArcadePhysicsCallback = (f, e) => {
-    const fireball = f as Fireball;
+  onHitEntity: Phaser.Types.Physics.Arcade.ArcadePhysicsCallback = (e, f) => {
     const enemy = e as Enemy;
+    const fireball = f as Fireball;
+
+    if (!enemy.body || !fireball.body) return;
 
     fireball.explode();
-    enemy.takeDamage(this.damage);
+    enemy.takeDamage(fireball.damage);
   };
 }

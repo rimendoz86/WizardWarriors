@@ -180,7 +180,7 @@ export class Game extends Scene {
     sprite: Phaser.GameObjects.GameObject,
     _tile: Phaser.Tilemaps.Tile
   ) {
-    if (sprite.name !== "fireball") return;
+    if (sprite.name !== "fireball" || !sprite.body) return;
     const fireball = sprite as Fireball;
     fireball.explode();
   }
