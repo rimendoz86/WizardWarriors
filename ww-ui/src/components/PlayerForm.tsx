@@ -146,9 +146,18 @@ const PlayerForm = ({
                     {save.total_enemies}
                   </span>
                 </p>
+                <p className={styles.gameOver}>
+                  Game Over:{" "}
+                  <span
+                    className={
+                      save.is_game_over ? styles.gameOverYes : styles.gameOverNo
+                    }
+                  >
+                    {save.is_game_over ? "Yes" : "No"}
+                  </span>
+                </p>
                 <p>Created: {new Date(save.created_at).toLocaleString()}</p>
                 <p>Updated: {new Date(save.updated_at).toLocaleString()}</p>
-                <p>Game Over: {save.is_game_over ? "Yes" : "No"}</p>
               </div>
             );
           })}
