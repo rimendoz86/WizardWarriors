@@ -359,34 +359,82 @@ func (us *UserStore) SaveGame(ctx context.Context, game_stats GameStats) (GameSt
 		RETURNING user_id, max_level, created_at, updated_at;
 	`
 
+	updateGameStatsQuery := `
+		UPDATE game_stats
+		SET
+			team_deaths = $1,
+			team_kills = $2,
+			player_level = $3,
+			player_kills = $4,
+			player_kills_at_level = $5,
+			total_allies = $6,
+			total_enemies = $7,
+			is_game_over = $8,
+			updated_at = CURRENT_TIMESTAMP
+		WHERE id = $9 AND is_game_over = false
+		RETURNING
+			user_id, team_deaths, team_kills, player_level,
+			player_kills, player_kills_at_level, total_allies, total_enemies,
+			is_game_over, created_at, updated_at;
+	`
+
+	updatePlayerSaveQuery := `
+		UPDATE player_saves
+		SET
+			max_level = $2,
+			updated_at = CURRENT_TIMESTAMP,
+			updated_by = $3
+		WHERE id = $1 AND is_active = TRUE
+		RETURNING user_id, max_level, created_at, updated_at;
+	`
+
 	tx, err := us.pool.Begin(ctx)
 	if err != nil {
 		return GameStats{}, fmt.Errorf("Failed to start transaction: %w", err)
 	}
 
 	var gs GameStats
-	err = tx.QueryRow(
-		ctx,
-		gameStatsQuery,
-		game_stats.UserID, game_stats.TeamDeaths, game_stats.TeamKills,
-		game_stats.PlayerLevel, game_stats.PlayerKills, game_stats.PlayerKillsAtLevel,
-		game_stats.TotalAllies, game_stats.TotalEnemies, game_stats.IsGameOver,
-		game_stats.GameCreatedAt, game_stats.GameUpdatedAt, true,
-	).Scan(
-		&gs.UserID, &gs.TeamDeaths, &gs.TeamKills, &gs.PlayerLevel, &gs.PlayerKills,
-		&gs.PlayerKillsAtLevel, &gs.TotalAllies, &gs.TotalEnemies, &gs.IsGameOver, &gs.GameCreatedAt,
-		&gs.GameUpdatedAt)
+	if game_stats.GameID == 0 {
+		err = tx.QueryRow(ctx, gameStatsQuery,
+			game_stats.UserID, game_stats.TeamDeaths, game_stats.TeamKills,
+			game_stats.PlayerLevel, game_stats.PlayerKills, game_stats.PlayerKillsAtLevel,
+			game_stats.TotalAllies, game_stats.TotalEnemies, game_stats.IsGameOver,
+			game_stats.GameCreatedAt, game_stats.GameUpdatedAt, true,
+		).Scan(
+			&gs.UserID, &gs.TeamDeaths, &gs.TeamKills, &gs.PlayerLevel, &gs.PlayerKills,
+			&gs.PlayerKillsAtLevel, &gs.TotalAllies, &gs.TotalEnemies, &gs.IsGameOver, &gs.GameCreatedAt,
+			&gs.GameUpdatedAt)
+	} else {
+		err = tx.QueryRow(
+			ctx,
+			updateGameStatsQuery,
+			game_stats.TeamDeaths, game_stats.TeamKills, game_stats.PlayerLevel,
+			game_stats.PlayerKills, game_stats.PlayerKillsAtLevel, game_stats.TotalAllies,
+			game_stats.TotalEnemies, game_stats.IsGameOver, game_stats.GameID,
+		).Scan(
+			&gs.UserID, &gs.TeamDeaths, &gs.TeamKills, &gs.PlayerLevel, &gs.PlayerKills,
+			&gs.PlayerKillsAtLevel, &gs.TotalAllies, &gs.TotalEnemies, &gs.IsGameOver, &gs.GameCreatedAt,
+			&gs.GameUpdatedAt)
+	}
 	if err != nil {
 		return GameStats{}, fmt.Errorf("Failed to save game stats: %w", err)
 	}
 	defer tx.Rollback(ctx)
 
 	var ps PlayerSaveResponse
-	err = tx.QueryRow(
-		ctx,
-		playerSaveQuery,
-		game_stats.UserID, game_stats.PlayerLevel, game_stats.Username,
-	).Scan(&ps.UserID, &ps.MaxLevel, &ps.CreatedAt, &ps.UpdatedAt)
+	if game_stats.GameID == 0 {
+		err = tx.QueryRow(
+			ctx,
+			playerSaveQuery,
+			game_stats.UserID, game_stats.PlayerLevel, game_stats.Username,
+		).Scan(&ps.UserID, &ps.MaxLevel, &ps.CreatedAt, &ps.UpdatedAt)
+	} else {
+		err = tx.QueryRow(
+			ctx,
+			updatePlayerSaveQuery,
+			game_stats.GameID, game_stats.PlayerLevel, game_stats.Username,
+		).Scan(&ps.UserID, &ps.MaxLevel, &ps.CreatedAt, &ps.UpdatedAt)
+	}
 	if err != nil {
 		return GameStats{}, fmt.Errorf("Failed to save player save: %w", err)
 	}
