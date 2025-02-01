@@ -1,5 +1,3 @@
-import { setGameStats } from "src/state";
-import { GameStats } from "src/types/index.types";
 import { ANIMS, ENTITY } from "../constants";
 import { Game as GameScene } from "../scenes/Game";
 import Ally from "./ally";
@@ -21,12 +19,7 @@ export default class Player extends Entity {
     this.initializeHealthBar(x, y, this.width, 4);
   }
 
-  incPlayerKills = () => {
-    setGameStats((prev: GameStats) => ({
-      ...prev,
-      player_kills: prev.player_kills + 1,
-    }));
-  };
+  incPlayerKills = () => {};
 
   attackTarget = (target: Ally | Enemy) => {
     if (!target) return;

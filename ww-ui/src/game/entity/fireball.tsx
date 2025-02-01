@@ -30,6 +30,8 @@ export default class Fireball extends Projectile {
   }
 
   explode = () => {
+    if (!this.body) return;
+
     this.setVelocity(0, 0);
     this.setActive(false);
     this.setVisible(false);

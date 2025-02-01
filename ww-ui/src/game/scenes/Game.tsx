@@ -18,6 +18,8 @@ export class Game extends Scene {
   collisionLayer: Phaser.Tilemaps.TilemapLayer | null = null;
   elevationLayer: Phaser.Tilemaps.TilemapLayer | null = null;
 
+  private spawnTimer?: Phaser.Time.TimerEvent;
+
   constructor() {
     super(CONSTANTS.SCENES.GAME);
 
@@ -164,16 +166,33 @@ export class Game extends Scene {
       this.player?.castFireball(pointer.x, pointer.y);
     });
 
-    this.time.addEvent({
-      delay: 5000,
-      loop: true,
-      callback: this.spawnEnemy,
-      callbackScope: this,
-    });
+    this.startSpawnLoop();
 
     this.loadGameStats(getGameStats());
 
     EventBus?.emit("current-scene-ready", this);
+  }
+
+  startSpawnLoop = () => {
+    if (this.spawnTimer) {
+      this.spawnTimer.remove();
+    }
+
+    const newDelay = this.getSpawnDelay(this.player?.level || 1);
+
+    this.spawnTimer = this.time.addEvent({
+      delay: newDelay,
+      loop: true,
+      callback: this.spawnEnemy,
+      callbackScope: this,
+    });
+  };
+
+  private getSpawnDelay(level: number) {
+    const baseDelay = 2500;
+    const decreasePerLevel = 250;
+    const delay = Math.max(0, baseDelay - level * decreasePerLevel);
+    return delay;
   }
 
   private onCollideWithObstacleTiles(
