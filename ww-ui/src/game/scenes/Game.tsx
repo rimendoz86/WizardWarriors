@@ -1,6 +1,11 @@
 import { Scene } from "phaser";
 import Player from "src/game/entity/player";
-import { getGameStats, isGameSaved, setGameSaved } from "src/state";
+import {
+  getGameStats,
+  isGameSaved,
+  setGameSaved,
+  setGameStats,
+} from "src/state";
 import { GameStats } from "src/types/index.types";
 import { EventBus } from "../EventBus";
 import { CONSTANTS, ENTITY } from "../constants";
@@ -99,14 +104,28 @@ export class Game extends Scene {
 
   spawnAlly = () => {
     this.spawnEntity(Ally, ENTITY.ALLY, this.allies);
+    setGameStats((prev) => ({
+      ...prev,
+      total_allies: (prev.total_allies += 1),
+    }));
   };
 
   spawnEnemy = () => {
     this.spawnEntity(Slime, ENTITY.ENEMY.SLIME, this.enemies);
+    setGameStats((prev) => ({
+      ...prev,
+      total_enemies: (prev.total_enemies += 1),
+    }));
+    console.log(getGameStats().total_enemies);
   };
 
   removeFromAllies = (ally: Ally) => {
     if (!ally) return;
+
+    setGameStats((prev) => ({
+      ...prev,
+      total_allies: prev.total_allies--,
+    }));
 
     const index = this.allies.indexOf(ally);
     if (index > -1) {
@@ -118,6 +137,11 @@ export class Game extends Scene {
 
   removeFromEnemies = (enemy: Enemy) => {
     if (!enemy) return;
+
+    setGameStats((prev) => ({
+      ...prev,
+      total_enemies: prev.total_enemies--,
+    }));
 
     const index = this.enemies.indexOf(enemy);
     if (index > -1) {
