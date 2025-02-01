@@ -1,5 +1,3 @@
-import { setGameStats } from "src/state";
-import { GameStats } from "src/types/index.types";
 import { Game as GameScene } from "../scenes/Game";
 import Ally from "./ally";
 import Entity from "./entity";
@@ -35,18 +33,11 @@ export default class Enemy extends Entity {
     }
   }
 
-  incPlayerKills = () => {
-    setGameStats((prev: GameStats) => ({
-      ...prev,
-      player_kills: prev.player_kills + 1,
-    }));
-  };
-
   setDead = () => {
     if (!this.scene) return;
+    this.incPlayerKills();
     this.scene.removeFromEnemies(this);
     this.setActive(false).setVisible(false);
-    this.incPlayerKills();
   };
 
   attackTarget = (target: Player | Ally) => {

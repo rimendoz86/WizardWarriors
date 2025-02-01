@@ -1,6 +1,11 @@
 import { Scene } from "phaser";
 import Player from "src/game/entity/player";
-import { getGameStats, isGameSaved, setGameSaved } from "src/state";
+import {
+  getGameStats,
+  isGameSaved,
+  setGameSaved,
+  setGameStats,
+} from "src/state";
 import { GameStats } from "src/types/index.types";
 import { EventBus } from "../EventBus";
 import { CONSTANTS, ENTITY } from "../constants";
@@ -17,6 +22,9 @@ export class Game extends Scene {
 
   collisionLayer: Phaser.Tilemaps.TilemapLayer | null = null;
   elevationLayer: Phaser.Tilemaps.TilemapLayer | null = null;
+
+  private allySpawnTimer?: Phaser.Time.TimerEvent;
+  private enemySpawnTimer?: Phaser.Time.TimerEvent;
 
   constructor() {
     super(CONSTANTS.SCENES.GAME);
@@ -97,14 +105,28 @@ export class Game extends Scene {
 
   spawnAlly = () => {
     this.spawnEntity(Ally, ENTITY.ALLY, this.allies);
+    setGameStats((prev) => ({
+      ...prev,
+      total_allies: (prev.total_allies += 1),
+    }));
   };
 
   spawnEnemy = () => {
     this.spawnEntity(Slime, ENTITY.ENEMY.SLIME, this.enemies);
+    setGameStats((prev) => ({
+      ...prev,
+      total_enemies: (prev.total_enemies += 1),
+    }));
+    console.log(getGameStats().total_enemies);
   };
 
   removeFromAllies = (ally: Ally) => {
     if (!ally) return;
+
+    setGameStats((prev) => ({
+      ...prev,
+      total_allies: prev.total_allies--,
+    }));
 
     const index = this.allies.indexOf(ally);
     if (index > -1) {
@@ -116,6 +138,11 @@ export class Game extends Scene {
 
   removeFromEnemies = (enemy: Enemy) => {
     if (!enemy) return;
+
+    setGameStats((prev) => ({
+      ...prev,
+      total_enemies: prev.total_enemies--,
+    }));
 
     const index = this.enemies.indexOf(enemy);
     if (index > -1) {
@@ -164,23 +191,54 @@ export class Game extends Scene {
       this.player?.castFireball(pointer.x, pointer.y);
     });
 
-    this.time.addEvent({
-      delay: 5000,
-      loop: true,
-      callback: this.spawnEnemy,
-      callbackScope: this,
-    });
+    this.startAllySpawnLoop();
+    this.startEnemySpawnLoop();
 
     this.loadGameStats(getGameStats());
 
     EventBus?.emit("current-scene-ready", this);
   }
 
+  startAllySpawnLoop = () => {
+    if (this.allySpawnTimer) {
+      this.allySpawnTimer.remove();
+    }
+
+    this.enemySpawnTimer = this.time.addEvent({
+      delay: 2000,
+      loop: true,
+      callback: this.spawnAlly,
+      callbackScope: this,
+    });
+  };
+
+  startEnemySpawnLoop = () => {
+    if (this.enemySpawnTimer) {
+      this.enemySpawnTimer.remove();
+    }
+
+    const newDelay = this.getSpawnDelay(this.player?.level || 1);
+
+    this.enemySpawnTimer = this.time.addEvent({
+      delay: newDelay,
+      loop: true,
+      callback: this.spawnEnemy,
+      callbackScope: this,
+    });
+  };
+
+  private getSpawnDelay(level: number) {
+    const baseDelay = 2500;
+    const decreasePerLevel = 250;
+    const delay = Math.max(0, baseDelay - level * decreasePerLevel);
+    return delay;
+  }
+
   private onCollideWithObstacleTiles(
     sprite: Phaser.GameObjects.GameObject,
     _tile: Phaser.Tilemaps.Tile
   ) {
-    if (sprite.name !== "fireball") return;
+    if (sprite.name !== "fireball" || !sprite.body) return;
     const fireball = sprite as Fireball;
     fireball.explode();
   }

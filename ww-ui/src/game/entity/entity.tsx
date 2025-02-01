@@ -1,3 +1,5 @@
+import { setGameStats } from "src/state";
+import { GameStats } from "src/types/index.types";
 import { Game as GameScene } from "../scenes/Game";
 import HealthBar from "./healthbar";
 
@@ -73,7 +75,24 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
     this.health = health;
   };
 
-  incPlayerKills = () => {};
+  incPlayerKills = () => {
+    setGameStats((prev: GameStats) => {
+      const newPlayerKills = prev.player_kills + 1;
+      const newPlayerLevel = Math.floor(
+        1 + Math.sqrt(1 + 8 * newPlayerKills) / 2
+      );
+
+      if (newPlayerLevel > prev.player_level) {
+        this.scene.startEnemySpawnLoop(); // we would want to spawn more enemies on level up
+      }
+
+      return {
+        ...prev,
+        player_level: newPlayerLevel,
+        player_kills: prev.player_kills + 1,
+      };
+    });
+  };
 
   takeDamage = (damage: number) => {
     this.setTint(0xff6666);

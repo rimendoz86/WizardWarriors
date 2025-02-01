@@ -133,8 +133,6 @@ class ApiService {
     }
   }
 
-  // TODO: Save unfinished game using existing game_id, different scene with a save button.
-
   private handleError<T>(error: unknown): ApiResponse<T> {
     if (error instanceof Error) {
       return {
