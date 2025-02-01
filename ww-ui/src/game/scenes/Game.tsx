@@ -23,7 +23,8 @@ export class Game extends Scene {
   collisionLayer: Phaser.Tilemaps.TilemapLayer | null = null;
   elevationLayer: Phaser.Tilemaps.TilemapLayer | null = null;
 
-  private spawnTimer?: Phaser.Time.TimerEvent;
+  private allySpawnTimer?: Phaser.Time.TimerEvent;
+  private enemySpawnTimer?: Phaser.Time.TimerEvent;
 
   constructor() {
     super(CONSTANTS.SCENES.GAME);
@@ -190,21 +191,35 @@ export class Game extends Scene {
       this.player?.castFireball(pointer.x, pointer.y);
     });
 
-    this.startSpawnLoop();
+    this.startAllySpawnLoop();
+    this.startEnemySpawnLoop();
 
     this.loadGameStats(getGameStats());
 
     EventBus?.emit("current-scene-ready", this);
   }
 
-  startSpawnLoop = () => {
-    if (this.spawnTimer) {
-      this.spawnTimer.remove();
+  startAllySpawnLoop = () => {
+    if (this.allySpawnTimer) {
+      this.allySpawnTimer.remove();
+    }
+
+    this.enemySpawnTimer = this.time.addEvent({
+      delay: 2000,
+      loop: true,
+      callback: this.spawnAlly,
+      callbackScope: this,
+    });
+  };
+
+  startEnemySpawnLoop = () => {
+    if (this.enemySpawnTimer) {
+      this.enemySpawnTimer.remove();
     }
 
     const newDelay = this.getSpawnDelay(this.player?.level || 1);
 
-    this.spawnTimer = this.time.addEvent({
+    this.enemySpawnTimer = this.time.addEvent({
       delay: newDelay,
       loop: true,
       callback: this.spawnEnemy,

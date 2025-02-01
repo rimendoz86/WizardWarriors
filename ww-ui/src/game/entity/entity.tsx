@@ -83,7 +83,7 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
       );
 
       if (newPlayerLevel > prev.player_level) {
-        this.scene.startSpawnLoop(); // we would want to spawn more enemies on level up
+        this.scene.startEnemySpawnLoop(); // we would want to spawn more enemies on level up
       }
 
       return {
