@@ -27,7 +27,7 @@ export default class MenuScene extends Scene {
         fontSize: "32px",
         fontStyle: "bold",
         color: "#00ff00",
-        strokeThickness: 2,
+        strokeThickness: 6,
         stroke: "#000",
       }
     );
