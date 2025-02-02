@@ -82,7 +82,7 @@ func registerHandler(us userService) http.HandlerFunc {
 			Value:    fmt.Sprintf("%d", userId),
 			Path:     "/",
 			Domain:   getDomain(),
-			Secure:   true,
+			Secure:   isProduction(),
 			SameSite: http.SameSiteNoneMode,
 		})
 
@@ -135,7 +135,7 @@ func loginHandler(us userService) http.HandlerFunc {
 			Value:    fmt.Sprintf("%d", userId),
 			Path:     "/",
 			Domain:   getDomain(),
-			Secure:   true,
+			Secure:   isProduction(),
 			SameSite: http.SameSiteNoneMode,
 		})
 
