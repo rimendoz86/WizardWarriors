@@ -38,11 +38,11 @@ export class Game extends Scene {
     this.player?.setLevel(player_level);
 
     for (let i = 0; i < total_allies; i++) {
-      this.spawnAlly();
+      this.spawnEntity(Ally, ENTITY.ALLY, this.allies);
     }
 
     for (let i = 0; i < total_enemies; i++) {
-      this.spawnEnemy();
+      this.spawnEntity(Slime, ENTITY.ENEMY.SLIME, this.enemies);
     }
   };
 
