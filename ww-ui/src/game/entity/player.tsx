@@ -49,6 +49,8 @@ export default class Player extends Entity {
     this.setTint(0xff6666);
     this.health -= damage;
 
+    if (!this.scene) return;
+
     this.scene.time.delayedCall(350, () => {
       this.healthBar.updateHealth(this.health);
       this.clearTint();

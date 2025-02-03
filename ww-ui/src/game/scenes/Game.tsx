@@ -117,7 +117,6 @@ export class Game extends Scene {
       ...prev,
       total_enemies: (prev.total_enemies += 1),
     }));
-    console.log(getGameStats().total_enemies);
   };
 
   removeFromAllies = (ally: Ally) => {
