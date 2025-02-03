@@ -2,6 +2,7 @@ import { GameObjects, Scene } from "phaser";
 import {
   getGameStats,
   isGameSaved,
+  resetGameStats,
   setGameSaved,
   setGameStats,
 } from "src/state";
@@ -40,12 +41,12 @@ export default class GameOverScene extends Scene {
       .setOrigin(0.5);
 
     const newGameButton = this.createButton(600, 300, "New Game", () => {
-      setGameSaved(false);
+      resetGameStats();
       this.scene.start(CONSTANTS.SCENES.GAME);
     });
 
     const menuButton = this.createButton(600, 360, "Main Menu", () => {
-      setGameSaved(false);
+      resetGameStats();
       this.scene.start(CONSTANTS.SCENES.MENU);
     });
 
