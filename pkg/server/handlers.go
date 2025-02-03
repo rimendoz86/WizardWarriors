@@ -83,7 +83,7 @@ func registerHandler(us userService) http.HandlerFunc {
 			Path:     "/",
 			Domain:   getDomain(),
 			Secure:   isProduction(),
-			SameSite: http.SameSiteNoneMode,
+			SameSite: http.SameSiteLaxMode,
 			HttpOnly: isProduction(),
 		})
 
@@ -137,7 +137,7 @@ func loginHandler(us userService) http.HandlerFunc {
 			Path:     "/",
 			Domain:   getDomain(),
 			Secure:   isProduction(),
-			SameSite: http.SameSiteNoneMode,
+			SameSite: http.SameSiteLaxMode,
 			HttpOnly: isProduction(),
 		})
 
