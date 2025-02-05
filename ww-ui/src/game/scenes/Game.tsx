@@ -187,6 +187,7 @@ export class Game extends Scene {
     this.player = new Player(this, 640, 310, ENTITY.PLAYER);
 
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      if (!pointer.primaryDown) return;
       this.player?.castFireball(pointer.x, pointer.y);
     });
 
