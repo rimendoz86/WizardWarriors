@@ -13,7 +13,7 @@ const Leaderboard = ({ data }: { data: GameStatsResponse[] | null }) => {
         <span>Username</span>
         <span>Level</span>
         <span>Kills</span>
-        <span>Deaths</span>
+        {/* <span>Team Kills</span> */}
         <span>Enemies</span>
         <span>Allies</span>
         <span>Game Status</span>
@@ -28,7 +28,7 @@ const Leaderboard = ({ data }: { data: GameStatsResponse[] | null }) => {
             <span className={`${styles.skeleton} ${styles.username}`}></span>
             <span className={`${styles.skeleton} ${styles.level}`}></span>
             <span className={`${styles.skeleton} ${styles.kills}`}></span>
-            <span className={`${styles.skeleton} ${styles.deaths}`}></span>
+            {/* <span className={`${styles.skeleton} ${styles.deaths}`}></span> */}
             <span className={`${styles.skeleton} ${styles.enemies}`}></span>
             <span className={`${styles.skeleton} ${styles.allies}`}></span>
             <span className={`${styles.skeleton} ${styles.status}`}></span>
@@ -41,7 +41,7 @@ const Leaderboard = ({ data }: { data: GameStatsResponse[] | null }) => {
             <span className={styles.username}>{player.username}</span>
             <span>{player.player_level}</span>
             <span className={styles.kills}>{player.player_kills}</span>
-            <span>{player.team_deaths}</span>
+            {/* <span>{player.team_deaths}</span> */}
             <span>{player.total_enemies}</span>
             <span>{player.total_allies}</span>
             <span>{player.is_game_over ? "✔️" : "⏳"}</span>
