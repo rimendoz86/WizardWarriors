@@ -204,8 +204,8 @@ export class Game extends Scene {
       this.allySpawnTimer.remove();
     }
 
-    this.enemySpawnTimer = this.time.addEvent({
-      delay: 2000,
+    this.allySpawnTimer = this.time.addEvent({
+      delay: 5000,
       loop: true,
       callback: this.spawnAlly,
       callbackScope: this,
