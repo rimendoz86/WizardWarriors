@@ -83,8 +83,7 @@ func registerHandler(us userService) http.HandlerFunc {
 			Path:     "/",
 			Domain:   getDomain(),
 			Secure:   isProduction(),
-			SameSite: http.SameSiteLaxMode,
-			HttpOnly: isProduction(),
+			SameSite: getSameSite(),
 		})
 
 		response := APIResponse{
@@ -137,8 +136,7 @@ func loginHandler(us userService) http.HandlerFunc {
 			Path:     "/",
 			Domain:   getDomain(),
 			Secure:   isProduction(),
-			SameSite: http.SameSiteLaxMode,
-			HttpOnly: isProduction(),
+			SameSite: getSameSite(),
 		})
 
 		saves, err := us.PlayerSaves(ctx)

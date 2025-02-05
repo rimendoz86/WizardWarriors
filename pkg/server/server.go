@@ -125,3 +125,10 @@ func getDomain() string {
 	}
 	return ""
 }
+
+func getSameSite() http.SameSite {
+	if isProduction() {
+		return http.SameSiteNoneMode
+	}
+	return http.SameSiteLaxMode
+}

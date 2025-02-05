@@ -1,13 +1,14 @@
 import { atom } from "jotai";
 import { createStore } from "jotai/vanilla";
 import { GameStats } from "src/types/index.types";
+import { getCookie } from "./components/PlayerForm";
 
 const store = createStore();
 
 export const gameStats: GameStats = {
   game_id: 0,
   username: "",
-  user_id: 0,
+  user_id: -1,
   team_deaths: 0,
   team_kills: 0,
   player_level: 1,
@@ -35,7 +36,7 @@ export const resetGameStats = () => {
   store.set(gameStatsAtom, {
     game_id: 0,
     username: "",
-    user_id: 0,
+    user_id: parseInt(getCookie("ww-userId")),
     team_deaths: 0,
     team_kills: 0,
     player_level: 1,
