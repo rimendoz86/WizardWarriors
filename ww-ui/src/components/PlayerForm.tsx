@@ -5,13 +5,13 @@ import { gameStatsAtom, setGameSaved } from "src/state";
 import { PlayerSaveResponse } from "src/types/index.types";
 import styles from "./PlayerForm.module.css";
 
-const getCookie = (name: string): string | undefined => {
+export const getCookie = (name: string): string => {
   const cookies = document.cookie.split("; ");
   for (const cookie of cookies) {
     const [key, value] = cookie.split("=");
     if (key === name) return decodeURIComponent(value);
   }
-  return undefined;
+  return "-1";
 };
 
 const PlayerForm = ({
@@ -41,7 +41,7 @@ const PlayerForm = ({
         setSaves(res.data);
         setGameStats((prev) => ({
           ...prev,
-          user_id: parseInt(getCookie("ww-userId") || "-1"),
+          user_id: parseInt(getCookie("ww-userId")),
           username,
         }));
       } else {
@@ -57,7 +57,7 @@ const PlayerForm = ({
         setPlayable(true);
         setGameStats((prev) => ({
           ...prev,
-          user_id: parseInt(getCookie("ww-userId") || "-1"),
+          user_id: parseInt(getCookie("ww-userId")),
           username: username,
         }));
       } else {
@@ -146,9 +146,18 @@ const PlayerForm = ({
                     {save.total_enemies}
                   </span>
                 </p>
+                <p className={styles.gameOver}>
+                  Game Over:{" "}
+                  <span
+                    className={
+                      save.is_game_over ? styles.gameOverYes : styles.gameOverNo
+                    }
+                  >
+                    {save.is_game_over ? "Yes" : "No"}
+                  </span>
+                </p>
                 <p>Created: {new Date(save.created_at).toLocaleString()}</p>
                 <p>Updated: {new Date(save.updated_at).toLocaleString()}</p>
-                <p>Game Over: {save.is_game_over ? "Yes" : "No"}</p>
               </div>
             );
           })}

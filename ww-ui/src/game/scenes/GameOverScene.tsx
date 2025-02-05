@@ -2,6 +2,7 @@ import { GameObjects, Scene } from "phaser";
 import {
   getGameStats,
   isGameSaved,
+  resetGameStats,
   setGameSaved,
   setGameStats,
 } from "src/state";
@@ -34,16 +35,18 @@ export default class GameOverScene extends Scene {
       .text(600, 240, "Game Over", {
         fontSize: "48px",
         color: "#ff0000",
+        strokeThickness: 4,
+        stroke: "#002200",
       })
       .setOrigin(0.5);
 
     const newGameButton = this.createButton(600, 300, "New Game", () => {
-      setGameSaved(false);
+      resetGameStats();
       this.scene.start(CONSTANTS.SCENES.GAME);
     });
 
     const menuButton = this.createButton(600, 360, "Main Menu", () => {
-      setGameSaved(false);
+      resetGameStats();
       this.scene.start(CONSTANTS.SCENES.MENU);
     });
 
@@ -59,7 +62,10 @@ export default class GameOverScene extends Scene {
     const button = this.add
       .text(x, y, text, {
         fontSize: "32px",
-        color: "#ff0",
+        fontStyle: "bold",
+        color: "#00ff00",
+        strokeThickness: 4,
+        stroke: "#002200",
       })
       .setInteractive({ useHandCursor: true })
       .setOrigin(0.5);
@@ -73,11 +79,11 @@ export default class GameOverScene extends Scene {
   }
 
   enterHoverState(button: GameObjects.Text) {
-    button.setStyle({ fill: "#fff" });
+    button.setStyle({ fill: "#00cc00" });
   }
 
   enterRestState(button: GameObjects.Text) {
-    button.setStyle({ fill: "#ff0" });
+    button.setStyle({ fill: "#00ff00" });
   }
 
   resize(gameSize: GameObjects.Components.Size) {

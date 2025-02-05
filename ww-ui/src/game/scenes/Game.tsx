@@ -38,11 +38,11 @@ export class Game extends Scene {
     this.player?.setLevel(player_level);
 
     for (let i = 0; i < total_allies; i++) {
-      this.spawnAlly();
+      this.spawnEntity(Ally, ENTITY.ALLY, this.allies);
     }
 
     for (let i = 0; i < total_enemies; i++) {
-      this.spawnEnemy();
+      this.spawnEntity(Slime, ENTITY.ENEMY.SLIME, this.enemies);
     }
   };
 
@@ -117,7 +117,6 @@ export class Game extends Scene {
       ...prev,
       total_enemies: (prev.total_enemies += 1),
     }));
-    console.log(getGameStats().total_enemies);
   };
 
   removeFromAllies = (ally: Ally) => {
@@ -188,6 +187,7 @@ export class Game extends Scene {
     this.player = new Player(this, 640, 310, ENTITY.PLAYER);
 
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      if (!pointer.primaryDown) return;
       this.player?.castFireball(pointer.x, pointer.y);
     });
 
@@ -204,8 +204,8 @@ export class Game extends Scene {
       this.allySpawnTimer.remove();
     }
 
-    this.enemySpawnTimer = this.time.addEvent({
-      delay: 2000,
+    this.allySpawnTimer = this.time.addEvent({
+      delay: 5000,
       loop: true,
       callback: this.spawnAlly,
       callbackScope: this,
