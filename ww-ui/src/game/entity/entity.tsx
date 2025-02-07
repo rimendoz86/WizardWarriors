@@ -105,7 +105,7 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
     }
 
     this.damageCooldowns.add(attacker?.id);
-    this.scene?.time?.delayedCall(500, () => {
+    this.scene?.time?.delayedCall(250, () => {
       this.damageCooldowns.delete(attacker?.id);
     });
 

@@ -7,10 +7,4 @@ export default class Slime extends Enemy {
   constructor(scene: GameScene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
   }
-
-  update(): void {
-    this.findClosestTarget();
-    this.moveToTarget();
-    this.play(this.texture.key + "-idle", true);
-  }
 }
