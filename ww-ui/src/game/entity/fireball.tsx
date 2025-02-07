@@ -45,6 +45,6 @@ export default class Fireball extends Projectile {
     if (!enemy.body || !fireball.body) return;
 
     fireball.explode();
-    enemy.takeDamage(fireball.damage);
+    enemy.takeDamage(fireball.damage, this);
   };
 }

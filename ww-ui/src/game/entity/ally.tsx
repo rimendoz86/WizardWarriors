@@ -51,7 +51,7 @@ export default class Ally extends Entity {
 
   attackTarget = (target: Enemy) => {
     if (!target) return;
-    target.takeDamage(this.attack);
+    target.takeDamage(this.attack, this);
   };
 
   shouldStopMoving = (distance: number): boolean => {

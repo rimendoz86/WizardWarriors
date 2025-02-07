@@ -4,6 +4,7 @@ import Ally from "./ally";
 import Enemy from "./enemy";
 import Entity from "./entity";
 import Fireball from "./fireball";
+import Projectile from "./projectile";
 
 export default class Player extends Entity {
   declare scene: GameScene;
@@ -23,7 +24,7 @@ export default class Player extends Entity {
 
   attackTarget = (target: Ally | Enemy) => {
     if (!target) return;
-    target.takeDamage(this.attack);
+    target.takeDamage(this.attack, this);
   };
 
   castFireball = (destX: number, destY: number) => {
@@ -45,9 +46,20 @@ export default class Player extends Entity {
     );
   };
 
-  takeDamage = (damage: number) => {
+  takeDamage = (damage: number, attacker?: Player | Entity | Projectile) => {
+    if (!attacker) return;
+    if (this.damageCooldowns.has(attacker.id)) {
+      return;
+    }
+
+    this.damageCooldowns.add(attacker.id);
+    this.scene?.time?.delayedCall(350, () => {
+      this.damageCooldowns.delete(attacker.id);
+    });
+
     this.setTint(0xff6666);
     this.health -= damage;
+    this.logDamage(damage, attacker?.name);
 
     if (!this.scene || !this.scene.time) return;
 
@@ -58,7 +70,7 @@ export default class Player extends Entity {
         this.scene?.time?.delayedCall(150, () => {
           this.setActive(false).setVisible(false);
         });
-        this.scene.gameOver();
+        this.scene?.gameOver();
       }
     });
   };

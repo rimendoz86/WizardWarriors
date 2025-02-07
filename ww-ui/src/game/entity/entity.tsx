@@ -2,6 +2,8 @@ import { setGameStats } from "src/state";
 import { GameStats } from "src/types/index.types";
 import { Game as GameScene } from "../scenes/Game";
 import HealthBar from "./healthbar";
+import Player from "./player";
+import Projectile from "./projectile";
 
 export default class Entity extends Phaser.Physics.Arcade.Sprite {
   declare scene: GameScene;
@@ -20,6 +22,8 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
   // used for checking if an entity is close to an enemy
   detectionRange: number = 200;
   target: Entity | null = null;
+
+  damageCooldowns = new Set<string>();
 
   constructor(scene: GameScene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
@@ -94,11 +98,21 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
     });
   };
 
-  takeDamage = (damage: number) => {
+  takeDamage = (damage: number, attacker?: Player | Entity | Projectile) => {
+    if (!attacker) return;
+    if (this.damageCooldowns.has(attacker?.id)) {
+      return;
+    }
+
+    this.damageCooldowns.add(attacker?.id);
+    this.scene?.time?.delayedCall(500, () => {
+      this.damageCooldowns.delete(attacker?.id);
+    });
+
     this.setTint(0xff6666);
     this.health -= damage;
     this.healthBar.updateHealth(this.health);
-    this.logDamage(damage);
+    this.logDamage(damage, attacker?.name);
 
     const delayedCall = this.scene.time.delayedCall(500, () => {
       this.clearTint();
@@ -114,11 +128,13 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
 
   attackTarget = (target: Entity): void => {
     if (!target) return;
-    target.takeDamage(this.attack);
+    target.takeDamage(this.attack, this);
   };
 
-  logDamage = (amount: number): void => {
-    console.log(`${this.name}-${this.id} took ${amount} damage.`);
+  logDamage = (amount: number, attackerName?: string): void => {
+    console.log(
+      `[${this.scene.time.now}] ${this.name}-${this.id} took ${amount} damage from ${attackerName}!`
+    );
   };
 
   setTarget = (target: Entity | null) => {
