@@ -1,6 +1,7 @@
 export const SCENES = {
   MENU: "MenuScene",
   GAME: "GameScene",
+  PAUSE: "PauseScene",
   PRELOAD: "PreloadScene",
   GAME_OVER: "GameOverScene",
 };
