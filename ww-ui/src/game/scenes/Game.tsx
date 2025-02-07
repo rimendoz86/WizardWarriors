@@ -8,7 +8,7 @@ import {
 } from "src/state";
 import { GameStats } from "src/types/index.types";
 import { EventBus } from "../EventBus";
-import { CONSTANTS, ENTITY } from "../constants";
+import { CONSTANTS, ENTITY, SCENES } from "../constants";
 import Ally from "../entity/ally";
 import Enemy from "../entity/enemy";
 import Slime from "../entity/slime";
@@ -27,7 +27,7 @@ export class Game extends Scene {
   private enemySpawnTimer?: Phaser.Time.TimerEvent;
 
   constructor() {
-    super(CONSTANTS.SCENES.GAME);
+    super(SCENES.GAME);
 
     this.player = null;
   }
@@ -155,6 +155,7 @@ export class Game extends Scene {
     this.setupBeforeUnload();
 
     this.input.keyboard?.addKeys({
+      esc: Phaser.Input.Keyboard.KeyCodes.ESC,
       w: Phaser.Input.Keyboard.KeyCodes.W,
       a: Phaser.Input.Keyboard.KeyCodes.A,
       s: Phaser.Input.Keyboard.KeyCodes.S,
@@ -183,6 +184,11 @@ export class Game extends Scene {
       this.onCollideWithObstacleTiles,
       this
     );
+
+    this.input?.keyboard?.on("keydown-ESC", () => {
+      this.scene.pause();
+      this.scene.run(SCENES.PAUSE);
+    });
 
     this.player = new Player(this, 640, 310, ENTITY.PLAYER);
 

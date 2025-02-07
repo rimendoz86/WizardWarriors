@@ -51,11 +51,11 @@ export default class Player extends Entity {
 
     if (!this.scene || !this.scene.time) return;
 
-    this.scene.time.delayedCall(350, () => {
+    this.scene?.time?.delayedCall(350, () => {
       this.healthBar.updateHealth(this.health);
       this.clearTint();
       if (this.health <= 0) {
-        this.scene.time.delayedCall(150, () => {
+        this.scene?.time?.delayedCall(150, () => {
           this.setActive(false).setVisible(false);
         });
         this.scene.gameOver();

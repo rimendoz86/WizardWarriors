@@ -53,7 +53,7 @@
 
 .headerRow,
 .playerRow {
-  grid-template-columns: 0.5fr 1.5fr repeat(6, 1fr);
+  grid-template-columns: 0.5fr 1.5fr repeat(5, 1fr);
   font-size: 0.8em;
 }
 
