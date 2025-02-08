@@ -42,7 +42,7 @@ export default class Enemy extends Entity {
 
   attackTarget = (target: Player | Ally) => {
     if (!target) return;
-    target.takeDamage(this.attack);
+    target.takeDamage(this.attack, this);
   };
 
   findClosestTarget = () => {

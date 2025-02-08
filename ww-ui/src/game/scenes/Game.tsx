@@ -26,10 +26,14 @@ export class Game extends Scene {
   private allySpawnTimer?: Phaser.Time.TimerEvent;
   private enemySpawnTimer?: Phaser.Time.TimerEvent;
 
+  chatBox: Phaser.GameObjects.Container | null = null;
+
   constructor() {
     super(SCENES.GAME);
 
     this.player = null;
+
+    EventBus.emit("log-events", "Game started!");
   }
 
   loadGameStats = (gameStats: GameStats) => {
@@ -124,7 +128,7 @@ export class Game extends Scene {
 
     setGameStats((prev) => ({
       ...prev,
-      total_allies: prev.total_allies--,
+      total_allies: (prev.total_allies -= 1),
     }));
 
     const index = this.allies.indexOf(ally);
@@ -140,7 +144,7 @@ export class Game extends Scene {
 
     setGameStats((prev) => ({
       ...prev,
-      total_enemies: prev.total_enemies--,
+      total_enemies: (prev.total_enemies -= 1),
     }));
 
     const index = this.enemies.indexOf(enemy);
@@ -234,10 +238,12 @@ export class Game extends Scene {
   };
 
   private getSpawnDelay(level: number) {
+    if (level > 10) return 150;
+
     const baseDelay = 2500;
     const decreasePerLevel = 250;
-    const delay = Math.max(0, baseDelay - level * decreasePerLevel);
-    return delay;
+
+    return Math.max(150, baseDelay - level * decreasePerLevel);
   }
 
   private onCollideWithObstacleTiles(
