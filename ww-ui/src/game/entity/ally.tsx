@@ -43,9 +43,10 @@ export default class Ally extends Entity {
   };
 
   incPlayerKills = () => {
+    // TODO: Add friendly ally kills?
     setGameStats((prev: GameStats) => ({
       ...prev,
-      player_kills: prev.player_kills + 1,
+      team_kills: prev.team_kills + 1,
     }));
   };
 

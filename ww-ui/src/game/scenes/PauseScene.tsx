@@ -21,7 +21,7 @@ export default class PauseScene extends Scene {
 
     this.PauseText = this.add
       .text(this.scale.width / 2, this.scale.height / 2, "PAUSED", {
-        fontSize: "32px",
+        fontSize: "48px",
         fontStyle: "bold",
         color: "#00222E",
         strokeThickness: 1,

@@ -1,9 +1,10 @@
 import usePhaserGame from "@hooks/usePhaserGame";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { config } from "./config";
 import { EventBus } from "./EventBus";
 import { GameStats } from "src/types/index.types";
 import useApiService from "@hooks/useApiService";
+import { LogBox } from "src/components/LogBox";
 
 export interface IRefPhaserGame {
   game: Phaser.Game | null;
@@ -19,6 +20,8 @@ const PhaserGame = ({ currentActiveScene }: PhaserGameProps) => {
   const gameInstanceRef = useRef<IRefPhaserGame>({ game: null, scene: null });
 
   const apiService = useApiService();
+
+  const [logMessages, setLogMessages] = useState<string[]>([]);
 
   usePhaserGame(config, gameRef);
 
@@ -58,7 +61,29 @@ const PhaserGame = ({ currentActiveScene }: PhaserGameProps) => {
     };
   }, [apiService]);
 
-  return <div ref={gameRef} />;
+  useEffect(() => {
+    const handleLogDamage = async (message: string) => {
+      setLogMessages((prev) => [...prev, message]);
+    };
+    const handleLogEvents = async (message: string) => {
+      setLogMessages((prev) => [...prev, message]);
+    };
+
+    EventBus.on("log-damage", handleLogDamage);
+    EventBus.on("log-events", handleLogEvents);
+
+    return () => {
+      EventBus.removeListener("log-damage");
+      EventBus.removeListener("log-events");
+    };
+  }, []);
+
+  return (
+    <>
+      <div ref={gameRef} />
+      <LogBox messages={logMessages} />
+    </>
+  );
 };
 
 export default PhaserGame;

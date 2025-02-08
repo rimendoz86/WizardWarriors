@@ -26,6 +26,7 @@ export default class GameOverScene extends Scene {
 
     if (!isGameSaved()) {
       EventBus.emit("save-game", getGameStats());
+      EventBus.emit("log-events", "Game Over!");
       setGameSaved(true);
     }
   }

@@ -26,10 +26,14 @@ export class Game extends Scene {
   private allySpawnTimer?: Phaser.Time.TimerEvent;
   private enemySpawnTimer?: Phaser.Time.TimerEvent;
 
+  chatBox: Phaser.GameObjects.Container | null = null;
+
   constructor() {
     super(SCENES.GAME);
 
     this.player = null;
+
+    EventBus.emit("log-events", "Game started!");
   }
 
   loadGameStats = (gameStats: GameStats) => {

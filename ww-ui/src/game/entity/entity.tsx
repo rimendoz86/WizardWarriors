@@ -4,6 +4,7 @@ import { Game as GameScene } from "../scenes/Game";
 import HealthBar from "./healthbar";
 import Player from "./player";
 import Projectile from "./projectile";
+import { EventBus } from "../EventBus";
 
 export default class Entity extends Phaser.Physics.Arcade.Sprite {
   declare scene: GameScene;
@@ -88,6 +89,10 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
 
       if (newPlayerLevel > prev.player_level) {
         this.scene.startEnemySpawnLoop(); // we would want to spawn more enemies on level up
+        EventBus.emit(
+          "log-events",
+          `You have reached level ${newPlayerLevel}!`
+        );
       }
 
       return {
@@ -132,8 +137,9 @@ export default class Entity extends Phaser.Physics.Arcade.Sprite {
   };
 
   logDamage = (amount: number, attackerName?: string): void => {
-    console.log(
-      `[${this.scene.time.now}] ${this.name}-${this.id} took ${amount} damage from ${attackerName}!`
+    EventBus.emit(
+      "log-damage",
+      `[${new Date().toLocaleTimeString("en-US").replace(/AM|PM/, "").trim()}] ${this.name}-${this.id} took ${amount} damage from ${attackerName}!`
     );
   };
 
