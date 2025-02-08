@@ -183,6 +183,7 @@ const PlayerForm = ({
         {error && <p className={styles.error}>{error}</p>}
       </div>
       <input
+        name="username"
         autoComplete="username"
         className={`${styles.input} ${error ? styles.inputError : ""}`}
         placeholder="Player name"
@@ -193,7 +194,8 @@ const PlayerForm = ({
         }}
       />
       <input
-        autoComplete="password"
+        name="password"
+        autoComplete="false"
         className={`${styles.input} ${error ? styles.inputError : ""}`}
         placeholder="Password"
         type="password"
