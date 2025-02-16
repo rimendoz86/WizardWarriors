@@ -9,23 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "jotai": "^2.10.3",
-    "next": "^15.0.3",
-    "phaser": "^3.87.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "jotai": "^2.12.0",
+    "next": "^15.1.7",
+    "phaser": "^3.88.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "ts-protoc-gen": "^0.15.1-pre.a71b34e"
   },
   "devDependencies": {
-    "@types/node": "^22.10.0",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "eslint": "^9.15.0",
-    "eslint-config-next": "^15.0.3",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-react": "^7.37.2",
-    "prettier": "^3.3.3",
-    "typescript": "^5.7.2"
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "eslint": "^9.20.1",
+    "eslint-config-next": "^15.1.7",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-react": "^7.37.4",
+    "prettier": "^3.5.1",
+    "typescript": "^5.7.3"
   }
 }

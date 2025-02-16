@@ -1,5 +1,5 @@
 import usePhaserGame from "@hooks/usePhaserGame";
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { config } from "./config";
 import { EventBus } from "./EventBus";
 import { GameStats } from "src/types/index.types";
@@ -23,7 +23,7 @@ const PhaserGame = ({ currentActiveScene }: PhaserGameProps) => {
 
   const [logMessages, setLogMessages] = useState<string[]>([]);
 
-  usePhaserGame(config, gameRef);
+  usePhaserGame(config, gameRef as RefObject<HTMLDivElement>); // TODO: react 19 doesn't take null as a ref
 
   useEffect(() => {
     const handleSceneReady = (scene_instance: Phaser.Scene) => {
