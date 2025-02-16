@@ -1,5 +1,6 @@
 import {
   createContext,
+  ReactElement,
   ReactNode,
   useContext,
   useEffect,
@@ -22,7 +23,7 @@ export function SocketProvider({
   children,
 }: {
   children: ReactNode;
-}): JSX.Element {
+}): ReactElement | null {
   const ws = useMemo(
     () => (typeof window !== "undefined" ? new WebSocket(`${WS_URL}`) : null),
     []
