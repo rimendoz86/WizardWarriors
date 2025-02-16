@@ -2,11 +2,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 export const LogBox = ({ messages }: { messages: string[] }) => {
   const logBoxRef = useRef<HTMLDivElement>(null);
-  const endOfBox = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
 
   const scrollToBottom = useCallback((smooth?: boolean) => {
-    endOfBox.current?.scrollIntoView({
+    if (!logBoxRef.current) return;
+
+    logBoxRef.current.scrollTo({
+      top: logBoxRef.current.scrollHeight,
       behavior: smooth ? "smooth" : "auto",
     });
   }, []);
@@ -22,8 +24,10 @@ export const LogBox = ({ messages }: { messages: string[] }) => {
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [scrollToBottom, messages]);
+    if (autoScroll) {
+      scrollToBottom();
+    }
+  }, [autoScroll, scrollToBottom, messages]);
 
   return (
     <div id="logBoxContainer">
@@ -31,7 +35,6 @@ export const LogBox = ({ messages }: { messages: string[] }) => {
         {messages.map((message, index) => (
           <p key={index}>{message}</p>
         ))}
-        <div ref={endOfBox} />
       </div>
       {!autoScroll && (
         <button
